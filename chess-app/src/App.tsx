@@ -66,16 +66,16 @@ function MainApp() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '12px 24px', background: '#1e1e2e', borderBottom: '1px solid #313244',
         }}>
-          {/* Knight icon — clickable, goes home */}
+          {/* Knight icon + title — clickable, goes home */}
           <button
             onClick={() => { navigate('/'); window.location.href = '/'; }}
             style={{
               background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
-              display: 'flex', alignItems: 'center', gap: '10px',
+              display: 'flex', alignItems: 'center', gap: '12px',
             }}
             title="Home"
           >
-            <svg width="32" height="32" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="64" height="64" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M22 10C32.5 11 38.5 18 38 39H15C15 30 25 32.5 23 18"
                 fill="#89b4fa"
@@ -89,6 +89,12 @@ function MainApp() {
                 transform="matrix(0.866 0.5 -0.5 0.866 9.693 -5.173)"
               />
             </svg>
+            <span style={{
+              fontSize: '22px', fontWeight: 700, color: '#89b4fa',
+              letterSpacing: '-0.5px', lineHeight: 1.2,
+            }}>
+              Qwen's 3.6 — Chess!
+            </span>
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {/* Avatar in top bar */}
@@ -127,9 +133,10 @@ function MainApp() {
         {/* Content */}
         <div style={{ padding: '16px' }}>
           <Routes>
-            <Route path="" element={<Home onOnline={() => window.location.href = '/online'} />} />
+            <Route path="" element={<Home onOnline={() => window.location.href = '/lobby'} />} />
+            <Route path="lobby" element={<Lobby onJoinGame={() => window.location.href = '/online'} />} />
             <Route path="local" element={<LocalGame />} />
-            <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/'} />} />
+            <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/lobby'} />} />
             <Route path="pgn" element={<PGNLoader />} />
             <Route path="profile" element={<Profile />} />
           </Routes>
