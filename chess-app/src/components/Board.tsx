@@ -31,7 +31,29 @@ function findKing(board: number[][], color: 'w' | 'b') {
   return null;
 }
 
-const Board: React.FC<BoardProps> = React.memo(({ state, onSelectSquare }) => {
+function boardsEqual(a: number[][], b: number[][]): boolean {
+  for (let r = 0; r < 8; r++)
+    for (let c = 0; c < 8; c++)
+      if (a[r][c] !== b[r][c]) return false;
+  return true;
+}
+
+function coordsEqual(a: { row: number; col: number } | null, b: { row: number; col: number } | null): boolean {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return a.row === b.row && a.col === b.col;
+}
+
+function moveListsEqual(a: ChessMove[], b: ChessMove[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].from.row !== b[i].from.row || a[i].from.col !== b[i].from.col ||
+        a[i].to.row !== b[i].to.row || a[i].to.col !== b[i].to.col) return false;
+  }
+  return true;
+}
+
+const BoardInner: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
   const kingInCheck =
     (state.gameStatus === 'check' || state.gameStatus === 'checkmate')
       ? findKing(state.board, state.turn)
@@ -71,6 +93,20 @@ const Board: React.FC<BoardProps> = React.memo(({ state, onSelectSquare }) => {
       </div>
     </div>
   );
+};
+
+const Board = React.memo(BoardInner, (prevProps, nextProps) => {
+  const prev = prevProps.state;
+  const next = nextProps.state;
+  if (!boardsEqual(prev.board, next.board)) return false;
+  if (!coordsEqual(prev.selectedSquare, next.selectedSquare)) return false;
+  if (!moveListsEqual(prev.legalMovesForSelected, next.legalMovesForSelected)) return false;
+  if (prev.lastMove !== next.lastMove) return false;
+  if (prev.gameOver !== next.gameOver) return false;
+  if (prev.gameStatus !== next.gameStatus) return false;
+  if (!coordsEqual(prev.enPassantTarget, next.enPassantTarget)) return false;
+  if (prev.castlingRights !== next.castlingRights) return false;
+  return true;
 });
 
 export default Board;

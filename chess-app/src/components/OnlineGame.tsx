@@ -29,6 +29,8 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const clockRef = useRef({ white: 0, black: 0 });
 
   const [board, setBoard] = useState<number[][]>(() => Array.from({ length: 8 }, () => Array(8).fill(0)));
+  const boardRef = useRef(board);
+  boardRef.current = board;
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
   const [legalMovesForSelected, setLegalMovesForSelected] = useState<ChessMove[]>([]);
   const [gameOver, setGameOver] = useState(false);
