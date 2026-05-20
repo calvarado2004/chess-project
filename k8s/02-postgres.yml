@@ -46,12 +46,25 @@ spec:
       labels:
         app: postgres
     spec:
+      restartPolicy: Always
       containers:
         - name: postgres
           image: postgres:18-alpine
-          ports:
-            - containerPort: 5432
-              name: postgres
+          imagePullPolicy: IfNotPresent
+          # Run idempotent init script before starting PostgreSQL
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ -f /db-init/init.sql ]; then
+                echo 'Running DB init...';
+                psql -v ON_ERROR_STOP=1 \
+                  -U "${POSTGRES_USER:-chess}" \
+                  -d "${POSTGRES_DB:-chess}" \
+                  -f /db-init/init.sql;
+                echo 'DB init complete.';
+              fi;
+              exec docker-entrypoint.sh postgres
           env:
             - name: POSTGRES_DB
               valueFrom:
@@ -68,10 +81,11 @@ spec:
                 secretKeyRef:
                   name: chess-project-secrets
                   key: postgres-password
-          volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql
-              subPath: pgdata
+            - name: POSTGRES_INITDB_ARGS
+              value: "--encoding=UTF8"
+          ports:
+            - containerPort: 5432
+              name: postgres
           livenessProbe:
             exec:
               command:
@@ -90,14 +104,25 @@ spec:
                 - chess
             initialDelaySeconds: 5
             periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              cpu: 100m
+              memory: 128Mi
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+              subPath: pgdata
+            - name: db-init-volume
+              mountPath: /db-init
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: postgres-pvc
+        - name: db-init-volume
+          configMap:
+            name: db-init
