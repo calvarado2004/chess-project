@@ -1,103 +1,88 @@
-# Chess — React + TypeScript
+# Chess Frontend
 
-A full-featured chess application with Stockfish engine integration, converted from a single HTML file into a proper React + TypeScript application.
+React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stockfish play, online multiplayer, PGN study, user profile, and rated game history.
 
-## Features
+## Architecture
 
-- **Full chess rules**: Castling, en passant, promotion, check/checkmate/stalemate detection
-- **Stockfish engine**: Integrated as a Web Worker for AI opponent and move analysis
-- **Evaluation bar**: Real-time engine evaluation display
-- **Clock**: Configurable time controls (5 min, 10 min)
-- **Move history**: Algebraic notation with scrollable history
-- **Captured pieces**: Displayed with sorting by value
-- **Sound effects**: Web Audio API for move, capture, check, promotion, checkmate
-- **PGN support**: Download games as PGN files, load PGN files
-- **Lichess-style UI**: Legal move dots/rings, coordinate labels, responsive design
+### App Shell
 
-## Tech Stack
+- `src/App.tsx` owns BrowserRouter routes, authenticated layout, top navigation, and links to Home, Lobby, Local Game, Online Game, PGN Study, Profile, and History.
+- `src/main.tsx` mounts the React application.
+- `src/index.css` contains the shared board, panel, responsive, and history styles. Desktop uses sidebars, tablet stacks panels below the board, and phone layouts use a full-width board.
 
-- **React 19** + **TypeScript**
-- **Vite 8** for bundling and dev server
-- **Stockfish.js** for chess engine
-- **Docker** + **Nginx** for containerization
+### State And Context
 
-## Getting Started
+- `src/context/AuthContext.tsx` stores the authenticated user, access token, loading state, profile refresh, and profile update actions.
+- `src/context/GameWebSocketContext.tsx` owns WebSocket connection state, lobby state, active online game state, draw offers, and multiplayer actions.
+- `src/lib/auth.ts` stores JWT access tokens, refresh tokens, and serialized user profile data.
+- `src/lib/api.ts` wraps REST calls for auth, profile, Elo stats, game history, and Stockfish game recording.
+- `src/lib/ws.ts` creates the browser WebSocket connection to `/ws`.
 
-### Development
+### Chess Engine Layer
+
+- `src/engine/types.ts` defines piece ids, coordinates, move types, game status, Stockfish strength levels from 500 to 2400 Elo, and text chess symbols.
+- `src/engine/logic.ts` contains reusable board logic: move generation, legal move filtering, attack detection, check/checkmate/stalemate, castling, en passant, and promotion.
+- `src/engine/notation.ts` handles FEN, PGN, and UCI helpers.
+- `src/engine/pgn.ts` parses PGN and replays SAN through legal move resolution so ambiguous moves and pawn moves such as `d4` select the correct source square.
+
+### Local And Stockfish Play
+
+- `src/hooks/useChessGame.ts` is the source of truth for local board behavior.
+- It owns board state, selected square, legal move list, captures, clocks, Stockfish worker lifecycle, sounds, SAN move history, PGN export, and game-end detection.
+- Stockfish games post completed results to `/api/users/me/history/stockfish` with the selected Stockfish Elo, player color, result, move count, and duration.
+- Human-as-black games flip the board so black pieces are at the bottom.
+
+### Online Multiplayer
+
+- `src/components/Lobby.tsx` joins/leaves the waiting lobby and creates or joins games.
+- `src/components/OnlineGame.tsx` renders the synchronized board, clocks, move history, captured pieces, draw/resign controls, game-over state, and leave-game guard.
+- Online boards reuse the same `Board` and `Square` components as local play. Legal move hints and check/checkmate clues are derived from the received FEN and local engine helpers.
+- Multiplayer sound effects mirror local board sounds for moves, captures, illegal moves, check, checkmate, stalemate, and promotion.
+
+### Board Components
+
+- `src/components/Board.tsx` renders the 8x8 grid, supports white/black orientation, highlights last move, selected squares, legal targets, and the checked king.
+- `src/components/Square.tsx` renders individual squares with text chess symbols, coordinate labels, legal dots/rings, and mobile-safe piece styling.
+- `src/components/Clock.tsx`, `CapturedPieces.tsx`, `MoveHistory.tsx`, `StatusBar.tsx`, `EvalBar.tsx`, `Settings.tsx`, and `Controls.tsx` compose the game surfaces around the board.
+
+### Profile And History
+
+- `src/components/Profile.tsx` edits display name and avatar, and shows current Elo, games, wins, and draws.
+- `src/components/GameHistory.tsx` fetches `/api/users/me/elo` and `/api/users/me/history?limit=50`, then displays last 50 rated games and last-10 Stockfish performance.
+- The top navigation shows the current user Elo and links directly to Profile and History.
+
+### PGN Study
+
+- `src/components/PGNLoader.tsx` accepts pasted or uploaded PGN, parses headers and moves, replays positions, and provides first/previous/next/last navigation.
+- It uses the same board renderer as live games, so orientation, coordinates, last-move highlighting, and piece styling remain consistent.
+
+## Responsive Layout
+
+- **Desktop and laptop**: board centered with evaluation/captured panel on the left and settings/history panel on the right.
+- **Tablet**: board remains centered and panels wrap below the board in two-column style where space allows.
+- **Mobile**: board fills available width, clocks and buttons shrink, side panels stack, move history height is capped, and text chess glyphs prevent mobile emoji-style black pawn rendering for white pawns.
+
+## Build
 
 ```bash
-cd chess-app
 npm install
+npm run build
+```
+
+The build emits a Vite static bundle for the Nginx production image.
+
+## Development
+
+```bash
 npm run dev
 ```
 
-Open http://localhost:5173
+The Vite dev server runs the frontend locally. In the full app, Docker Compose serves the production frontend on `http://localhost:3001` and proxies API/WebSocket traffic to the backend container.
 
-### Docker
+## Docker
 
 ```bash
 docker build -t chess-app .
-docker run -p 3000:80 chess-app
 ```
 
-Or with docker-compose:
-
-```bash
-docker-compose up --build
-```
-
-Open http://localhost:3000
-
-## Project Structure
-
-```
-chess-app/
-├── public/
-│   └── stockfish.js          # Chess engine (Web Worker)
-├── src/
-│   ├── engine/               # Pure chess logic
-│   │   ├── types.ts          # Types and constants
-│   │   ├── logic.ts          # Move generation, attack detection
-│   │   ├── notation.ts       # FEN/PGN generation, UCI parsing
-│   │   └── index.ts          # Barrel exports
-│   ├── hooks/
-│   │   └── useChessGame.ts   # Main game state hook
-│   ├── components/           # React components
-│   │   ├── Board.tsx
-│   │   ├── Square.tsx
-│   │   ├── EvalBar.tsx
-│   │   ├── Clock.tsx
-│   │   ├── MoveHistory.tsx
-│   │   ├── CapturedPieces.tsx
-│   │   ├── Settings.tsx
-│   │   ├── StatusBar.tsx
-│   │   └── Controls.tsx
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
-├── Dockerfile
-├── docker-compose.yml
-├── vite.config.ts
-└── tsconfig.json
-```
-
-## Phases
-
-### ✅ Phase 1 — React Conversion + Containerization (Done)
-- Converted single HTML file to React + TypeScript
-- Split logic into modular engine layer and React components
-- Containerized with Docker + Nginx
-
-### Phase 2 — PGN Save/Load
-- Full PGN replay from loaded files
-- localStorage persistence for last game
-- Export game state to PGN
-
-### Phase 3 — Backend (Users + Scores)
-- Node.js/Express API server
-- SQLite for user auth, game saving, leaderboards
-- Docker Compose with backend + DB
-
-### Phase 4 — OpenShift Deployment
-- Kubernetes manifests / OpenShift templates
-- Route configuration, resource limits
+The frontend image is a multi-stage build: Node builds the Vite bundle, then Nginx serves static assets and proxies `/api` and `/ws`.

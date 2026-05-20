@@ -30,6 +30,52 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+## Architecture Components
+
+### Frontend Runtime
+
+- **SPA shell**: `chess-app/src/App.tsx` owns authenticated routing, top navigation, and the shared `GameWebSocketProvider`.
+- **Auth state**: `chess-app/src/context/AuthContext.tsx` loads the stored JWT user, refreshes `/api/users/me`, and exposes profile updates to the UI.
+- **API client**: `chess-app/src/lib/api.ts` wraps REST calls, attaches access tokens, refreshes expired tokens, records Stockfish games, and fetches Elo/history data.
+- **WebSocket client**: `chess-app/src/context/GameWebSocketContext.tsx` maintains the online game session, lobby state, draw offers, move sync, and game-over events.
+- **Local engine hook**: `chess-app/src/hooks/useChessGame.ts` is the source of truth for local board behavior, Stockfish turns, legal move guards, SAN generation, clocks, sounds, and local Stockfish result recording.
+- **Board UI**: `Board.tsx` and `Square.tsx` render selected squares, legal targets, last move, check/checkmate clues, flipped orientation, coordinates, and text-rendered chess symbols for mobile compatibility.
+- **Study mode**: `PGNLoader.tsx` and `engine/pgn.ts` parse PGN, replay moves through legal source-square resolution, and expose move-by-move navigation.
+- **History/profile**: `GameHistory.tsx` shows the last 50 rated games and last-10 Stockfish performance; `Profile.tsx` shows the current Elo summary.
+
+### Backend Runtime
+
+- **HTTP server**: `backend/src/server.ts` wires Express middleware, REST routes, health checks, and the WebSocket server onto the same HTTP server.
+- **Auth routes/services**: `routes/auth.ts`, `routes/user.ts`, and `services/userService.ts` handle registration, login, JWT refresh/logout, profile reads, and profile updates.
+- **Game history service**: `services/gameHistoryService.ts` records rated Stockfish and multiplayer results, updates user Elo totals, and returns last-50 history plus aggregate stats.
+- **Elo engine**: `engine/elo.ts` implements expected score, K-factor, rating deltas, rating caps, and performance rating from recent rated games.
+- **Server chess engine**: `engine/logic.ts` and `engine/notation.ts` validate online moves and generate FEN/SAN from legal board state.
+- **Lobby manager**: `ws/lobby.ts` keeps the current in-memory waiting list. Because this is not shared across pods yet, backend and frontend are intentionally deployed with one replica.
+- **Game rooms**: `ws/rooms.ts` owns live game state, clocks, legal move enforcement, draw/resign/checkmate/stalemate handling, SAN move persistence, game-over broadcasts, and multiplayer history recording.
+- **WebSocket server**: `ws/server.ts` authenticates socket clients, routes lobby/game messages, reconnects players, and sends heartbeats.
+
+### Data Model
+
+- **`users`**: credentials, display profile, avatar, Elo rating, and aggregate win/loss/draw counters.
+- **`user_sessions`**: hashed refresh tokens and expiration dates.
+- **`games`**: multiplayer and Stockfish game records, player ids, status, result, clocks, and finish time.
+- **`moves`**: online move records with move number, UCI, SAN, and side to move.
+- **`game_history`**: per-user rated results with opponent, opponent Elo, player color, Elo before/after, Elo delta, performance Elo, move count, and duration.
+
+### Deployment Topology
+
+- **Docker Compose** runs `postgres`, `backend`, and `chess`; the frontend Nginx container proxies `/api` and `/ws` to the backend service.
+- **OpenShift** uses Docker build objects under `k8s/openshift/`, deployments under `k8s/03-backend.yml` and `k8s/04-frontend.yml`, a persistent Postgres StatefulSet, and an edge-terminated frontend Route.
+- **Replica policy** is one backend and one frontend replica until the lobby/room state is moved out of process, for example to Redis or database-backed pub/sub.
+
+## Runtime Flows
+
+- **Stockfish game result**: local hook detects a completed Stockfish game, determines human result and Stockfish Elo, posts `/api/users/me/history/stockfish`, then refreshes the user profile so the top bar and profile Elo update.
+- **Multiplayer move**: client sends UCI over WebSocket, backend validates the source piece and legal move, applies the move on cloned server state, persists SAN, broadcasts state, and rejects illegal moves.
+- **Multiplayer game finish**: room end states update `games`, record a rated `game_history` row for each player, broadcast `game_over`, and leave the final state available to clients.
+- **PGN replay**: the PGN loader strips headers/comments/NAGs, resolves each SAN move against legal moves from replay state, applies the move, and keeps FEN-related context such as castling and en passant current.
+- **Responsive board rendering**: CSS breakpoints keep desktop sidebars, collapse tablet panels under the board, and use a full-width phone board with text chess symbols to avoid mobile emoji pawn substitution.
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -97,7 +143,7 @@ chess-project/
 │   └── Dockerfile             # Multi-stage build (node → node)
 │
 ├── docker-compose.yml         # Orchestration (postgres, backend, chess)
-└── PHASE2_MULTIPLAYER.md      # Detailed phase plan with task tracking
+└── k8s/                       # Kubernetes/OpenShift manifests and build configs
 ```
 
 ## Docker Services
