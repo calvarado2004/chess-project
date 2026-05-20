@@ -1,4 +1,4 @@
-# ♔ Chess Project
+# Qwen's 3.6 — Chess!
 
 A full-featured chess application with online multiplayer, Stockfish engine integration, and user accounts.
 
@@ -101,7 +101,7 @@ chess-project/
 
 | Service | Image | Port | Description |
 |---------|-------|------|-------------|
-| `chess` | nginx:alpine | 3001:80 | Frontend SPA + API/WS proxy |
+| `chess` | nginx:alpine | 3001:80 | Frontend SPA + API/WS proxy (BACKEND_HOST env) |
 | `backend` | node:20-alpine | 3000 | REST API + WebSocket server |
 | `postgres` | postgres:18-alpine | 5432 | PostgreSQL database |
 
@@ -173,6 +173,10 @@ docker build -t <registry>/<project>/chess-project-chess:latest ./chess-app
 docker push <registry>/<project>/chess-project-backend:latest
 docker push <registry>/<project>/chess-project-chess:latest
 
+# The frontend container uses BACKEND_HOST env var to find the backend.
+# In OCP it defaults to "backend.chess-project.svc.cluster.local" (set in k8s/04-frontend.yml).
+# For local docker-compose it defaults to "backend".
+
 # Then update image references in k8s/03-backend.yml and k8s/04-frontend.yml
 # and re-apply:
 oc apply -f k8s/03-backend.yml -f k8s/04-frontend.yml -n chess-project
@@ -185,8 +189,8 @@ oc apply -f k8s/03-backend.yml -f k8s/04-frontend.yml -n chess-project
 | `00-namespace.yml` | Namespace `chess-project` |
 | `01-secret.yml` | Secret with DB creds, JWT secrets, CORS origin |
 | `02-postgres.yml` | PVC (5Gi, `px-csi-db`), headless Service, StatefulSet |
-| `03-backend.yml` | Service + Deployment (2 replicas) |
-| `04-frontend.yml` | Service + Deployment (2 replicas) + OpenShift Route (TLS edge termination) |
+| `03-backend.yml` | Service (HTTP + WS ports) + Deployment (2 replicas, `imagePullPolicy: Always`) |
+| `04-frontend.yml` | Service + Deployment (2 replicas, BACKEND_HOST env, `imagePullPolicy: Always`) + OpenShift Route (TLS edge termination) |
 
 ## Quick Start
 

@@ -26,6 +26,7 @@ export default function PGNLoader() {
   const [enPassantTarget, setEnPassantTarget] = useState<Coord | null>(null);
   const [capturedByWhite, setCapturedByWhite] = useState<number[]>([]);
   const [capturedByBlack, setCapturedByBlack] = useState<number[]>([]);
+  const [lastMove, setLastMove] = useState<{ from: Coord; to: Coord } | null>(null);
 
   const handleLoad = useCallback(() => {
     setError(null);
@@ -41,7 +42,7 @@ export default function PGNLoader() {
         return;
       }
 
-      const { board: finalBoard, turn: finalTurn, moveHistory: finalMoves, castlingRights: cr, enPassantTarget: ep } =
+      const { board: finalBoard, turn: finalTurn, moveHistory: finalMoves, castlingRights: cr, enPassantTarget: ep, lastMove: lm } =
         replayMovesFromPGN(parsed.moves);
 
       // We need to track the full move list for navigation
@@ -61,6 +62,7 @@ export default function PGNLoader() {
       setEnPassantTarget(null);
       setCapturedByWhite([]);
       setCapturedByBlack([]);
+      setLastMove(null);
       setGameLoaded(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to parse PGN');
@@ -82,13 +84,20 @@ export default function PGNLoader() {
     if (index < -1 || index >= moveList.length) return;
     setCurrentMoveIndex(index);
 
+    if (index === -1) {
+      // Initial position
+      setLastMove(null);
+      return;
+    }
+
     // Replay from start to the target move
-    const { board: targetBoard, turn: targetTurn, moveHistory: targetHistory, castlingRights: targetCR, enPassantTarget: targetEP } =
+    const { board: targetBoard, turn: targetTurn, moveHistory: targetHistory, castlingRights: targetCR, enPassantTarget: targetEP, lastMove: targetLM } =
       replayMovesFromPGN(moveList.slice(0, index + 1));
 
     setBoard(targetBoard);
     setTurn(targetTurn);
     setMoveHistory(targetHistory);
+    setLastMove(targetLM);
 
     // Calculate captured pieces by comparing initial and current board
     const initial = initBoard();
@@ -218,10 +227,7 @@ export default function PGNLoader() {
                   turn,
                   selectedSquare: null,
                   legalMovesForSelected: [],
-                  lastMove: currentMoveIndex >= 0 ? {
-                    from: { row: 0, col: 0 }, // simplified
-                    to: { row: 0, col: 0 },
-                  } : null,
+                  lastMove: lastMove,
                   moveHistory: moveHistory,
                   capturedByWhite,
                   capturedByBlack,

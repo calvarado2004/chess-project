@@ -36,6 +36,8 @@ services:
 
   chess:
     build: ./chess-app
+    environment:
+      BACKEND_HOST: backend
     ports:
       - "3001:80"
     depends_on:

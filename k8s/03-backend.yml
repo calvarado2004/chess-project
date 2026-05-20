@@ -12,6 +12,10 @@ spec:
       targetPort: 3000
       protocol: TCP
       name: http
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: ws
   selector:
     app: backend
 ---
@@ -35,7 +39,7 @@ spec:
       containers:
         - name: backend
           image: chess-project-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
               name: http

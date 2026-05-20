@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
 
@@ -8,6 +9,7 @@ interface LobbyProps {
 
 export default function Lobby({ onJoinGame }: LobbyProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const {
     lobbyPlayers,
     isConnected,
@@ -15,6 +17,7 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
     leaveLobby,
     createGame,
     joinGame,
+    onlineGame,
   } = useGameWebSocket();
 
   const [timeControl, setTimeControl] = useState(600);
@@ -41,12 +44,11 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
   }, [joinGame]);
 
   // Navigate to game when onlineGame is created
-  const { onlineGame } = useGameWebSocket();
   useEffect(() => {
-    if (onlineGame && onJoinGame) {
-      onJoinGame();
+    if (onlineGame) {
+      navigate('/online');
     }
-  }, [onlineGame, onJoinGame]);
+  }, [onlineGame, navigate]);
 
   if (!isConnected) {
     return (
