@@ -103,7 +103,7 @@ function MainApp() {
         {/* Content */}
         <div style={{ padding: '16px' }}>
           <Routes>
-            <Route path="" element={<Home onOnline={() => window.location.href = '/'} />} />
+            <Route path="" element={<Home onOnline={() => window.location.href = '/online'} />} />
             <Route path="local" element={<LocalGame />} />
             <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/'} />} />
             <Route path="pgn" element={<PGNLoader />} />
