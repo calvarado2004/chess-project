@@ -10,6 +10,7 @@ import OnlineGame from './components/OnlineGame';
 import LocalGame from './components/LocalGame';
 import PGNLoader from './components/PGNLoader';
 import Profile from './components/Profile';
+import GameHistory from './components/GameHistory';
 import Home from './components/Home';
 import './index.css';
 
@@ -109,6 +110,12 @@ function MainApp() {
             <span style={{ color: '#cdd6f4', fontSize: '14px' }}>
               {user.display_name || user.username}
             </span>
+            <span style={{
+              color: '#f9e2af', fontSize: '13px', fontWeight: 700,
+              padding: '4px 8px', background: '#45475a', borderRadius: '6px',
+            }}>
+              {user.elo_rating} ELO
+            </span>
             <button
               onClick={() => { window.location.href = '/profile'; }}
               style={{
@@ -117,6 +124,15 @@ function MainApp() {
               }}
             >
               Profile
+            </button>
+            <button
+              onClick={() => { navigate('/history'); }}
+              style={{
+                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
+              }}
+            >
+              History
             </button>
             <button
               onClick={handleLogout}
@@ -139,6 +155,7 @@ function MainApp() {
             <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/lobby'} />} />
             <Route path="pgn" element={<PGNLoader />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="history" element={<GameHistory />} />
           </Routes>
         </div>
       </div>

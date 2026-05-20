@@ -7,19 +7,9 @@ export interface ELOResult {
   performanceRating: number | null;
 }
 
-export interface GameRecord {
-  result: 'win' | 'loss' | 'draw';
-  opponentRating: number;
-  playerRating: number;
-  moveCount: number;
-  gameDuration: number; // seconds
-  playerColor: 'w' | 'b';
-}
-
 const K_FACTOR_NEW = 32;    // For first 30 games
 const K_FACTOR_ESTABLISHED = 24; // For established players
 const K_FACTOR_CAP = 16;    // For high-rated players (2000+)
-const BASE_RATING = 1200;
 const MIN_RATING = 800;
 const MAX_RATING = 3000;
 
@@ -51,16 +41,9 @@ export function getKFactor(rating: number, gamesPlayed: number): number {
  * - Draw: performance = opponent + (0.5 - expected) * 400
  */
 export function calculatePerformanceRating(opponentRating: number, result: 'win' | 'loss' | 'draw'): number {
-  const actualScore = result === 'win' ? 1 : result === 'draw' ? 0.5 : 0;
-  // Performance rating formula: R_perf = R_opponent + 400 * log10(actual / (1 - actual))
-  // But for single game, we use a simplified approach
-  const expected = expectedScore(BASE_RATING, opponentRating); // Simplified
-  
-  // Better approach: Performance = Opponent + (Actual - Expected) * 400
-  // This gives us the rating that would make the expected score equal to actual
-  const performance = opponentRating + (actualScore - 0.5) * 400;
-  
-  return Math.round(performance);
+  if (result === 'win') return opponentRating + 400;
+  if (result === 'loss') return opponentRating - 400;
+  return opponentRating;
 }
 
 /**
@@ -106,10 +89,18 @@ export function calculateRatingChange(
  */
 export function calculateAveragePerformance(games: { result: 'win' | 'loss' | 'draw'; opponentRating: number }[]): number | null {
   if (games.length === 0) return null;
-  
-  const performances = games.map(g => calculatePerformanceRating(g.opponentRating, g.result));
-  const sum = performances.reduce((a, b) => a + b, 0);
-  return Math.round(sum / performances.length);
+
+  const averageOpponent = games.reduce((sum, game) => sum + game.opponentRating, 0) / games.length;
+  const score = games.reduce((sum, game) => {
+    if (game.result === 'win') return sum + 1;
+    if (game.result === 'draw') return sum + 0.5;
+    return sum;
+  }, 0);
+
+  if (score === 0) return Math.round(averageOpponent - 400);
+  if (score === games.length) return Math.round(averageOpponent + 400);
+
+  return Math.round(averageOpponent + 400 * Math.log10(score / (games.length - score)));
 }
 
 /**
@@ -121,7 +112,14 @@ export function calculateELOStats(
   wins: number,
   losses: number,
   draws: number,
-  gameHistory: Array<{ result: 'win' | 'loss' | 'draw'; opponentRating: number; performance_elo?: number | null }>
+  gameHistory: Array<{
+    result: 'win' | 'loss' | 'draw';
+    opponentRating: number;
+    performance_elo?: number | null;
+    opponent?: string;
+    eloChange?: number;
+    created_at?: string | Date;
+  }>
 ): {
   rating: number;
   games: number;
@@ -136,18 +134,16 @@ export function calculateELOStats(
   const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
   
   // Calculate average performance rating
-  const perfGames = gameHistory.filter(g => g.performance_elo !== null);
-  const avgPerformance = calculateAveragePerformance(
-    perfGames.map(g => ({ result: g.result, opponentRating: g.opponentRating }))
-  );
+  const recentRatedGames = gameHistory.slice(0, 10);
+  const avgPerformance = calculateAveragePerformance(recentRatedGames);
   
   // Get recent games (last 10)
-  const recentGames = gameHistory.slice(-10).map(g => ({
+  const recentGames = gameHistory.slice(0, 10).map(g => ({
     result: g.result,
-    opponent: 'Stockfish',
+    opponent: g.opponent ?? 'Stockfish',
     opponentRating: g.opponentRating,
-    eloChange: 0, // Not stored per-game in this simplified version
-    date: '',
+    eloChange: g.eloChange ?? 0,
+    date: g.created_at ? new Date(g.created_at).toISOString() : '',
   }));
   
   return {

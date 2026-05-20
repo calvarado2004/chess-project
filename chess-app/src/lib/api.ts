@@ -154,4 +154,58 @@ export async function getPublicUser(userId: string): Promise<StoredUser> {
   return response.data;
 }
 
+export interface ELOStats {
+  rating: number;
+  games: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  winRate: number;
+  performanceRating: number | null;
+  recentGames: Array<{
+    result: string;
+    opponent: string;
+    opponentRating: number;
+    eloChange: number;
+    date: string;
+  }>;
+}
+
+export interface GameHistoryEntry {
+  id: string;
+  game_id: string;
+  opponent: string;
+  opponent_elo: number;
+  player_color: 'w' | 'b';
+  result: 'win' | 'loss' | 'draw';
+  player_elo_before: number;
+  player_elo_after: number;
+  elo_change: number;
+  performance_elo: number | null;
+  move_count: number;
+  game_duration_s: number;
+  created_at: string;
+}
+
+export async function getELOStats(): Promise<ELOStats> {
+  const response = await api.get(getApiUrl('/users/me/elo'));
+  return response.data;
+}
+
+export async function getGameHistory(limit = 50): Promise<GameHistoryEntry[]> {
+  const response = await api.get(getApiUrl(`/users/me/history?limit=${limit}`));
+  return response.data;
+}
+
+export async function recordStockfishGame(data: {
+  stockfishElo: number;
+  playerColor: 'w' | 'b';
+  result: 'win' | 'loss' | 'draw';
+  moveCount: number;
+  gameDuration: number;
+}): Promise<ELOStats> {
+  const response = await api.post(getApiUrl('/users/me/history/stockfish'), data);
+  return response.data;
+}
+
 export default api;

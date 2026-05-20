@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const AVAILABLE_AVATARS = [
@@ -18,6 +19,7 @@ const AVAILABLE_AVATARS = [
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
+  const navigate = useNavigate();
   const [displayName, setDisplayName] = useState(user?.display_name || '');
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'king.svg');
   const [saving, setSaving] = useState(false);
@@ -149,6 +151,41 @@ export default function Profile() {
           @{user.username}
         </div>
       </div>
+
+      {/* Rating */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px',
+        marginBottom: '24px',
+      }}>
+        {[
+          ['ELO', user.elo_rating],
+          ['Games', user.elo_games],
+          ['Wins', user.elo_wins],
+          ['Draws', user.elo_draws],
+        ].map(([label, value]) => (
+          <div
+            key={label}
+            style={{
+              padding: '10px', background: '#313244', border: '1px solid #45475a',
+              borderRadius: '6px', textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '11px', color: '#a6adc8', marginBottom: '4px' }}>{label}</div>
+            <div style={{ fontSize: '18px', color: '#cdd6f4', fontWeight: 700 }}>{value}</div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => navigate('/history')}
+        style={{
+          width: '100%', padding: '10px', fontSize: '14px', fontWeight: 600,
+          background: '#45475a', color: '#cdd6f4', border: 'none',
+          borderRadius: '8px', cursor: 'pointer', marginBottom: '12px',
+        }}
+      >
+        View Game History
+      </button>
 
       {/* Member since */}
       <div style={{ marginBottom: '24px' }}>

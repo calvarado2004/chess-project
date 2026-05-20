@@ -7,6 +7,11 @@ export interface StoredUser {
   username: string;
   display_name: string;
   avatar: string;
+  elo_rating: number;
+  elo_games: number;
+  elo_wins: number;
+  elo_losses: number;
+  elo_draws: number;
   created_at: string;
 }
 

@@ -1,6 +1,7 @@
 import { WebSocket } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../db/index.js';
+import { recordGameResult } from '../services/gameHistoryService.js';
 import {
   createInitialState,
   GameContext,
@@ -404,9 +405,51 @@ export class GameRoom {
         'UPDATE games SET status = $1, result = $2, finished_at = now() WHERE id = $3',
         ['finished', result, this.state.gameId]
       );
+      await this.persistRatedGameHistory(result);
     } catch (err) {
       console.error('[Room] Failed to persist game result:', err);
     }
+  }
+
+  private async persistRatedGameHistory(result: string): Promise<void> {
+    if (!this.state.white || !this.state.black) return;
+
+    const ratings = await query(
+      'SELECT id, elo_rating FROM users WHERE id = ANY($1::uuid[])',
+      [[this.state.white.id, this.state.black.id]]
+    );
+    const ratingById = new Map<string, number>(
+      ratings.rows.map((row: { id: string; elo_rating: number }) => [row.id, row.elo_rating])
+    );
+
+    const whiteResult = result === '1-0' ? 'win' : result === '0-1' ? 'loss' : 'draw';
+    const blackResult = result === '0-1' ? 'win' : result === '1-0' ? 'loss' : 'draw';
+    const duration = Math.max(0, Math.round((Date.now() - this.state.createdAt) / 1000));
+    const moveCount = this.state.moveHistory.length;
+    const whiteElo = ratingById.get(this.state.white.id) ?? 1200;
+    const blackElo = ratingById.get(this.state.black.id) ?? 1200;
+
+    await recordGameResult(
+      this.state.white.id,
+      this.state.gameId,
+      this.state.black.displayName || this.state.black.username,
+      blackElo,
+      'w',
+      whiteResult,
+      moveCount,
+      duration
+    );
+
+    await recordGameResult(
+      this.state.black.id,
+      this.state.gameId,
+      this.state.white.displayName || this.state.white.username,
+      whiteElo,
+      'b',
+      blackResult,
+      moveCount,
+      duration
+    );
   }
 
   private buildGameStateMessage(): WsMessage<GameStatePayload> {

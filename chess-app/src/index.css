@@ -11,6 +11,10 @@ body {
   padding: 16px;
 }
 
+#root {
+  width: 100%;
+}
+
 #app {
   display: flex;
   gap: 24px;
@@ -18,6 +22,7 @@ body {
   width: 100%;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 0 auto;
 }
 
 /* ---- Left sidebar ---- */
@@ -36,6 +41,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 
 /* ---- Right sidebar ---- */
@@ -155,8 +161,9 @@ body {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  width: min(85vw, 624px);
-  height: min(85vw, 624px);
+  width: clamp(320px, 62vw, 624px);
+  height: clamp(320px, 62vw, 624px);
+  aspect-ratio: 1 / 1;
   position: relative;
 }
 
@@ -165,7 +172,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: min(9.75vw, 65px);
+  font-family: "DejaVu Sans", "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "Apple Symbols", sans-serif;
+  font-size: clamp(34px, 7.5vw, 65px);
+  font-variant-emoji: text;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -186,6 +195,11 @@ body {
   z-index: 2;
   line-height: 1;
   pointer-events: none;
+  display: block;
+  font-family: "DejaVu Sans", "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "Apple Symbols", sans-serif;
+  font-variant-emoji: text;
+  font-style: normal;
+  transform: translateY(-1px);
 }
 
 .square .piece.white-piece {
@@ -381,6 +395,11 @@ select:focus { border-color: #7a5c3a; }
   gap: 0;
 }
 
+.captured-row .cap-piece {
+  font-family: "DejaVu Sans", "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "Apple Symbols", sans-serif;
+  font-variant-emoji: text;
+}
+
 .captured-row .cap-piece.white-piece {
   color: #ffffff;
   -webkit-text-stroke: 0.5px #8B7355;
@@ -410,9 +429,405 @@ select:focus { border-color: #7a5c3a; }
   letter-spacing: 0.4px;
 }
 
+/* ---- Game history ---- */
+.history-page {
+  width: min(1120px, 100%);
+  margin: 24px auto;
+  color: #cdd6f4;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.history-header h2 {
+  color: #89b4fa;
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.history-header p {
+  color: #a6adc8;
+  font-size: 14px;
+}
+
+.history-rating {
+  min-width: 110px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #313244;
+  border: 1px solid #45475a;
+  text-align: center;
+}
+
+.history-rating span {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  color: #f9e2af;
+}
+
+.history-rating small,
+.history-stats small,
+.stockfish-card small {
+  color: #a6adc8;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.history-stats {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.history-stats div {
+  padding: 12px;
+  border-radius: 8px;
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  text-align: center;
+}
+
+.history-stats span {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: #cdd6f4;
+  margin-bottom: 2px;
+}
+
+.history-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+.history-section {
+  min-width: 0;
+}
+
+.history-table {
+  display: grid;
+  gap: 4px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 76px minmax(170px, 1fr) 68px minmax(170px, 1fr) 64px 96px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #313244;
+  font-size: 13px;
+}
+
+.history-row-head {
+  background: transparent;
+  color: #a6adc8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.history-row b {
+  display: inline-block;
+  margin-left: 8px;
+  color: #a6e3a1;
+}
+
+.history-row.result-loss b {
+  color: #f38ba8;
+}
+
+.history-row.result-win > span:first-child {
+  color: #a6e3a1;
+  font-weight: 700;
+}
+
+.history-row.result-loss > span:first-child {
+  color: #f38ba8;
+  font-weight: 700;
+}
+
+.history-row.result-draw > span:first-child {
+  color: #f9e2af;
+  font-weight: 700;
+}
+
+.history-empty,
+.history-error {
+  padding: 14px;
+  border-radius: 8px;
+  background: #313244;
+  color: #a6adc8;
+}
+
+.history-error {
+  border: 1px solid #f38ba8;
+  color: #f38ba8;
+}
+
+.stockfish-list {
+  display: grid;
+  gap: 8px;
+}
+
+.stockfish-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #313244;
+}
+
+.stockfish-card div {
+  display: grid;
+  gap: 2px;
+}
+
+.stockfish-card div:last-child {
+  text-align: right;
+}
+
+.stockfish-card span {
+  color: #a6adc8;
+  font-size: 13px;
+}
+
 /* ---- Responsive ---- */
+@media (max-width: 1180px) {
+  body {
+    padding: 12px;
+  }
+
+  #app {
+    gap: 16px;
+    max-width: 980px;
+  }
+
+  .sidebar-left {
+    width: 180px;
+  }
+
+  .sidebar-right {
+    width: 220px;
+  }
+
+  .board-container {
+    width: clamp(360px, 56vw, 560px);
+    height: clamp(360px, 56vw, 560px);
+  }
+}
+
 @media (max-width: 900px) {
-  #app { flex-direction: column; align-items: center; }
-  .sidebar-left, .sidebar-right { width: min(85vw, 624px); flex-direction: row; flex-wrap: wrap; }
-  .sidebar-left .panel, .sidebar-right .panel { flex: 1; min-width: 140px; }
+  body {
+    padding: 8px;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+    gap: 12px;
+    max-width: 760px;
+  }
+
+  .main-col {
+    width: 100%;
+    max-width: min(94vw, 680px);
+    order: 1;
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    width: 100%;
+    max-width: min(94vw, 680px);
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 0;
+    order: 2;
+  }
+
+  .sidebar-right {
+    order: 3;
+  }
+
+  .sidebar-left .panel,
+  .sidebar-right .panel {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .board-area {
+    width: 100%;
+  }
+
+  .board-container {
+    width: min(94vw, 680px);
+    height: min(94vw, 680px);
+  }
+
+  .square {
+    font-size: clamp(38px, 10.5vw, 70px);
+  }
+
+  .eval-bar-container {
+    min-height: 120px;
+    height: 120px;
+  }
+
+  .move-history {
+    max-height: 180px;
+  }
+
+  .history-page {
+    margin: 12px auto;
+  }
+
+  .history-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .history-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .history-row {
+    grid-template-columns: 72px minmax(140px, 1fr) 62px minmax(140px, 1fr);
+  }
+
+  .history-row span:nth-child(5),
+  .history-row span:nth-child(6) {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 0;
+  }
+
+  #app {
+    gap: 8px;
+    width: 100%;
+    max-width: none;
+    padding: 8px;
+  }
+
+  .main-col {
+    max-width: 100%;
+    gap: 4px;
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .panel {
+    padding: 10px;
+  }
+
+  .panel h3 {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .board-container {
+    width: calc(100vw - 16px);
+    height: calc(100vw - 16px);
+    max-width: 100%;
+  }
+
+  .square {
+    font-size: clamp(30px, 10vw, 48px);
+  }
+
+  .coord-file,
+  .coord-rank {
+    font-size: 9px;
+  }
+
+  .legal-ring {
+    box-shadow: inset 0 0 0 4px rgba(239, 83, 80, 0.55);
+  }
+
+  .player-label {
+    font-size: 13px;
+    padding: 2px 4px;
+    gap: 6px;
+  }
+
+  .player-label .player-icon {
+    font-size: 18px;
+    width: 20px;
+  }
+
+  .player-label .player-clock {
+    font-size: 15px;
+    padding: 4px 8px;
+  }
+
+  .status-bar {
+    font-size: 13px;
+    min-height: 24px;
+    padding: 3px 0;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .captured-row {
+    font-size: 16px;
+    min-height: 20px;
+  }
+
+  .move-history {
+    max-height: 150px;
+  }
+
+  .history-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .history-rating {
+    width: 100%;
+  }
+
+  .history-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .history-row {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .history-row span:nth-child(n+3) {
+    display: none;
+  }
+
+  .stockfish-card {
+    flex-direction: column;
+  }
+
+  .stockfish-card div:last-child {
+    text-align: left;
+  }
 }

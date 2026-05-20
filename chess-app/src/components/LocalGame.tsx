@@ -1,5 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useChessGame } from '../hooks/useChessGame';
+import { STRENGTH_MAP } from '../engine';
+import { recordStockfishGame } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import Board from './Board';
 import EvalBar from './EvalBar';
 import Clock from './Clock';
@@ -11,6 +14,7 @@ import Controls from './Controls';
 import type { GameMode } from '../engine';
 
 export default function LocalGame() {
+  const { refreshUser } = useAuth();
   const {
     board, turn, gameMode, gameStatus, gameOver, strengthLevel,
     clock, engineStatus, engineEval, whiteName, blackName,
@@ -22,14 +26,20 @@ export default function LocalGame() {
   } = useChessGame();
 
   const [timeControl, setTimeControl] = useState(10);
+  const gameStartedAt = useRef(Date.now());
+  const recordedGameKey = useRef<string | null>(null);
   const boardOrientation = gameMode === 'hbe' ? 'black' : 'white';
 
   const handleNewGame = useCallback(() => {
+    gameStartedAt.current = Date.now();
+    recordedGameKey.current = null;
     resetGame(timeControl);
   }, [resetGame, timeControl]);
 
   const handleGameModeChange = useCallback((mode: GameMode) => {
     setGameMode(mode);
+    gameStartedAt.current = Date.now();
+    recordedGameKey.current = null;
     resetGame(timeControl);
   }, [setGameMode, resetGame, timeControl]);
 
@@ -39,8 +49,44 @@ export default function LocalGame() {
 
   const handleTimeControlChange = useCallback((minutes: number) => {
     setTimeControl(minutes);
+    gameStartedAt.current = Date.now();
+    recordedGameKey.current = null;
     resetGame(minutes);
   }, [resetGame]);
+
+  useEffect(() => {
+    if (!gameOver || (gameMode !== 'hwe' && gameMode !== 'hbe')) return;
+
+    const gameKey = `${gameMode}-${strengthLevel}-${moveHistory.length}-${gameStatus}`;
+    if (recordedGameKey.current === gameKey) return;
+    recordedGameKey.current = gameKey;
+
+    const humanColor = gameMode === 'hwe' ? 'w' : 'b';
+    let result: 'win' | 'loss' | 'draw' = 'draw';
+    if (gameStatus === 'checkmate') {
+      const winner = turn === 'w' ? 'b' : 'w';
+      result = winner === humanColor ? 'win' : 'loss';
+    } else if (gameStatus === 'white_time_win') {
+      result = humanColor === 'w' ? 'win' : 'loss';
+    } else if (gameStatus === 'black_time_win') {
+      result = humanColor === 'b' ? 'win' : 'loss';
+    }
+
+    const stockfishElo = STRENGTH_MAP[strengthLevel]?.elo ?? 800;
+    const gameDuration = Math.max(0, Math.round((Date.now() - gameStartedAt.current) / 1000));
+
+    recordStockfishGame({
+      stockfishElo,
+      playerColor: humanColor,
+      result,
+      moveCount: moveHistory.length,
+      gameDuration,
+    })
+      .then(() => refreshUser())
+      .catch((err: unknown) => {
+        console.error('Failed to record Stockfish game', err);
+      });
+  }, [gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, strengthLevel, turn]);
 
   const handleSavePGN = useCallback(() => {
     const pgn = generatePGN();

@@ -1,6 +1,6 @@
 # Qwen's 3.6 — Chess!
 
-A full-featured chess application with online multiplayer, Stockfish engine integration, and user accounts.
+A full-featured chess application with online multiplayer, Stockfish engine integration, rated game history, and user accounts.
 
 ## Architecture
 
@@ -52,9 +52,11 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 
 - **Account System** — Registration, login, JWT authentication, profile management
 - **Avatar Selection** — 12 chess-themed avatars (6 pieces × 2 styles)
-- **ELO Rating** — Automatic ELO calculation after Stockfish games (K-factor: 32 for new players, 24 for established, 16 for 2000+)
-- **Game History** — Full tracking of wins, losses, draws, performance ratings
+- **ELO Rating** — Automatic ELO calculation after Stockfish and multiplayer games (K-factor: 32 for new players, 24 for established, 16 for 2000+)
+- **Game History** — Last 50 rated games, rating deltas, opponent rating, color, moves, and duration
+- **Stockfish Performance** — Last 10 Stockfish games contribute a performance rating using Stockfish's selected ELO
 - **Profile Page** — View and edit display name, avatar, and ELO stats
+- **Responsive Layouts** — Desktop, tablet, and phone layouts for the board, clocks, panels, and history views
 
 ## Project Structure
 
@@ -65,6 +67,7 @@ chess-project/
 │   │   ├── components/        # React components
 │   │   │   ├── Board.tsx      # Chess board with square interaction
 │   │   │   ├── Clock.tsx      # Chess clock display
+│   │   │   ├── GameHistory.tsx # Last 50 games and Stockfish performance
 │   │   │   ├── Lobby.tsx      # Online lobby with matchmaking
 │   │   │   ├── LocalGame.tsx  # Local/Stockfish game view
 │   │   │   ├── OnlineGame.tsx # Online multiplayer game view
@@ -189,8 +192,8 @@ oc apply -f k8s/03-backend.yml -f k8s/04-frontend.yml -n chess-project
 | `00-namespace.yml` | Namespace `chess-project` |
 | `01-secret.yml` | Secret with DB creds, JWT secrets, CORS origin |
 | `02-postgres.yml` | PVC (5Gi, `px-csi-db`), headless Service, StatefulSet |
-| `03-backend.yml` | Service (HTTP + WS ports) + Deployment (2 replicas, `imagePullPolicy: Always`) |
-| `04-frontend.yml` | Service + Deployment (2 replicas, BACKEND_HOST env, `imagePullPolicy: Always`) + OpenShift Route (TLS edge termination) |
+| `03-backend.yml` | Service (HTTP + WS ports) + Deployment (1 replica while lobby state is in-memory, `imagePullPolicy: Always`) |
+| `04-frontend.yml` | Service + Deployment (1 replica while lobby state is in-memory, BACKEND_HOST env, `imagePullPolicy: Always`) + OpenShift Route (TLS edge termination) |
 
 ## Quick Start
 
@@ -229,7 +232,8 @@ docker compose up postgres
 - `GET /api/users/me` — Current user profile (with ELO stats)
 - `PATCH /api/users/me` — Update display name and/or avatar
 - `GET /api/users/me/elo` — ELO statistics and performance rating
-- `GET /api/users/me/history` — Game history (last 100 games)
+- `GET /api/users/me/history?limit=50` — Rated game history (last 50 games)
+- `POST /api/users/me/history/stockfish` — Record a completed local Stockfish game
 - `GET /api/users/:id` — Public profile
 
 ## WebSocket Protocol
@@ -251,9 +255,23 @@ docker compose up postgres
 
 - **Starting Rating**: 1200
 - **K-Factor**: 32 (first 30 games), 24 (established), 16 (2000+)
-- **Performance Rating**: Calculated per game based on opponent rating and result
-- **Auto-Tracking**: ELO updates automatically after each Stockfish game
+- **Performance Rating**: Calculated from the last 10 rated games, with Stockfish games using the selected Stockfish ELO
+- **Auto-Tracking**: ELO updates automatically after Stockfish games and completed multiplayer games
 - **Stats Tracked**: Wins, losses, draws, win rate, average performance rating
+
+## Recent Gameplay Fixes
+
+- Online board selection now follows the local board logic so selecting a piece does not shift or mutate pieces.
+- Illegal online moves are rejected by the server and by the client-side legal move guard.
+- Multiplayer check and checkmate clues match the local board.
+- Multiplayer move, capture, check, checkmate, stalemate, promotion, and illegal-move audio matches local play.
+- Multiplayer games require a draw offer, accepted draw, resignation, timeout, stalemate, or checkmate to finish.
+- Draw offers notify the opponent with accept/reject actions.
+- Boards flip for the player perspective when playing Black.
+- Stockfish solo levels run from 500 ELO to 2400 ELO in 100-point increments.
+- PGN replay now resolves legal source squares correctly, including pawn moves such as `d4`.
+- Local and multiplayer PGN move history uses legal SAN generation with captures, castling, promotion, checks, checkmate, and disambiguation.
+- Mobile piece rendering uses text chess symbols so white and black pawns render correctly on mobile browsers.
 
 ## Database Schema
 

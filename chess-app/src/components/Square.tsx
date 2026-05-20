@@ -71,7 +71,7 @@ export const Square: React.FC<SquareProps> = React.memo(({
       onClick={onClick}
     >
       {pieceChar && (
-        <span className={isWhitePiece ? 'white-piece' : 'black-piece'} style={pieceStyle}>{pieceChar}</span>
+        <span className={`piece ${isWhitePiece ? 'white-piece' : 'black-piece'}`} style={pieceStyle}>{pieceChar}</span>
       )}
 
       {isLegalDot && (
