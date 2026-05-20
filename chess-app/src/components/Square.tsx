@@ -1,3 +1,4 @@
+import React from 'react';
 import { PIECE_UNICODE, isWhite, isBlack, FILES, RANKS } from '../engine';
 import type { Coord, ChessMove } from '../engine';
 
@@ -22,7 +23,7 @@ function isLegalCapture(move: ChessMove, row: number, col: number, piece: number
   return move.enPassant === true;
 }
 
-export const Square: React.FC<SquareProps> = ({
+export const Square: React.FC<SquareProps> = React.memo(({
   row,
   col,
   piece,
@@ -92,6 +93,17 @@ export const Square: React.FC<SquareProps> = ({
       )}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.row === nextProps.row &&
+    prevProps.col === nextProps.col &&
+    prevProps.piece === nextProps.piece &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.isLastMove === nextProps.isLastMove &&
+    prevProps.isInCheck === nextProps.isInCheck &&
+    prevProps.legalMoves === nextProps.legalMoves &&
+    prevProps.onClick === nextProps.onClick
+  );
+});
 
 export default Square;
