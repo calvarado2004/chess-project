@@ -13,6 +13,7 @@ import {
   getLegalMoves,
   isInCheck,
   parseUCIMove,
+  PIECE_TYPE,
   type ChessMove,
   type Coord,
   type EngineEval,
@@ -55,6 +56,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [lastMove, setLastMove] = useState<ChessMove | null>(null);
   const [drawOffered, setDrawOffered] = useState(false);
   const [drawReceived, setDrawReceived] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [notification, setNotification] = useState('');
   const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
@@ -159,13 +161,22 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
     // Only update board when FEN changes (prevents clearing selection on every game_state update)
     if (onlineGame.fen !== prevFenRef.current) {
+      const previousFen = prevFenRef.current;
+      const previousBoard = boardRef.current;
+      const parsedLastMove = onlineGame.lastMove ? parseUCIMove(onlineGame.lastMove) : null;
       const newContext = parseFENGameContext(onlineGame.fen);
       const newBoard = newContext.board.map((boardRow) => [...boardRow]);
+      const derivedStatus = getDerivedGameStatus(newContext);
+
       setBoard(newBoard);
       setEnPassantTarget(newContext.enPassantTarget);
       setCastlingRights(newContext.castlingRights);
-      setGameStatus(getDerivedGameStatus(newContext));
+      setGameStatus(derivedStatus);
       prevFenRef.current = onlineGame.fen;
+
+      if (previousFen && parsedLastMove) {
+        playOnlineMoveSound(previousBoard, parsedLastMove, derivedStatus);
+      }
 
       // If the selected square no longer has a piece on the new board, clear selection
       if (selectedSquare) {
@@ -252,6 +263,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         setLegalMovesForSelected(getSelectionMoves(row, col));
       } else {
         // Clicked empty square, opponent piece, or not my turn — deselect
+        playIllegalSound();
         showNotification('Illegal move');
         setSelectedSquare(null);
         setLegalMovesForSelected([]);
@@ -296,6 +308,14 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     }
     setDrawReceived(false);
   }, [onlineGame?.gameId, declineDraw]);
+
+  const handleBackToLobby = useCallback(() => {
+    if (!gameOver && onlineGame?.status === 'playing') {
+      setShowExitConfirm(true);
+      return;
+    }
+    onBackToLobby();
+  }, [gameOver, onlineGame?.status, onBackToLobby]);
 
   const whiteName = onlineGame?.white?.displayName || 'White';
   const blackName = onlineGame?.black?.displayName || 'Black';
@@ -360,6 +380,39 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         </div>
       )}
 
+      {/* Leave guard modal */}
+      {showExitConfirm && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', zIndex: 999,
+        }}>
+          <div style={{
+            background: '#1e1e2e', padding: '32px', borderRadius: '12px',
+            textAlign: 'center', color: '#cdd6f4', maxWidth: '360px',
+          }}>
+            <h3 style={{ marginBottom: '12px' }}>Leave active game?</h3>
+            <p style={{ marginBottom: '20px', color: '#a6adc8' }}>
+              Multiplayer games must finish by draw agreement or resignation.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button onClick={() => { handleDrawOffer(); setShowExitConfirm(false); }} style={{
+                padding: '10px 18px', background: '#89b4fa', color: '#1e1e2e',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
+              }}>Offer Draw</button>
+              <button onClick={() => { handleResign(); setShowExitConfirm(false); onBackToLobby(); }} style={{
+                padding: '10px 18px', background: '#f38ba8', color: '#1e1e2e',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
+              }}>Resign</button>
+              <button onClick={() => setShowExitConfirm(false)} style={{
+                padding: '10px 18px', background: '#45475a', color: '#cdd6f4',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
+              }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="sidebar-left">
         <EvalBar eval={engineEval} engineStatus={engineStatus} />
         <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
@@ -410,7 +463,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               )}
             </>
           )}
-          <button className="btn" onClick={onBackToLobby}>
+          <button className="btn" onClick={handleBackToLobby}>
             Back to Lobby
           </button>
         </div>
@@ -498,4 +551,94 @@ function getDerivedGameStatus(context: GameContext): GameStatus {
   }
 
   return inCheck ? 'check' : 'normal';
+}
+
+function playOnlineMoveSound(previousBoard: number[][], move: ChessMove, status: GameStatus) {
+  const piece = previousBoard[move.from.row]?.[move.from.col] ?? 0;
+  const captured = previousBoard[move.to.row]?.[move.to.col] ?? 0;
+  const isEnPassantCapture = piece !== 0 &&
+    PIECE_TYPE[piece] === 'p' &&
+    move.from.col !== move.to.col &&
+    captured === 0;
+
+  if (move.promotion) playPromotionSound();
+  else if (captured !== 0 || isEnPassantCapture) playCaptureSound();
+  else playMoveSound();
+
+  if (status === 'checkmate') playCheckmateSound();
+  else if (status === 'stalemate') playStalemateSound();
+  else if (status === 'check') playCheckSound();
+}
+
+// ===================== Sound =====================
+const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+let audioCtx: AudioContext | null = null;
+function ensureAudioCtx(): AudioContext {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playMoveSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    const bufLen = Math.floor(ctx.sampleRate * 0.04); const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const data = buf.getChannelData(0); for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufLen, 3);
+    const noise = ctx.createBufferSource(); noise.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 1.2;
+    const ng = ctx.createGain(); ng.gain.setValueAtTime(0.45, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    noise.connect(bp).connect(ng).connect(ctx.destination); noise.start(t); noise.stop(t + 0.06);
+    const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(180, t); osc.frequency.exponentialRampToValueAtTime(90, t + 0.08);
+    const og = ctx.createGain(); og.gain.setValueAtTime(0.35, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    osc.connect(og).connect(ctx.destination); osc.start(t); osc.stop(t + 0.1);
+  } catch {}
+}
+function playCaptureSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    const bufLen = Math.floor(ctx.sampleRate * 0.1); const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const data = buf.getChannelData(0); for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufLen, 2);
+    const noise = ctx.createBufferSource(); noise.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.setValueAtTime(2500, t); bp.frequency.exponentialRampToValueAtTime(600, t + 0.08); bp.Q.value = 1.5;
+    const ng = ctx.createGain(); ng.gain.setValueAtTime(0.5, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    noise.connect(bp).connect(ng).connect(ctx.destination); noise.start(t); noise.stop(t + 0.1);
+    const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.06);
+    const og = ctx.createGain(); og.gain.setValueAtTime(0.5, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    osc.connect(og).connect(ctx.destination); osc.start(t); osc.stop(t + 0.08);
+  } catch {}
+}
+function playCheckSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    [880, 1100].forEach((freq, i) => { const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain(); const start = t + i * 0.08; g.gain.setValueAtTime(0, start); g.gain.linearRampToValueAtTime(0.3, start + 0.01); g.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+      osc.connect(g).connect(ctx.destination); osc.start(start); osc.stop(start + 0.3); });
+  } catch {}
+}
+function playCheckmateSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    [440, 554, 660].forEach(freq => { const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.2, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      osc.connect(g).connect(ctx.destination); osc.start(t); osc.stop(t + 0.5); });
+    [330, 392, 494].forEach(freq => { const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain(); const start = t + 0.35; g.gain.setValueAtTime(0, start); g.gain.linearRampToValueAtTime(0.25, start + 0.02); g.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
+      osc.connect(g).connect(ctx.destination); osc.start(start); osc.stop(start + 0.6); });
+  } catch {}
+}
+function playPromotionSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    [523, 659, 784, 1047].forEach((freq, i) => { const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain(); const start = t + i * 0.07; g.gain.setValueAtTime(0, start); g.gain.linearRampToValueAtTime(0.25, start + 0.008); g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+      osc.connect(g).connect(ctx.destination); osc.start(start); osc.stop(start + 0.35); });
+  } catch {}
+}
+function playIllegalSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(200, t); osc.frequency.exponentialRampToValueAtTime(120, t + 0.1);
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+    osc.connect(g).connect(ctx.destination); osc.start(t); osc.stop(t + 0.12);
+  } catch {}
+}
+function playStalemateSound() {
+  try { const ctx = ensureAudioCtx(); const t = ctx.currentTime;
+    [440, 392, 349].forEach((freq, i) => { const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain(); const start = t + i * 0.12; g.gain.setValueAtTime(0, start); g.gain.linearRampToValueAtTime(0.2, start + 0.01); g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+      osc.connect(g).connect(ctx.destination); osc.start(start); osc.stop(start + 0.35); });
+  } catch {}
 }
