@@ -91,22 +91,23 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     setTimeout(() => setNotification(''), 5000);
   };
 
+  const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
+  const canMove = !gameOver && isMyTurn && onlineGame?.status === 'playing';
+
   const handleSelectSquare = useCallback((row: number, col: number) => {
-    if (gameOver) { console.log('[OnlineGame] handleSelectSquare: blocked by gameOver'); return; }
-    if (!myColor.current) { console.log('[OnlineGame] handleSelectSquare: blocked by myColor.current=', myColor.current); return; }
+    if (gameOver) return;
+    if (!myColor.current) return;
+    if (!canMove) return; // Block interaction when it's not my turn
 
     const piece = board[row]?.[col];
     const isMyPiece = piece !== undefined && piece !== 0 &&
       (myColor.current === 'white' ? (piece >= 1 && piece <= 6) : (piece >= 7 && piece <= 12));
-    console.log('[OnlineGame] handleSelectSquare: row=', row, 'col=', col, 'piece=', piece, 'isMyPiece=', isMyPiece, 'myColor=', myColor.current);
 
     if (selectedSquare) {
       // Check if this is a legal move target
       const isLegalTarget = legalMovesForSelected.some(m => m.to.row === row && m.to.col === col);
       if (isLegalTarget) {
-        // Try to move — compute UCI directly from selected → target squares
         const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
-        console.log('[OnlineGame] Sending move:', uci, 'gameId:', onlineGame?.gameId);
         if (onlineGame?.gameId) {
           sendMove(uci, onlineGame.gameId);
         }
@@ -137,9 +138,8 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       } as any;
       const moves = getLegalMoves(moveContext, row, col);
       setLegalMovesForSelected(moves);
-      console.log('[OnlineGame] Selected piece at', row, col, 'legal moves:', moves.length);
     }
-  }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
+  }, [board, selectedSquare, legalMovesForSelected, gameOver, canMove, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
@@ -167,9 +167,6 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     }
     setDrawReceived(false);
   }, [onlineGame?.gameId, declineDraw]);
-
-  const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
-  const canMove = !gameOver && isMyTurn && onlineGame?.status === 'playing';
 
   const whiteName = onlineGame?.white?.displayName || 'White';
   const blackName = onlineGame?.black?.displayName || 'Black';
