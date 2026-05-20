@@ -21,6 +21,7 @@ interface BoardState {
 interface BoardProps {
   state: BoardState;
   onSelectSquare: (row: number, col: number) => void;
+  orientation?: 'white' | 'black';
 }
 
 function findKing(board: number[][], color: 'w' | 'b') {
@@ -53,7 +54,7 @@ function moveListsEqual(a: ChessMove[], b: ChessMove[]): boolean {
   return true;
 }
 
-const BoardInner: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
+const BoardInner: React.FC<BoardProps> = ({ state, onSelectSquare, orientation = 'white' }) => {
   const kingInCheck =
     (state.gameStatus === 'check' || state.gameStatus === 'checkmate')
       ? findKing(state.board, state.turn)
@@ -62,8 +63,10 @@ const BoardInner: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
   return (
     <div className="board-wrapper">
       <div className="board-container" id="boardContainer">
-        {Array.from({ length: 8 }, (_, row) =>
-          Array.from({ length: 8 }, (_, col) => {
+        {Array.from({ length: 8 }, (_, displayRow) =>
+          Array.from({ length: 8 }, (_, displayCol) => {
+            const row = orientation === 'black' ? 7 - displayRow : displayRow;
+            const col = orientation === 'black' ? 7 - displayCol : displayCol;
             const piece = state.board[row][col] === EMPTY ? null : state.board[row][col];
             const isSelected =
               state.selectedSquare?.row === row && state.selectedSquare?.col === col;
@@ -85,6 +88,8 @@ const BoardInner: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
                 isLastMove={isLastMove}
                 isInCheck={isInCheck}
                 legalMoves={state.legalMovesForSelected}
+                displayRow={displayRow}
+                displayCol={displayCol}
                 onClick={() => onSelectSquare(row, col)}
               />
             );
@@ -106,6 +111,7 @@ const Board = React.memo(BoardInner, (prevProps, nextProps) => {
   if (prev.gameStatus !== next.gameStatus) return false;
   if (!coordsEqual(prev.enPassantTarget, next.enPassantTarget)) return false;
   if (prev.castlingRights !== next.castlingRights) return false;
+  if (prevProps.orientation !== nextProps.orientation) return false;
   return true;
 });
 

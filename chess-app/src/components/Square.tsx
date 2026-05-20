@@ -11,6 +11,8 @@ interface SquareProps {
   isInCheck: boolean;
   legalMoves: ChessMove[];
   onClick: () => void;
+  displayRow?: number;
+  displayCol?: number;
 }
 
 function isLegalTarget(move: ChessMove, row: number, col: number): boolean {
@@ -32,6 +34,8 @@ export const Square: React.FC<SquareProps> = React.memo(({
   isInCheck,
   legalMoves,
   onClick,
+  displayRow = row,
+  displayCol = col,
 }) => {
   const isLight = (row + col) % 2 === 0;
 
@@ -84,11 +88,11 @@ export const Square: React.FC<SquareProps> = React.memo(({
         </>
       )}
 
-      {col === 0 && (
+      {displayCol === 0 && (
         <span className="coord-rank">{RANKS[row]}</span>
       )}
 
-      {row === 7 && (
+      {displayRow === 7 && (
         <span className="coord-file">{FILES[col]}</span>
       )}
     </div>
@@ -102,7 +106,9 @@ export const Square: React.FC<SquareProps> = React.memo(({
     prevProps.isLastMove === nextProps.isLastMove &&
     prevProps.isInCheck === nextProps.isInCheck &&
     prevProps.legalMoves === nextProps.legalMoves &&
-    prevProps.onClick === nextProps.onClick
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.displayRow === nextProps.displayRow &&
+    prevProps.displayCol === nextProps.displayCol
   );
 });
 

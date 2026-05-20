@@ -22,6 +22,7 @@ export default function LocalGame() {
   } = useChessGame();
 
   const [timeControl, setTimeControl] = useState(10);
+  const boardOrientation = gameMode === 'hbe' ? 'black' : 'white';
 
   const handleNewGame = useCallback(() => {
     resetGame(timeControl);
@@ -64,7 +65,7 @@ export default function LocalGame() {
       <div className="main-col">
         <Clock color="black" name={blackName} timeFormatted={formatTime(clock.blackTime)} isActive={clock.running && turn === 'b'} icon="♚" />
         <StatusBar gameStatus={gameStatus} turn={turn} />
-        <Board state={{ board, turn, selectedSquare, legalMovesForSelected, lastMove, moveHistory, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={selectSquare} />
+        <Board state={{ board, turn, selectedSquare, legalMovesForSelected, lastMove, moveHistory, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={selectSquare} orientation={boardOrientation} />
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clock.whiteTime)} isActive={clock.running && turn === 'w'} icon="♔" />
         <Controls onNewGame={handleNewGame} />
       </div>

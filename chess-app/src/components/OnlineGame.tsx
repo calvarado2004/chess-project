@@ -325,6 +325,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   const whiteName = onlineGame?.white?.displayName || 'White';
   const blackName = onlineGame?.black?.displayName || 'Black';
+  const boardOrientation = myColor.current === 'black' ? 'black' : 'white';
 
   const handleSavePGN = useCallback(() => {
     const moves = onlineGame?.moveHistory ?? [];
@@ -451,7 +452,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
           </div>
         )}
 
-        <Board state={{ board, turn: onlineGame?.turn ?? 'w', selectedSquare, legalMovesForSelected, lastMove, moveHistory: [], capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={handleSelectSquare} />
+        <Board state={{ board, turn: onlineGame?.turn ?? 'w', selectedSquare, legalMovesForSelected, lastMove, moveHistory: [], capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={handleSelectSquare} orientation={boardOrientation} />
 
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clockDisplay.white)} isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'} icon="♔" />
 
