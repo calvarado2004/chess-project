@@ -7,6 +7,7 @@ import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
 import type { Coord } from '../engine';
+import type { ChessMove } from '../engine/types';
 
 interface OnlineGameProps {
   onBackToLobby: () => void;
@@ -228,7 +229,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               board,
               turn: onlineGame?.turn ?? 'w',
               selectedSquare,
-              legalMovesForSelected: legalMoves,
+              legalMovesForSelected: [],
               lastMove,
               moveHistory: [],
               capturedByWhite,

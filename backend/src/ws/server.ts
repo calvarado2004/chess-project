@@ -169,10 +169,10 @@ export class WsGameServer {
           // Match found — create game
           this.createMatchedGame(userId, username, match.entry, match.theirColor, timeControl, increment, send);
         } else {
-          // No match — create room and wait
-          const gameId = this.createWaitingRoom(userId, username, color, timeControl, increment, send);
+          // No match — create room and wait (requester is always white when waiting)
+          const gameId = this.createWaitingRoom(userId, username, 'white', timeControl, increment, send);
           if (gameId) {
-            send({ type: 'game_created', payload: { gameId, waiting: true, timeControl, color }, gameId });
+            send({ type: 'game_created', payload: { gameId, waiting: true, timeControl, color: 'white' }, gameId });
           }
         }
         break;
@@ -364,14 +364,19 @@ export class WsGameServer {
     this.playerRooms.set(requesterId, gameId);
     this.playerRooms.set(entry.playerId, gameId);
 
-    // Send game joined to both
-    const gameJoinedMsg: WsMessage = {
+    // Send game joined to each player with their own color
+    const requesterMsg: WsMessage = {
       type: 'game_joined',
-      payload: { gameId, timeControl, increment, requesterColor, matchColor },
+      payload: { gameId, timeControl, increment, requesterColor, matchColor, playerColor: requesterColor },
       gameId,
     };
-    requesterWs.send(JSON.stringify(gameJoinedMsg));
-    entryWs.send(JSON.stringify(gameJoinedMsg));
+    const entryMsg: WsMessage = {
+      type: 'game_joined',
+      payload: { gameId, timeControl, increment, requesterColor, matchColor, playerColor: matchColor },
+      gameId,
+    };
+    requesterWs.send(JSON.stringify(requesterMsg));
+    entryWs.send(JSON.stringify(entryMsg));
 
     this.broadcastLobby();
   }

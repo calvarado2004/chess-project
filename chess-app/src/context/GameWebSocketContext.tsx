@@ -57,11 +57,11 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
       const payload = msg.payload as {
         gameId: string; timeControl?: number; increment?: number;
         requesterColor?: 'white' | 'black'; matchColor?: 'white' | 'black';
+        playerColor?: 'white' | 'black';
       };
       const tc = payload.timeControl ?? 600;
-      // requesterColor is the color of the player who created the game
-      // The current player gets the opposite color
-      const playerColor = payload.requesterColor === 'white' ? 'black' : 'white';
+      // Use playerColor from server if available (most reliable), otherwise derive from requesterColor
+      const playerColor = payload.playerColor || (payload.requesterColor === 'white' ? 'black' : 'white');
       setOnlineGame({
         gameId: payload.gameId,
         white: null,
