@@ -320,6 +320,8 @@ function executeMove(move: ChessMove) {
     else state.capturedByBlack.push(captured);
   }
 
+  let notation = buildSAN(move, piece, captured);
+
   if (piece === W_KING) { state.castlingRights.wK = false; state.castlingRights.wQ = false; }
   if (piece === B_KING) { state.castlingRights.bK = false; state.castlingRights.bQ = false; }
   if (piece === W_ROOK && move.from.row === 7 && move.from.col === 0) state.castlingRights.wQ = false;
@@ -335,22 +337,6 @@ function executeMove(move: ChessMove) {
 
   if (PIECE_TYPE[piece] === 'p' || captured !== EMPTY) state.halfmoveClock = 0;
   else state.halfmoveClock++;
-
-  let notation = '';
-  const fromSq = rowColToFileRank(move.from.row, move.from.col);
-  const toSq = rowColToFileRank(move.to.row, move.to.col);
-  if (move.castle === 'K') notation = 'O-O';
-  else if (move.castle === 'Q') notation = 'O-O-O';
-  else {
-    const pType = PIECE_TYPE[piece];
-    if (pType !== 'p') notation += pType.toUpperCase();
-    if (captured !== EMPTY || move.enPassant) {
-      if (pType === 'p') notation += FILES[move.from.col];
-      notation += 'x';
-    }
-    notation += toSq;
-    if (move.promotion) notation += '=' + move.promotion.toUpperCase();
-  }
 
   state.lastMove = move;
   if (state.turn === 'b') state.fullmoveNumber++;
@@ -392,6 +378,43 @@ function executeMove(move: ChessMove) {
   if (!state.gameOver && ((state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w'))) {
     requestEngineMove();
   }
+}
+
+function buildSAN(move: ChessMove, piece: number, captured: number): string {
+  const toSq = rowColToFileRank(move.to.row, move.to.col);
+  if (move.castle === 'K') return 'O-O';
+  if (move.castle === 'Q') return 'O-O-O';
+
+  const pType = PIECE_TYPE[piece];
+  const isCapture = captured !== EMPTY || move.enPassant;
+
+  if (pType === 'p') {
+    return `${isCapture ? `${FILES[move.from.col]}x` : ''}${toSq}${move.promotion ? `=${move.promotion.toUpperCase()}` : ''}`;
+  }
+
+  const sameTypeCandidates: ChessMove[] = [];
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      if (r === move.from.row && c === move.from.col) continue;
+      const candidatePiece = state.board[r][c];
+      if (candidatePiece === EMPTY || colorOf(candidatePiece) !== colorOf(piece)) continue;
+      if (PIECE_TYPE[candidatePiece] !== pType) continue;
+      sameTypeCandidates.push(...getLegalMoves(r, c).filter((candidate) =>
+        candidate.to.row === move.to.row && candidate.to.col === move.to.col
+      ));
+    }
+  }
+
+  let disambiguation = '';
+  if (sameTypeCandidates.length > 0) {
+    const sameFile = sameTypeCandidates.some((candidate) => candidate.from.col === move.from.col);
+    const sameRank = sameTypeCandidates.some((candidate) => candidate.from.row === move.from.row);
+    if (!sameFile) disambiguation = FILES[move.from.col];
+    else if (!sameRank) disambiguation = RANKS[move.from.row];
+    else disambiguation = rowColToFileRank(move.from.row, move.from.col);
+  }
+
+  return `${pType.toUpperCase()}${disambiguation}${isCapture ? 'x' : ''}${toSq}`;
 }
 
 // ===================== Clock =====================

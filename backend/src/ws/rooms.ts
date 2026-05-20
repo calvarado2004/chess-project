@@ -9,6 +9,8 @@ import {
   cloneState,
   PIECE_TYPE,
   colorOf,
+  FILES,
+  RANKS,
   rowColToFileRank,
   generateFEN,
   GameStatus,
@@ -155,6 +157,9 @@ export class GameRoom {
       return { success: false, message: 'Illegal move' };
     }
 
+    const capturedBefore = this.getCapturedPieceForMove(matchingMove);
+    let san = this.buildSAN(matchingMove, capturedBefore);
+
     // Apply the move and track captured piece
     const capturedPiece = applyMoveToBoard(cloned.board, matchingMove);
     if (capturedPiece !== 0) {
@@ -163,32 +168,6 @@ export class GameRoom {
       } else {
         this.state.capturedByBlack = [...(this.state.capturedByBlack || []), capturedPiece];
       }
-    }
-
-    // Build SAN-like notation
-    const fromSq = rowColToFileRank(matchingMove.from.row, matchingMove.from.col);
-    const toSq = rowColToFileRank(matchingMove.to.row, matchingMove.to.col);
-    let san = '';
-    if (matchingMove.castle === 'K') san = 'O-O';
-    else if (matchingMove.castle === 'Q') san = 'O-O-O';
-    else {
-      // Look up the piece from the original gameContext board, not the cloned one.
-      // getLegalMoves mutates cloned.board during legality checks, so the piece
-      // at the source square may no longer be correct after getLegalMoves returns.
-      const origPiece = this.gameContext?.board?.[matchingMove.from.row]?.[matchingMove.from.col];
-      const pType = origPiece != null ? PIECE_TYPE[origPiece] : undefined;
-
-      if (pType === 'p') {
-        // Pawn: just destination square (e.g., "d4") or capture with source file (e.g., "dxe4")
-        const isCapture = capturedPiece !== 0 || matchingMove.enPassant;
-        san = isCapture ? fromSq.charAt(0) + 'x' + toSq : toSq;
-      } else {
-        // Piece move: type + destination (e.g., "Nf3" or "Nxf3")
-        san += pType?.toUpperCase() || '?';
-        san += capturedPiece !== 0 ? 'x' : '';
-        san += toSq;
-      }
-      if (matchingMove.promotion) san += '=' + matchingMove.promotion.toUpperCase();
     }
 
     // Switch turn
@@ -208,22 +187,27 @@ export class GameRoom {
     this.state.lastMove = uci;
     this.state.moveNumber = cloned.fullmoveNumber;
 
-    // Persist move to DB
-    this.persistMove(uci, san, cloned.turn === 'w' ? 'b' : 'w');
-
     // Check game end conditions
     const allMoves = this.getAllLegalMoves(cloned.turn);
     if (allMoves.length === 0) {
       const inCheck = this.isInCheck(cloned.turn);
       if (inCheck) {
+        san += '#';
         const winner = cloned.turn === 'w' ? '0-1' : '1-0';
         this.endGame(winner, 'checkmate');
       } else {
         this.endGame('1/2-1/2', 'stalemate');
       }
+    } else if (this.isInCheck(cloned.turn)) {
+      san += '+';
     }
 
+    // Persist move to DB
+    this.persistMove(uci, san, cloned.turn === 'w' ? 'b' : 'w');
+
     // Broadcast move to opponent
+    const fromSq = rowColToFileRank(matchingMove.from.row, matchingMove.from.col);
+    const toSq = rowColToFileRank(matchingMove.to.row, matchingMove.to.col);
     const opponentColor = playerColor === 'white' ? 'black' : 'white';
     this.broadcastToOpponent(opponentColor, {
       type: 'opponent_move',
@@ -262,6 +246,55 @@ export class GameRoom {
       }
     }
     return false;
+  }
+
+  private getCapturedPieceForMove(move: import('../engine/index.js').ChessMove): number {
+    const piece = this.gameContext.board[move.from.row][move.from.col];
+    if (move.enPassant) {
+      const capturedRow = colorOf(piece) === 'w' ? move.to.row + 1 : move.to.row - 1;
+      return this.gameContext.board[capturedRow]?.[move.to.col] ?? 0;
+    }
+    return this.gameContext.board[move.to.row]?.[move.to.col] ?? 0;
+  }
+
+  private buildSAN(move: import('../engine/index.js').ChessMove, capturedPiece: number): string {
+    const piece = this.gameContext.board[move.from.row][move.from.col];
+    const pieceType = PIECE_TYPE[piece];
+    const toSq = rowColToFileRank(move.to.row, move.to.col);
+
+    if (move.castle === 'K') return 'O-O';
+    if (move.castle === 'Q') return 'O-O-O';
+
+    const isCapture = capturedPiece !== 0 || move.enPassant;
+    if (pieceType === 'p') {
+      return `${isCapture ? `${FILES[move.from.col]}x` : ''}${toSq}${move.promotion ? `=${move.promotion.toUpperCase()}` : ''}`;
+    }
+
+    const candidates: import('../engine/index.js').ChessMove[] = [];
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        if (r === move.from.row && c === move.from.col) continue;
+        const candidatePiece = this.gameContext.board[r][c];
+        if (candidatePiece === 0 || colorOf(candidatePiece) !== colorOf(piece)) continue;
+        if (PIECE_TYPE[candidatePiece] !== pieceType) continue;
+
+        const context = cloneState(this.gameContext);
+        candidates.push(...getLegalMoves(context, r, c).filter((candidate) =>
+          candidate.to.row === move.to.row && candidate.to.col === move.to.col
+        ));
+      }
+    }
+
+    let disambiguation = '';
+    if (candidates.length > 0) {
+      const sameFile = candidates.some((candidate) => candidate.from.col === move.from.col);
+      const sameRank = candidates.some((candidate) => candidate.from.row === move.from.row);
+      if (!sameFile) disambiguation = FILES[move.from.col];
+      else if (!sameRank) disambiguation = RANKS[move.from.row];
+      else disambiguation = rowColToFileRank(move.from.row, move.from.col);
+    }
+
+    return `${pieceType.toUpperCase()}${disambiguation}${isCapture ? 'x' : ''}${toSq}`;
   }
 
   private isSquareAttackedBy(row: number, col: number, byColor: 'w' | 'b'): boolean {
