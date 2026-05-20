@@ -9,6 +9,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 16px;
+  overflow-x: hidden;
 }
 
 #root {
@@ -747,9 +748,10 @@ select:focus { border-color: #7a5c3a; }
   }
 
   .board-container {
-    width: calc(100vw - 16px);
-    height: calc(100vw - 16px);
-    max-width: 100%;
+    width: 100%;
+    max-width: min(100%, calc(100dvw - 32px));
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 
   .square {
