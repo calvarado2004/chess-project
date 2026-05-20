@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
@@ -27,5 +27,9 @@ COPY --from=build /app/dist ./dist
 COPY init-db.sql ./init-db.sql
 
 EXPOSE 3000
+
+# OpenShift runs as non-root (UID 1001)
+RUN chown -R 1001:0 /app
+USER 1001
 
 CMD ["node", "dist/server.js"]

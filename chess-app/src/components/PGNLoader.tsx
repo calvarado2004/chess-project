@@ -84,12 +84,6 @@ export default function PGNLoader() {
     if (index < -1 || index >= moveList.length) return;
     setCurrentMoveIndex(index);
 
-    if (index === -1) {
-      // Initial position
-      setLastMove(null);
-      return;
-    }
-
     // Replay from start to the target move
     const { board: targetBoard, turn: targetTurn, moveHistory: targetHistory, castlingRights: targetCR, enPassantTarget: targetEP, lastMove: targetLM } =
       replayMovesFromPGN(moveList.slice(0, index + 1));
