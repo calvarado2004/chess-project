@@ -94,29 +94,50 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         moveHistory?: string[];
       };
 
-      setOnlineGame((prev) => ({
-        gameId: payload.gameId,
-        white: payload.whitePlayer ? {
-          id: payload.whitePlayer.id,
-          username: payload.whitePlayer.username,
-          displayName: payload.whitePlayer.displayName,
-        } : null,
-        black: payload.blackPlayer ? {
-          id: payload.blackPlayer.id,
-          username: payload.blackPlayer.username,
-          displayName: payload.blackPlayer.displayName,
-        } : null,
-        fen: payload.fen,
-        turn: payload.turn,
-        whiteTime: payload.whiteTime,
-        blackTime: payload.blackTime,
-        status: payload.status === 'paused' ? 'playing' : payload.status,
-        lastMove: payload.lastMove,
-        playerColor: prev?.playerColor, // preserve playerColor from game_created/game_joined
-        moveHistory: payload.moveHistory,
-        capturedByWhite: payload.capturedByWhite,
-        capturedByBlack: payload.capturedByBlack,
-      }));
+      setOnlineGame((prev) => {
+        const newStatus = payload.status === 'paused' ? 'playing' : payload.status;
+
+        // Check if anything game-relevant changed (exclude timing to avoid re-renders on clock ticks)
+        const gameRelevantChanged = !prev ||
+            prev.fen !== payload.fen ||
+            prev.turn !== payload.turn ||
+            prev.status !== newStatus ||
+            prev.lastMove !== payload.lastMove ||
+            JSON.stringify(prev.capturedByWhite) !== JSON.stringify(payload.capturedByWhite) ||
+            JSON.stringify(prev.capturedByBlack) !== JSON.stringify(payload.capturedByBlack) ||
+            JSON.stringify(prev.moveHistory) !== JSON.stringify(payload.moveHistory) ||
+            prev.white?.id !== (payload.whitePlayer?.id ?? prev.white?.id) ||
+            prev.black?.id !== (payload.blackPlayer?.id ?? prev.black?.id);
+
+        if (!gameRelevantChanged) {
+          // Nothing game-relevant changed — return same reference to avoid re-render
+          return prev;
+        }
+
+        return {
+          gameId: payload.gameId,
+          white: payload.whitePlayer ? {
+            id: payload.whitePlayer.id,
+            username: payload.whitePlayer.username,
+            displayName: payload.whitePlayer.displayName,
+          } : null,
+          black: payload.blackPlayer ? {
+            id: payload.blackPlayer.id,
+            username: payload.blackPlayer.username,
+            displayName: payload.blackPlayer.displayName,
+          } : null,
+          fen: payload.fen,
+          turn: payload.turn,
+          whiteTime: payload.whiteTime,
+          blackTime: payload.blackTime,
+          status: newStatus,
+          lastMove: payload.lastMove,
+          playerColor: prev?.playerColor,
+          moveHistory: payload.moveHistory,
+          capturedByWhite: payload.capturedByWhite,
+          capturedByBlack: payload.capturedByBlack,
+        };
+      });
     });
 
     chessWs.on('game_over', (msg) => {

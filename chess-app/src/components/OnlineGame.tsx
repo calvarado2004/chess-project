@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
 import { useAuth } from '../context/AuthContext';
 import Board from './Board';
@@ -23,6 +23,10 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     declineDraw,
     formatTime,
   } = useGameWebSocket();
+
+  // Local clock state — updates independently to avoid full re-renders
+  const [clockDisplay, setClockDisplay] = useState({ white: 0, black: 0 });
+  const clockRef = useRef({ white: 0, black: 0 });
 
   const [board, setBoard] = useState<number[][]>(() => Array.from({ length: 8 }, () => Array(8).fill(0)));
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
@@ -86,6 +90,29 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     }
     return () => { engineRef.current?.terminate(); };
   }, []);
+
+  // Clock interval — keeps display updated without context re-renders
+  useEffect(() => {
+    // Initialize clock from onlineGame
+    if (onlineGame) {
+      clockRef.current = { white: onlineGame.whiteTime, black: onlineGame.blackTime };
+      setClockDisplay({ white: onlineGame.whiteTime, black: onlineGame.blackTime });
+    }
+
+    const interval = setInterval(() => {
+      if (!onlineGame || onlineGame.status !== 'playing') return;
+      const current = clockRef.current;
+      const turn = onlineGame.turn;
+      if (turn === 'w' && current.white > 0) {
+        current.white--;
+      } else if (turn === 'b' && current.black > 0) {
+        current.black--;
+      }
+      setClockDisplay({ ...current });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [onlineGame]);
 
   // Send FEN to Stockfish for evaluation whenever it changes
   useEffect(() => {
@@ -345,7 +372,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
           <Clock
             color="black"
             name={blackName}
-            timeFormatted={formatTime(onlineGame?.blackTime ?? 0)}
+            timeFormatted={formatTime(clockDisplay.black)}
             isActive={onlineGame?.turn === 'b' && onlineGame?.status === 'playing'}
             icon="♚"
           />
@@ -375,7 +402,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
           )}
 
           <Board
-            state={{
+            state={useMemo(() => ({
               board,
               turn: onlineGame?.turn ?? 'w',
               selectedSquare,
@@ -388,14 +415,14 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               gameStatus,
               enPassantTarget,
               castlingRights,
-            }}
+            }), [board, onlineGame?.turn, selectedSquare, legalMovesForSelected, lastMove, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights])}
             onSelectSquare={handleSelectSquare}
           />
 
           <Clock
             color="white"
             name={whiteName}
-            timeFormatted={formatTime(onlineGame?.whiteTime ?? 0)}
+            timeFormatted={formatTime(clockDisplay.white)}
             isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'}
             icon="♔"
           />
