@@ -1,95 +1,126 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useChessGame } from './hooks/useChessGame';
-import Board from './components/Board';
-import EvalBar from './components/EvalBar';
-import Clock from './components/Clock';
-import MoveHistory from './components/MoveHistory';
-import CapturedPieces from './components/CapturedPieces';
-import Settings from './components/Settings';
-import StatusBar from './components/StatusBar';
-import Controls from './components/Controls';
-import type { GameMode } from './engine';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { GameWebSocketProvider } from './context/GameWebSocketContext';
+import Login from './components/Login';
+import Register from './components/Register';
+import ProtectedRoute from './components/ProtectedRoute';
+import Lobby from './components/Lobby';
+import OnlineGame from './components/OnlineGame';
+import LocalGame from './components/LocalGame';
+import PGNLoader from './components/PGNLoader';
+import Profile from './components/Profile';
+import Home from './components/Home';
 import './index.css';
 
-function App() {
-  const {
-    board, turn, gameMode, gameStatus, gameOver, strengthLevel,
-    clock, engineStatus, engineEval, whiteName, blackName,
-    lastEngineBestMove,
-    selectedSquare, legalMovesForSelected, lastMove,
-    moveHistory, capturedByWhite, capturedByBlack,
-    enPassantTarget, castlingRights,
-    selectSquare, resetGame, setGameMode, setStrength,
-    generatePGN, formatTime,
-  } = useChessGame();
-
-  const [timeControl, setTimeControl] = useState(10);
-
-  const handleNewGame = useCallback(() => {
-    resetGame(timeControl);
-  }, [resetGame, timeControl]);
-
-  const handleGameModeChange = useCallback((mode: GameMode) => {
-    setGameMode(mode);
-  }, [setGameMode]);
-
-  const handleStrengthChange = useCallback((level: string) => {
-    setStrength(level);
-  }, [setStrength]);
-
-  const handleTimeControlChange = useCallback((minutes: number) => {
-    setTimeControl(minutes);
-    resetGame(minutes);
-  }, [resetGame]);
-
-  const handleDownloadPGN = useCallback(() => {
-    const pgn = generatePGN();
-    const blob = new Blob([pgn], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'chess-game.pgn'; a.click();
-    URL.revokeObjectURL(url);
-  }, [generatePGN]);
-
-  const handleLoadPGN = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => console.log('PGN loaded:', reader.result);
-    reader.readAsText(file);
-  }, []);
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
 
   return (
-    <div id="app">
-      <div className="sidebar-left">
-        <EvalBar eval={engineEval} engineStatus={engineStatus} />
-        <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
-      </div>
-
-      <div className="main-col">
-        <Clock color="black" name={blackName} timeFormatted={formatTime(clock.blackTime)} isActive={clock.running && turn === 'b'} icon="♚" />
-        <StatusBar gameStatus={gameStatus} turn={turn} />
-        <Board state={{ board, turn, selectedSquare, legalMovesForSelected, lastMove, moveHistory, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={selectSquare} />
-        <Clock color="white" name={whiteName} timeFormatted={formatTime(clock.whiteTime)} isActive={clock.running && turn === 'w'} icon="♔" />
-        <Controls onNewGame={handleNewGame} />
-      </div>
-
-      <div className="sidebar-right">
-        <Settings gameMode={gameMode} strengthLevel={strengthLevel} timeControl={timeControl} onGameModeChange={handleGameModeChange} onStrengthChange={handleStrengthChange} onTimeControlChange={handleTimeControlChange} />
-        <div className="panel">
-          <h3>Move History</h3>
-          <MoveHistory moves={moveHistory} />
-        </div>
-        <div className="panel">
-          <h3>PGN</h3>
-          <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
-            <button className="btn" onClick={handleDownloadPGN} style={{ width: '100%' }}>Download PGN</button>
-            <label style={{ fontSize: '11px', color: '#888' }}>Load PGN: <input type="file" accept=".pgn" onChange={handleLoadPGN} style={{ marginTop: '4px', width: '100%' }} /></label>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : (
+            <Login onSwitchToRegister={() => window.location.href = '/register'} />
+          )
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : (
+            <Register onSwitchToLogin={() => window.location.href = '/login'} />
+          )
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <ProtectedRoute>
+            <MainApp />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
-export default App;
+function MainApp() {
+  const { user, logout } = useAuth();
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    window.location.href = '/login';
+  }, [logout]);
+
+  if (!user) return null;
+
+  return (
+    <GameWebSocketProvider>
+      <div style={{ minHeight: '100vh', background: '#181825' }}>
+        {/* Top bar */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '12px 24px', background: '#1e1e2e', borderBottom: '1px solid #313244',
+        }}>
+          <h1 style={{ margin: 0, fontSize: '20px', color: '#89b4fa' }}>♔ Chess</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Avatar in top bar */}
+            <img
+              src={`/avatars/${user.avatar || 'king.svg'}`}
+              alt="Avatar"
+              style={{
+                width: '36px', height: '36px', borderRadius: '50%',
+                border: '2px solid #45475a',
+              }}
+            />
+            <span style={{ color: '#cdd6f4', fontSize: '14px' }}>
+              {user.display_name || user.username}
+            </span>
+            <button
+              onClick={() => { window.location.href = '/profile'; }}
+              style={{
+                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
+              }}
+            >
+              Profile
+            </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
+                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: '16px' }}>
+          <Routes>
+            <Route path="" element={<Home onOnline={() => window.location.href = '/'} />} />
+            <Route path="local" element={<LocalGame />} />
+            <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/'} />} />
+            <Route path="pgn" element={<PGNLoader />} />
+            <Route path="profile" element={<Profile />} />
+          </Routes>
+        </div>
+      </div>
+    </GameWebSocketProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
