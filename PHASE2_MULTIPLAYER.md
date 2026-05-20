@@ -9,14 +9,18 @@
 - **Engine logic**: Self-contained in `src/engine/` (types, logic, notation) — pure TypeScript, no dependencies
 - **Stockfish**: Runs client-side via Web Worker (`stockfish.js` in `public/`)
 
-## Target State
+## Target State (Achieved ✅)
 
-- **Backend API** (Node.js/Express + WebSocket) for matchmaking and real-time game sync
-- **User accounts** with registration, login, JWT auth, and profile
-- **Online Human vs Human** with at least 2 concurrent connections per user
-- **Lobby/waiting room** to find opponents
-- **Both services containerized** (frontend + backend + database)
-- **Shared game state** synced via WebSocket; moves validated on the server
+- **Backend API** (Node.js/Express + WebSocket) for matchmaking and real-time game sync ✅
+- **User accounts** with registration, login, JWT auth, and profile ✅
+- **Online Human vs Human** with at least 2 concurrent connections per user ✅
+- **Lobby/waiting room** to find opponents ✅
+- **Both services containerized** (frontend + backend + database) ✅
+- **Shared game state** synced via WebSocket; moves validated on the server ✅
+- **ELO rating system** with automatic calculation after Stockfish games ✅
+- **Game history** tracking with performance ratings ✅
+- **Profile page** with avatar selection (12 chess-themed avatars) ✅
+- **PGN loader** for studying games ✅
 
 ---
 
@@ -38,11 +42,13 @@
 │  │  (Node.js + Express + ws)             │           │
 │  │  - REST: auth, profiles, lobby        │           │
 │  │  - WS:  move sync, chat, heartbeats   │           │
+│  │  - ELO: rating calculation, stats     │           │
 │  └──────────────────┬───────────────────┘           │
 │                     │                                │
 │  ┌──────────────────▼───────────────────┐           │
-│  │  PostgreSQL (Docker container)        │           │
+│  │  PostgreSQL 18 (Docker container)     │           │
 │  │  - users, sessions, games, moves      │           │
+│  │  - game_history (ELO tracking)        │           │
 │  └──────────────────────────────────────┘           │
 └─────────────────────────────────────────────────────┘
 ```
@@ -538,16 +544,16 @@ Response: text/plain PGN
 |---|------|--------|
 | 2.1.1 | Backend directory and package.json | ✅ Done |
 | 2.1.2 | Express REST server skeleton | ✅ Done |
-| 2.1.3 | PostgreSQL setup and Docker integration | ⬜ Pending |
-| 2.1.4 | Database schema and migrations | ⬜ Pending |
-| 2.2.1 | User registration endpoint | ⬜ Pending |
-| 2.2.2 | Login and token refresh | ⬜ Pending |
-| 2.2.3 | User profile endpoints | ⬜ Pending |
-| 2.3.1 | WebSocket server initialization | ⬜ Pending |
-| 2.3.2 | WebSocket message protocol | ⬜ Pending |
-| 2.3.3 | Lobby system | ⬜ Pending |
-| 2.3.4 | Game room and move validation | ⬜ Pending |
-| 2.3.5 | Clock synchronization | ⬜ Pending |
+| 2.1.3 | PostgreSQL setup and Docker integration | ✅ Done |
+| 2.1.4 | Database schema and migrations | ✅ Done |
+| 2.2.1 | User registration endpoint | ✅ Done |
+| 2.2.2 | Login and token refresh | ✅ Done |
+| 2.2.3 | User profile endpoints | ✅ Done |
+| 2.3.1 | WebSocket server initialization | ✅ Done |
+| 2.3.2 | WebSocket message protocol | ✅ Done |
+| 2.3.3 | Lobby system | ✅ Done |
+| 2.3.4 | Game room and move validation | ✅ Done |
+| 2.3.5 | Clock synchronization | ✅ Done |
 | 2.4.1 | Auth context and API client | ⬜ Pending |
 | 2.4.2 | WebSocket client | ⬜ Pending |
 | 2.4.3 | Lobby UI | ⬜ Pending |

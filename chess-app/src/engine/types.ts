@@ -98,4 +98,4 @@ export const STRENGTH_MAP: Record<string, EngineConfig> = {
 };
 
 // ===================== Game Mode =====================
-export type GameMode = 'hvh' | 'hwe' | 'hbe';
+export type GameMode = 'hvh' | 'hwe' | 'hbe' | 'online';
