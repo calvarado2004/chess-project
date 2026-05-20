@@ -31,7 +31,7 @@ function findKing(board: number[][], color: 'w' | 'b') {
   return null;
 }
 
-const Board: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
+const Board: React.FC<BoardProps> = React.memo(({ state, onSelectSquare }) => {
   const kingInCheck =
     (state.gameStatus === 'check' || state.gameStatus === 'checkmate')
       ? findKing(state.board, state.turn)
@@ -71,6 +71,6 @@ const Board: React.FC<BoardProps> = ({ state, onSelectSquare }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Board;
