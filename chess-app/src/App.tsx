@@ -61,22 +61,16 @@ function MainApp() {
 
   return (
     <GameWebSocketProvider>
-      <div style={{ minHeight: '100vh', background: '#181825' }}>
+      <div className="app-shell">
         {/* Top bar */}
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '12px 24px', background: '#1e1e2e', borderBottom: '1px solid #313244',
-        }}>
+        <div className="app-topbar">
           {/* Knight icon + title — clickable, goes home */}
           <button
-            onClick={() => { navigate('/'); window.location.href = '/'; }}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
-              display: 'flex', alignItems: 'center', gap: '12px',
-            }}
+            onClick={() => { navigate('/'); }}
+            className="app-brand"
             title="Home"
           >
-            <svg width="64" height="64" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className="app-brand-icon" width="64" height="64" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M22 10C32.5 11 38.5 18 38 39H15C15 30 25 32.5 23 18"
                 fill="#89b4fa"
@@ -90,56 +84,38 @@ function MainApp() {
                 transform="matrix(0.866 0.5 -0.5 0.866 9.693 -5.173)"
               />
             </svg>
-            <span style={{
-              fontSize: '22px', fontWeight: 700, color: '#89b4fa',
-              letterSpacing: '-0.5px', lineHeight: 1.2,
-            }}>
+            <span className="app-title">
               Qwen's 3.6 — Chess!
             </span>
           </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="app-user-actions">
             {/* Avatar in top bar */}
             <img
               src={`/avatars/${user.avatar || 'king.svg'}`}
               alt="Avatar"
-              style={{
-                width: '36px', height: '36px', borderRadius: '50%',
-                border: '2px solid #45475a',
-              }}
+              className="app-avatar"
             />
-            <span style={{ color: '#cdd6f4', fontSize: '14px' }}>
+            <span className="app-user-name">
               {user.display_name || user.username}
             </span>
-            <span style={{
-              color: '#f9e2af', fontSize: '13px', fontWeight: 700,
-              padding: '4px 8px', background: '#45475a', borderRadius: '6px',
-            }}>
+            <span className="app-elo-pill">
               {user.elo_rating} ELO
             </span>
             <button
-              onClick={() => { window.location.href = '/profile'; }}
-              style={{
-                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
-                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
-              }}
+              onClick={() => { navigate('/profile'); }}
+              className="app-nav-button"
             >
               Profile
             </button>
             <button
               onClick={() => { navigate('/history'); }}
-              style={{
-                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
-                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
-              }}
+              className="app-nav-button"
             >
               History
             </button>
             <button
               onClick={handleLogout}
-              style={{
-                padding: '6px 14px', background: '#45475a', color: '#cdd6f4',
-                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
-              }}
+              className="app-nav-button"
             >
               Logout
             </button>
@@ -147,7 +123,7 @@ function MainApp() {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '16px' }}>
+        <div className="app-content">
           <Routes>
             <Route path="" element={<Home onOnline={() => window.location.href = '/lobby'} />} />
             <Route path="lobby" element={<Lobby onJoinGame={() => window.location.href = '/online'} />} />

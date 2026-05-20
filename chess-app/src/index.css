@@ -16,6 +16,100 @@ body {
   width: 100%;
 }
 
+.app-shell {
+  min-height: 100vh;
+  background: #181825;
+  overflow-x: hidden;
+}
+
+.app-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: #1e1e2e;
+  border-bottom: 1px solid #313244;
+  width: 100%;
+  max-width: 100%;
+}
+
+.app-brand {
+  min-width: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.app-brand-icon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+}
+
+.app-title {
+  min-width: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #89b4fa;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.app-user-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 1 auto;
+}
+
+.app-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #45475a;
+  flex: 0 0 auto;
+}
+
+.app-user-name {
+  color: #cdd6f4;
+  font-size: 14px;
+  max-width: 150px;
+  overflow-wrap: anywhere;
+}
+
+.app-elo-pill {
+  color: #f9e2af;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 8px;
+  background: #45475a;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.app-nav-button {
+  padding: 6px 14px;
+  background: #45475a;
+  color: #cdd6f4;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.app-content {
+  padding: 16px;
+}
+
 #app {
   display: flex;
   gap: 24px;
@@ -771,6 +865,9 @@ select:focus { border-color: #7a5c3a; }
     font-size: 13px;
     padding: 2px 4px;
     gap: 6px;
+    width: min(100%, calc(100dvw - 32px));
+    max-width: min(100%, calc(100dvw - 32px));
+    align-self: center;
   }
 
   .player-label .player-icon {
@@ -801,6 +898,59 @@ select:focus { border-color: #7a5c3a; }
 
   .move-history {
     max-height: 150px;
+  }
+
+  .app-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .app-brand {
+    width: 100%;
+    gap: 8px;
+    padding: 0;
+  }
+
+  .app-brand-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .app-title {
+    font-size: 18px;
+  }
+
+  .app-user-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .app-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .app-user-name {
+    max-width: 98px;
+    font-size: 12px;
+    line-height: 1.15;
+  }
+
+  .app-elo-pill,
+  .app-nav-button {
+    font-size: 12px;
+  }
+
+  .app-nav-button {
+    padding: 6px 10px;
+  }
+
+  .app-content {
+    padding: 8px;
   }
 
   .history-header {
