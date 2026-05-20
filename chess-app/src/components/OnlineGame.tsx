@@ -58,25 +58,24 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   // Game over detection
   useEffect(() => {
-    if (onlineGame?.status === 'finished') {
-      setGameOver(true);
-      const reason = (onlineGame as any).reason;
-      if (reason === 'checkmate') {
-        const winner = myColor.current === 'white' ? 'Black' : 'White';
-        setGameStatus('checkmate');
-        showNotification(`Checkmate — ${winner} wins!`);
-      } else if (reason === 'resign') {
-        const winner = myColor.current === 'white' ? 'White' : 'Black';
-        setGameStatus('checkmate');
-        showNotification(`${winner} wins by resignation!`);
-      } else if (reason === 'timeout') {
-        const winner = myColor.current === 'white' ? 'White' : 'Black';
-        setGameStatus(myColor.current === 'white' ? 'black_time_win' : 'white_time_win');
-        showNotification(`${winner} wins on time!`);
-      } else if (reason === 'draw' || reason === 'stalemate') {
-        setGameStatus('stalemate');
-        showNotification('Draw!');
-      }
+    if (!onlineGame || onlineGame.status !== 'finished') return;
+    setGameOver(true);
+    const reason = (onlineGame as any)?.reason;
+    if (reason === 'checkmate') {
+      const winner = myColor.current === 'white' ? 'Black' : 'White';
+      setGameStatus('checkmate');
+      showNotification(`Checkmate — ${winner} wins!`);
+    } else if (reason === 'resign') {
+      const winner = myColor.current === 'white' ? 'White' : 'Black';
+      setGameStatus('checkmate');
+      showNotification(`${winner} wins by resignation!`);
+    } else if (reason === 'timeout') {
+      const winner = myColor.current === 'white' ? 'White' : 'Black';
+      setGameStatus(myColor.current === 'white' ? 'black_time_win' : 'white_time_win');
+      showNotification(`${winner} wins on time!`);
+    } else if (reason === 'draw' || reason === 'stalemate') {
+      setGameStatus('stalemate');
+      showNotification('Draw!');
     }
   }, [onlineGame?.status, (onlineGame as any)?.reason, myColor.current]);
 
