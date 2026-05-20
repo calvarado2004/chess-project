@@ -38,12 +38,12 @@ const EvalBar: React.FC<EvalBarProps> = ({ eval: evalData, engineStatus }) => {
   }
 
   return (
-    <div className="panel" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="panel" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
       <div className="eval-bar-container">
         <div className="eval-bar-white" style={{ height: `${whitePercent}%` }} />
         <div className="eval-bar-black" />
       </div>
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
         <h3 style={{ marginBottom: '4px' }}>Evaluation</h3>
         <div className="eval-text">{displayText}</div>
         <div className={`stockfish-status ${engineStatus}`}>Stockfish: {statusText}</div>
