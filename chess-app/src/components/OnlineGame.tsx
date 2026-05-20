@@ -6,7 +6,7 @@ import Clock from './Clock';
 import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
-import { getLegalMoves, colorOf, type Coord, type ChessMove, type GameStatus } from '../engine';
+import { getLegalMoves, type Coord, type ChessMove, type EngineEval, type EngineStatus } from '../engine';
 
 interface OnlineGameProps {
   onBackToLobby: () => void;
@@ -37,31 +37,104 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [drawOffered, setDrawOffered] = useState(false);
   const [drawReceived, setDrawReceived] = useState(false);
   const [notification, setNotification] = useState('');
+  const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
+  const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
 
   const myColor = useRef<'white' | 'black' | null>(null);
+  const engineRef = useRef<Worker | null>(null);
+  const fenRef = useRef<string>('');
+  const prevFenRef = useRef<string>('');
 
-  // Parse FEN to board
+  // ===================== Stockfish =====================
+  useEffect(() => {
+    try {
+      const worker = new Worker(new URL('/stockfish.js', import.meta.url), { type: 'classic' });
+      worker.onmessage = (e) => {
+        const msg = e.data;
+        if (msg === 'uciok') {
+          worker.postMessage('isready');
+        } else if (msg === 'readyok') {
+          setEngineStatus('ready');
+          worker.postMessage('ucinewgame');
+        } else if (typeof msg === 'string' && msg.startsWith('info') && msg.includes('score')) {
+          const parts = msg.split(' ');
+          const cpIdx = parts.indexOf('score');
+          const mateIdx = parts.indexOf('score');
+          if (cpIdx !== -1) {
+            const type = parts[cpIdx + 1];
+            const value = parseInt(parts[cpIdx + 2], 10);
+            if (type === 'cp') {
+              // Value is from side-to-move perspective, convert to white's
+              const fenParts = fenRef.current.split(' ');
+              const stm = fenParts[1];
+              const whiteValue = stm === 'w' ? value : -value;
+              setEngineEval({ type: 'cp' as const, whiteValue });
+            } else if (type === 'mate') {
+              const fenParts = fenRef.current.split(' ');
+              const stm = fenParts[1];
+              const whiteValue = stm === 'w' ? value : -value;
+              setEngineEval({ type: 'mate' as const, whiteValue });
+            }
+          }
+        }
+      };
+      worker.onerror = () => setEngineStatus('error');
+      worker.postMessage('uci');
+      engineRef.current = worker;
+    } catch {
+      setEngineStatus('unavailable');
+    }
+    return () => { engineRef.current?.terminate(); };
+  }, []);
+
+  // Send FEN to Stockfish for evaluation whenever it changes
+  useEffect(() => {
+    if (!onlineGame?.fen || engineStatus !== 'ready') return;
+    if (onlineGame.fen === fenRef.current) return;
+    fenRef.current = onlineGame.fen;
+
+    const worker = engineRef.current;
+    if (!worker) return;
+
+    worker.postMessage('stop');
+    worker.postMessage('position fen ' + onlineGame.fen);
+    worker.postMessage('go depth 10');
+  }, [onlineGame?.fen, engineStatus]);
+
+  // ===================== Game State =====================
+  // Parse FEN to board — only update when FEN actually changes to avoid clearing selection
   useEffect(() => {
     if (!onlineGame || !onlineGame.fen) return;
-    const newBoard = parseFENBoard(onlineGame.fen);
-    setBoard(newBoard);
 
-    // Determine my color from playerColor or from player IDs
-    console.log('[OnlineGame] useEffect: playerColor=', onlineGame.playerColor, 'user.id=', user?.id, 'white.id=', onlineGame.white?.id, 'black.id=', onlineGame.black?.id);
-    if (onlineGame.playerColor) {
-      myColor.current = onlineGame.playerColor;
-      console.log('[OnlineGame] Set myColor from playerColor:', myColor.current);
-    } else if (user && onlineGame.white && onlineGame.black) {
-      myColor.current = onlineGame.white.id === user.id ? 'white' : 'black';
-      console.log('[OnlineGame] Set myColor from user id match:', myColor.current);
-    } else {
-      console.warn('[OnlineGame] Could not determine myColor! playerColor=', onlineGame.playerColor, 'user=', user?.id);
+    // Determine my color (only on initial load)
+    if (!myColor.current) {
+      if (onlineGame.playerColor) {
+        myColor.current = onlineGame.playerColor;
+      } else if (user && onlineGame.white && onlineGame.black) {
+        myColor.current = onlineGame.white.id === user.id ? 'white' : 'black';
+      }
     }
-    console.log('[OnlineGame] Final myColor.current:', myColor.current);
 
-    // Parse move history from FEN is complex; use a simpler approach
-    // We'll track moves as they come
-  }, [onlineGame?.fen, user?.id, onlineGame?.white?.id, onlineGame?.black?.id, onlineGame?.playerColor]);
+    // Only update board when FEN changes (prevents clearing selection on every game_state update)
+    if (onlineGame.fen !== prevFenRef.current) {
+      const newBoard = parseFENBoard(onlineGame.fen);
+      setBoard(newBoard);
+      prevFenRef.current = onlineGame.fen;
+
+      // If the selected square no longer has a piece on the new board, clear selection
+      if (selectedSquare) {
+        const piece = newBoard[selectedSquare.row]?.[selectedSquare.col];
+        if (!piece || piece === 0) {
+          setSelectedSquare(null);
+          setLegalMovesForSelected([]);
+        }
+      }
+    }
+
+    // Always update captured pieces
+    if (onlineGame.capturedByWhite) setCapturedByWhite(onlineGame.capturedByWhite);
+    if (onlineGame.capturedByBlack) setCapturedByBlack(onlineGame.capturedByBlack);
+  }, [onlineGame?.fen, onlineGame?.capturedByWhite, onlineGame?.capturedByBlack, user?.id, onlineGame?.white?.id, onlineGame?.black?.id, onlineGame?.playerColor, selectedSquare]);
 
   // Game over detection
   useEffect(() => {
@@ -92,12 +165,10 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   };
 
   const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
-  const canMove = !gameOver && isMyTurn && onlineGame?.status === 'playing';
 
   const handleSelectSquare = useCallback((row: number, col: number) => {
     if (gameOver) return;
     if (!myColor.current) return;
-    if (!canMove) return; // Block interaction when it's not my turn
 
     const piece = board[row]?.[col];
     const isMyPiece = piece !== undefined && piece !== 0 &&
@@ -111,35 +182,66 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         if (onlineGame?.gameId) {
           sendMove(uci, onlineGame.gameId);
         }
+      } else if (isMyPiece) {
+        // Switch selection to the newly clicked piece
+        setSelectedSquare({ row, col });
+        try {
+          const moveCtx = {
+            board,
+            turn: onlineGame?.turn ?? 'w',
+            selectedSquare: null,
+            legalMovesForSelected: [],
+            lastMove: null,
+            moveHistory: [],
+            capturedByWhite: [],
+            capturedByBlack: [],
+            gameOver: false,
+            gameStatus: 'normal',
+            enPassantTarget,
+            castlingRights,
+            halfmoveClock: 0,
+            fullmoveNumber: 1,
+          };
+          const moves = getLegalMoves(moveCtx as any, row, col);
+          setLegalMovesForSelected(moves);
+        } catch {
+          setLegalMovesForSelected([]);
+        }
+      } else {
+        // Clicked empty square or opponent piece — deselect
+        setSelectedSquare(null);
+        setLegalMovesForSelected([]);
       }
-      setSelectedSquare(null);
-      setLegalMovesForSelected([]);
       return;
     }
 
     // Select a piece — compute legal moves
     if (isMyPiece) {
       setSelectedSquare({ row, col });
-      const moveContext = {
-        board,
-        turn: onlineGame?.turn ?? 'w',
-        selectedSquare: null,
-        legalMovesForSelected: [],
-        lastMove: null,
-        moveHistory: [],
-        capturedByWhite: [],
-        capturedByBlack: [],
-        gameOver: false,
-        gameStatus: 'normal' as GameStatus,
-        enPassantTarget: enPassantTarget,
-        castlingRights: castlingRights,
-        halfmoveClock: 0,
-        fullmoveNumber: 1,
-      } as any;
-      const moves = getLegalMoves(moveContext, row, col);
-      setLegalMovesForSelected(moves);
+      try {
+        const moveCtx = {
+          board,
+          turn: onlineGame?.turn ?? 'w',
+          selectedSquare: null,
+          legalMovesForSelected: [],
+          lastMove: null,
+          moveHistory: [],
+          capturedByWhite: [],
+          capturedByBlack: [],
+          gameOver: false,
+          gameStatus: 'normal',
+          enPassantTarget,
+          castlingRights,
+          halfmoveClock: 0,
+          fullmoveNumber: 1,
+        };
+        const moves = getLegalMoves(moveCtx as any, row, col);
+        setLegalMovesForSelected(moves);
+      } catch {
+        setLegalMovesForSelected([]);
+      }
     }
-  }, [board, selectedSquare, legalMovesForSelected, gameOver, canMove, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
+  }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
@@ -234,7 +336,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
         {/* Left sidebar */}
         <div className="sidebar-left" style={{ width: '180px' }}>
-          <EvalBar eval={null} engineStatus="unavailable" />
+          <EvalBar eval={engineEval} engineStatus={engineStatus} />
           <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
         </div>
 
@@ -307,7 +409,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
                 <button className="btn" onClick={handleResign} style={{ background: '#f38ba8' }}>
                   Resign
                 </button>
-                {!drawOffered && !drawReceived && canMove && (
+                {!drawOffered && !drawReceived && isMyTurn && (
                   <button className="btn" onClick={handleDrawOffer}>
                     Draw
                   </button>
@@ -368,3 +470,4 @@ function parseFENBoard(fen: string): number[][] {
 
   return board;
 }
+

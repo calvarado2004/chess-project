@@ -28,6 +28,8 @@ export interface OnlineGame {
   lastMove?: string;
   playerColor?: 'white' | 'black';
   moveHistory?: string[];
+  capturedByWhite?: number[];
+  capturedByBlack?: number[];
 }
 
 export class ChessWebSocket {

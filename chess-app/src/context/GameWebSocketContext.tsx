@@ -114,6 +114,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         lastMove: payload.lastMove,
         playerColor: prev?.playerColor, // preserve playerColor from game_created/game_joined
         moveHistory: payload.moveHistory,
+        capturedByWhite: payload.capturedByWhite,
+        capturedByBlack: payload.capturedByBlack,
       }));
     });
 
