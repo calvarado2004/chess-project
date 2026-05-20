@@ -37,6 +37,34 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
       setLobbyPlayers((msg.payload as { players: LobbyPlayer[] }).players);
     });
 
+    chessWs.on('game_created', (msg) => {
+      const payload = msg.payload as { gameId: string; waiting: boolean };
+      setOnlineGame({
+        gameId: payload.gameId,
+        white: null,
+        black: null,
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        turn: 'w',
+        whiteTime: 600,
+        blackTime: 600,
+        status: 'waiting',
+      });
+    });
+
+    chessWs.on('game_joined', (msg) => {
+      const payload = msg.payload as { gameId: string };
+      setOnlineGame({
+        gameId: payload.gameId,
+        white: null,
+        black: null,
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        turn: 'w',
+        whiteTime: 600,
+        blackTime: 600,
+        status: 'waiting',
+      });
+    });
+
     chessWs.on('game_state', (msg) => {
       const payload = msg.payload as {
         gameId: string;

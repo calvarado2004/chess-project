@@ -1,0 +1,46 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: backend
+  namespace: chess-project
+  labels:
+    app: backend
+spec:
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+  source:
+    type: Git
+    git:
+      uri: https://github.com/calvarado2004/chess-project.git
+      ref: main
+    contextDir: backend
+  strategy:
+    type: Docker
+  output:
+    to:
+      kind: ImageStreamTag
+      name: backend:latest
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: backend
+  namespace: chess-project
+  labels:
+    app: backend
+spec:
+  tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: image-registry.openshift-image-registry.svc:5000/chess-project/backend:latest
+      referencePolicy:
+        type: Source

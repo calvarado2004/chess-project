@@ -191,6 +191,14 @@ function parseSANMove(
   if (rest.length > 0 && 'KNBRQ'.includes(rest[0].toUpperCase())) {
     pieceType = rest[0].toLowerCase();
     offset = 1;
+  } else if (rest.length > 0 && 'abcdefgh'.includes(rest[0])) {
+    // Pawn move with no disambiguation (e.g. "d4") — the first char is the file,
+    // not a piece type. The destination was already parsed from the last 2 chars,
+    // so there's nothing left for disambiguation.
+    pieceType = 'p';
+    offset = 0;
+    // Reset rest to empty since the entire string was just the destination
+    rest = '';
   }
 
   // Disambiguation (remaining chars between piece and destination)
