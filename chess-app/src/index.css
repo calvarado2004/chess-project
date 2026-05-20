@@ -868,15 +868,15 @@ select:focus { border-color: #7a5c3a; }
   }
 
   .board-container {
-    width: min(100%, calc(100svw - 24px));
-    max-width: calc(100svw - 24px);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
     flex: 0 0 auto;
-    height: auto;
+    height: calc(100vw - 24px);
     aspect-ratio: 1 / 1;
   }
 
   .square {
-    font-size: clamp(30px, calc((100dvw - 16px) / 10.8), 52px);
+    font-size: clamp(30px, calc((100vw - 24px) / 10.8), 52px);
   }
 
   .coord-file,
@@ -892,8 +892,8 @@ select:focus { border-color: #7a5c3a; }
     font-size: 13px;
     padding: 2px 4px;
     gap: 6px;
-    width: min(100%, calc(100dvw - 16px));
-    max-width: calc(100svw - 24px);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
     align-self: center;
   }
 
