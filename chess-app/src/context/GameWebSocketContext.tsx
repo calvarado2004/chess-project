@@ -7,6 +7,8 @@ interface GameWebSocketContextType {
   ws: ChessWebSocket | null;
   lobbyPlayers: LobbyPlayer[];
   onlineGame: OnlineGame | null;
+  drawOfferFrom: 'white' | 'black' | null;
+  drawDeclinedCount: number;
   isConnected: boolean;
   connect: () => Promise<boolean>;
   disconnect: () => void;
@@ -28,6 +30,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
   const [ws, setWs] = useState<ChessWebSocket | null>(null);
   const [lobbyPlayers, setLobbyPlayers] = useState<LobbyPlayer[]>([]);
   const [onlineGame, setOnlineGame] = useState<OnlineGame | null>(null);
+  const [drawOfferFrom, setDrawOfferFrom] = useState<'white' | 'black' | null>(null);
+  const [drawDeclinedCount, setDrawDeclinedCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<ChessWebSocket | null>(null);
 
@@ -142,6 +146,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
 
     chessWs.on('game_over', (msg) => {
       const payload = msg.payload as { result: string; reason: string; fen: string };
+      setDrawOfferFrom(null);
       setOnlineGame((prev) => prev ? {
         ...prev,
         status: 'finished',
@@ -164,7 +169,12 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
 
     chessWs.on('draw_offer', (msg) => {
       const payload = msg.payload as { from: 'white' | 'black' };
-      console.log(`[WS] Draw offered by ${payload.from}`);
+      setDrawOfferFrom(payload.from);
+    });
+
+    chessWs.on('draw_decline', () => {
+      setDrawOfferFrom(null);
+      setDrawDeclinedCount((count) => count + 1);
     });
   }, []);
 
@@ -203,6 +213,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     setWs(null);
     setIsConnected(false);
     setOnlineGame(null);
+    setDrawOfferFrom(null);
+    setDrawDeclinedCount(0);
     setLobbyPlayers([]);
   }, []);
 
@@ -244,10 +256,12 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
 
   const acceptDraw = useCallback((gameId: string) => {
     ws?.acceptDraw(gameId);
+    setDrawOfferFrom(null);
   }, [ws]);
 
   const declineDraw = useCallback((gameId: string) => {
     ws?.declineDraw(gameId);
+    setDrawOfferFrom(null);
   }, [ws]);
 
   const formatTime = useCallback((seconds: number): string => {
@@ -262,6 +276,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         ws,
         lobbyPlayers,
         onlineGame,
+        drawOfferFrom,
+        drawDeclinedCount,
         isConnected,
         connect,
         disconnect,

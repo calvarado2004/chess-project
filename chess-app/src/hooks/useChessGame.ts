@@ -36,7 +36,7 @@ const state = {
   halfmoveClock: 0,
   fullmoveNumber: 1,
   gameMode: 'hvh' as GameMode,
-  strengthLevel: 'beginner',
+  strengthLevel: 'elo-800',
   whiteName: 'You',
   blackName: 'Stockfish',
   engineStatus: 'unavailable' as EngineStatus,

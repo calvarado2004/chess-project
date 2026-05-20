@@ -30,7 +30,8 @@ export type ServerMessageType =
   | 'lobby_player_joined'
   | 'lobby_player_left'
   | 'game_created'
-  | 'game_joined_by_other';
+  | 'game_joined_by_other'
+  | 'draw_decline';
 
 // ===================== Message Structure =====================
 export interface WsMessage<T = unknown> {

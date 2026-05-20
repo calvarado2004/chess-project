@@ -301,7 +301,18 @@ export class WsGameServer {
         const room = this.rooms.get(gameId);
         if (!room) return;
 
+        const offerFrom = room.state.drawOfferFrom;
         room.state.drawOfferFrom = null;
+        if (!offerFrom) return;
+
+        const offerer = room.getPlayer(offerFrom);
+        if (offerer?.ws.readyState === 1) {
+          offerer.ws.send(JSON.stringify({
+            type: 'draw_decline',
+            payload: {},
+            gameId,
+          } as WsMessage));
+        }
         break;
       }
 

@@ -28,7 +28,8 @@ export type ServerMessageType =
   | 'lobby_player_joined'
   | 'lobby_player_left'
   | 'game_created'
-  | 'draw_offer';
+  | 'draw_offer'
+  | 'draw_decline';
 
 export interface WsMessage<T = unknown> {
   type: ClientMessageType | ServerMessageType;

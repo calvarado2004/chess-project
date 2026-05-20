@@ -1,4 +1,5 @@
 import React from 'react';
+import { STRENGTH_MAP } from '../engine';
 import type { GameMode } from '../engine';
 
 interface SettingsProps {
@@ -30,11 +31,11 @@ const Settings: React.FC<SettingsProps> = ({
         <div className="setting-row">
           <label htmlFor="strength">Stockfish Strength</label>
           <select id="strength" value={strengthLevel} onChange={e => onStrengthChange(e.target.value)}>
-            <option value="beginner">Beginner (800)</option>
-            <option value="casual">Casual (1100)</option>
-            <option value="intermediate">Intermediate (1400)</option>
-            <option value="advanced">Advanced (1800)</option>
-            <option value="strong">Strong (2200)</option>
+            {Object.entries(STRENGTH_MAP).map(([level, config]) => (
+              <option key={level} value={level}>
+                {config.elo} ELO
+              </option>
+            ))}
           </select>
         </div>
         <div className="setting-row">

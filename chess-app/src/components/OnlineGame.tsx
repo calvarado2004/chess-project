@@ -30,6 +30,8 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const { user } = useAuth();
   const {
     onlineGame,
+    drawOfferFrom,
+    drawDeclinedCount,
     sendMove,
     resign,
     offerDraw,
@@ -55,7 +57,6 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [castlingRights, setCastlingRights] = useState({ wK: true, wQ: true, bK: true, bQ: true });
   const [lastMove, setLastMove] = useState<ChessMove | null>(null);
   const [drawOffered, setDrawOffered] = useState(false);
-  const [drawReceived, setDrawReceived] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [notification, setNotification] = useState('');
   const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
@@ -306,8 +307,13 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     if (onlineGame?.gameId) {
       declineDraw(onlineGame.gameId);
     }
-    setDrawReceived(false);
   }, [onlineGame?.gameId, declineDraw]);
+
+  useEffect(() => {
+    if (drawDeclinedCount === 0) return;
+    setDrawOffered(false);
+    showNotification('Draw offer declined.');
+  }, [drawDeclinedCount]);
 
   const handleBackToLobby = useCallback(() => {
     if (!gameOver && onlineGame?.status === 'playing') {
@@ -355,7 +361,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       )}
 
       {/* Draw offer modal */}
-      {drawReceived && (
+      {drawOfferFrom && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center',
@@ -456,7 +462,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               <button className="btn" onClick={handleResign} style={{ background: '#f38ba8' }}>
                 Resign
               </button>
-              {!drawOffered && !drawReceived && isMyTurn && (
+              {!drawOffered && !drawOfferFrom && isMyTurn && (
                 <button className="btn" onClick={handleDrawOffer}>
                   Draw
                 </button>

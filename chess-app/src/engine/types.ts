@@ -89,13 +89,24 @@ export interface EngineConfig {
   movetime: number;
 }
 
-export const STRENGTH_MAP: Record<string, EngineConfig> = {
-  beginner:     { skill: 0,  elo: 800,  movetime: 150 },
-  casual:       { skill: 3,  elo: 1100, movetime: 300 },
-  intermediate: { skill: 7,  elo: 1400, movetime: 500 },
-  advanced:     { skill: 12, elo: 1800, movetime: 800 },
-  strong:       { skill: 20, elo: 2200, movetime: 1200 },
-};
+export const STOCKFISH_ELO_LEVELS = Array.from(
+  { length: 20 },
+  (_, index) => 500 + index * 100,
+);
+
+export const STRENGTH_MAP: Record<string, EngineConfig> = Object.fromEntries(
+  STOCKFISH_ELO_LEVELS.map((elo) => {
+    const normalized = (elo - 500) / (2400 - 500);
+    return [
+      `elo-${elo}`,
+      {
+        skill: Math.round(normalized * 20),
+        elo,
+        movetime: Math.round(150 + normalized * 1050),
+      },
+    ];
+  }),
+);
 
 // ===================== Game Mode =====================
 export type GameMode = 'hvh' | 'hwe' | 'hbe' | 'online';
