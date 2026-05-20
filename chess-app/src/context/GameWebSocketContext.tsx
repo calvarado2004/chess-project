@@ -40,6 +40,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     chessWs.on('game_created', (msg) => {
       const payload = msg.payload as { gameId: string; waiting: boolean; timeControl?: number; color?: 'white' | 'black' };
       const tc = payload.timeControl ?? 600;
+      console.log('[WS] game_created payload:', payload);
       setOnlineGame({
         gameId: payload.gameId,
         white: null,
@@ -62,6 +63,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
       const tc = payload.timeControl ?? 600;
       // Use playerColor from server if available (most reliable), otherwise derive from requesterColor
       const playerColor = payload.playerColor || (payload.requesterColor === 'white' ? 'black' : 'white');
+      console.log('[WS] game_joined payload:', payload, 'resolved playerColor:', playerColor);
       setOnlineGame({
         gameId: payload.gameId,
         white: null,

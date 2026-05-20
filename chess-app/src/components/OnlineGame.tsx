@@ -48,11 +48,17 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     setBoard(newBoard);
 
     // Determine my color from playerColor or from player IDs
+    console.log('[OnlineGame] useEffect: playerColor=', onlineGame.playerColor, 'user.id=', user?.id, 'white.id=', onlineGame.white?.id, 'black.id=', onlineGame.black?.id);
     if (onlineGame.playerColor) {
       myColor.current = onlineGame.playerColor;
+      console.log('[OnlineGame] Set myColor from playerColor:', myColor.current);
     } else if (user && onlineGame.white && onlineGame.black) {
       myColor.current = onlineGame.white.id === user.id ? 'white' : 'black';
+      console.log('[OnlineGame] Set myColor from user id match:', myColor.current);
+    } else {
+      console.warn('[OnlineGame] Could not determine myColor! playerColor=', onlineGame.playerColor, 'user=', user?.id);
     }
+    console.log('[OnlineGame] Final myColor.current:', myColor.current);
 
     // Parse move history from FEN is complex; use a simpler approach
     // We'll track moves as they come
@@ -87,16 +93,18 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   };
 
   const handleSelectSquare = useCallback((row: number, col: number) => {
-    if (gameOver) return;
-    if (!myColor.current) return;
+    if (gameOver) { console.log('[OnlineGame] handleSelectSquare: blocked by gameOver'); return; }
+    if (!myColor.current) { console.log('[OnlineGame] handleSelectSquare: blocked by myColor.current=', myColor.current); return; }
 
     const piece = board[row]?.[col];
     const isMyPiece = piece !== undefined && piece !== 0 &&
       (myColor.current === 'white' ? (piece >= 1 && piece <= 6) : (piece >= 7 && piece <= 12));
+    console.log('[OnlineGame] handleSelectSquare: row=', row, 'col=', col, 'piece=', piece, 'isMyPiece=', isMyPiece, 'myColor=', myColor.current);
 
     if (selectedSquare) {
       // Try to move — compute UCI directly from selected → target squares
       const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
+      console.log('[OnlineGame] Sending move:', uci, 'gameId:', onlineGame?.gameId);
       if (onlineGame?.gameId) {
         sendMove(uci, onlineGame.gameId);
       }
