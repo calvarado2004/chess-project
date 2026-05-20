@@ -8,6 +8,7 @@ import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
 import {
   colorOf,
+  cloneState,
   getAllLegalMoves,
   getLegalMoves,
   isInCheck,
@@ -159,7 +160,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     // Only update board when FEN changes (prevents clearing selection on every game_state update)
     if (onlineGame.fen !== prevFenRef.current) {
       const newContext = parseFENGameContext(onlineGame.fen);
-      const newBoard = newContext.board;
+      const newBoard = newContext.board.map((boardRow) => [...boardRow]);
       setBoard(newBoard);
       setEnPassantTarget(newContext.enPassantTarget);
       setCastlingRights(newContext.castlingRights);
@@ -488,8 +489,9 @@ function parseFENGameContext(fen: string): GameContext {
 }
 
 function getDerivedGameStatus(context: GameContext): GameStatus {
-  const inCheck = isInCheck(context.board, context.turn);
-  const legalMoves = getAllLegalMoves(context, context.turn);
+  const statusContext = cloneState(context);
+  const inCheck = isInCheck(statusContext.board, statusContext.turn);
+  const legalMoves = getAllLegalMoves(statusContext, statusContext.turn);
 
   if (legalMoves.length === 0) {
     return inCheck ? 'checkmate' : 'stalemate';
