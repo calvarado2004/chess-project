@@ -201,7 +201,8 @@ export class ChessWebSocket {
 
   // ===================== Game Actions =====================
   sendMove(uci: string, gameId: string): void {
-    this.send({ type: 'move', payload: { uci }, gameId });
+    // gameId is tracked server-side via playerRooms; don't include it in the message
+    this.send({ type: 'move', payload: { uci } });
   }
 
   resign(gameId: string): void {
