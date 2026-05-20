@@ -8,7 +8,9 @@ import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
 import {
   colorOf,
+  getAllLegalMoves,
   getLegalMoves,
+  isInCheck,
   parseUCIMove,
   type ChessMove,
   type Coord,
@@ -161,6 +163,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       setBoard(newBoard);
       setEnPassantTarget(newContext.enPassantTarget);
       setCastlingRights(newContext.castlingRights);
+      setGameStatus(getDerivedGameStatus(newContext));
       prevFenRef.current = onlineGame.fen;
 
       // If the selected square no longer has a piece on the new board, clear selection
@@ -248,6 +251,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         setLegalMovesForSelected(getSelectionMoves(row, col));
       } else {
         // Clicked empty square, opponent piece, or not my turn — deselect
+        showNotification('Illegal move');
         setSelectedSquare(null);
         setLegalMovesForSelected([]);
       }
@@ -481,4 +485,15 @@ function parseFENGameContext(fen: string): GameContext {
     halfmoveClock: parseInt(halfmove, 10) || 0,
     fullmoveNumber: parseInt(fullmove, 10) || 1,
   };
+}
+
+function getDerivedGameStatus(context: GameContext): GameStatus {
+  const inCheck = isInCheck(context.board, context.turn);
+  const legalMoves = getAllLegalMoves(context, context.turn);
+
+  if (legalMoves.length === 0) {
+    return inCheck ? 'checkmate' : 'stalemate';
+  }
+
+  return inCheck ? 'check' : 'normal';
 }
