@@ -8,7 +8,9 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Copy source and build
-COPY . .
+COPY tsconfig.json tsconfig.app.json tsconfig.node.json ./
+COPY src/ ./src/
+COPY public/ ./public/
 RUN npm run build
 
 # Production stage
