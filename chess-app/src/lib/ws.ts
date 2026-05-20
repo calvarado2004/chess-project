@@ -27,6 +27,7 @@ export interface OnlineGame {
   status: 'playing' | 'finished' | 'waiting';
   lastMove?: string;
   playerColor?: 'white' | 'black';
+  moveHistory?: string[];
 }
 
 export class ChessWebSocket {

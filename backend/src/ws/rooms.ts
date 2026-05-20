@@ -46,6 +46,7 @@ export class GameRoom {
       createdAt: Date.now(),
       capturedByWhite: [],
       capturedByBlack: [],
+      moveHistory: [],
     };
     this.gameContext = createInitialState();
   }
@@ -166,10 +167,22 @@ export class GameRoom {
     if (matchingMove.castle === 'K') san = 'O-O';
     else if (matchingMove.castle === 'Q') san = 'O-O-O';
     else {
-      const piece = cloned.board[matchingMove.from.row][matchingMove.from.col];
-      const pType = PIECE_TYPE[piece];
-      if (pType !== 'p') san += pType.toUpperCase();
-      san += fromSq + 'x' + toSq;
+      // Look up the piece from the original gameContext board, not the cloned one.
+      // getLegalMoves mutates cloned.board during legality checks, so the piece
+      // at the source square may no longer be correct after getLegalMoves returns.
+      const origPiece = this.gameContext?.board?.[matchingMove.from.row]?.[matchingMove.from.col];
+      const pType = origPiece != null ? PIECE_TYPE[origPiece] : undefined;
+
+      if (pType === 'p') {
+        // Pawn: just destination square (e.g., "d4") or capture with source file (e.g., "dxe4")
+        const isCapture = capturedPiece !== 0 || matchingMove.enPassant;
+        san = isCapture ? fromSq.charAt(0) + 'x' + toSq : toSq;
+      } else {
+        // Piece move: type + destination (e.g., "Nf3" or "Nxf3")
+        san += pType?.toUpperCase() || '?';
+        san += capturedPiece !== 0 ? 'x' : '';
+        san += toSq;
+      }
       if (matchingMove.promotion) san += '=' + matchingMove.promotion.toUpperCase();
     }
 
@@ -318,6 +331,8 @@ export class GameRoom {
     } catch (err) {
       console.error('[Room] Failed to persist move:', err);
     }
+    // Track SAN in room state for frontend broadcast
+    this.state.moveHistory = [...this.state.moveHistory, san];
   }
 
   resign(playerColor: 'white' | 'black'): void {
@@ -389,6 +404,7 @@ export class GameRoom {
         lastMove: this.state.lastMove || undefined,
         capturedByWhite: this.state.capturedByWhite,
         capturedByBlack: this.state.capturedByBlack,
+        moveHistory: this.state.moveHistory,
       },
       gameId: this.state.gameId,
     };

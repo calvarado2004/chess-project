@@ -91,6 +91,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         lastMove?: string;
         capturedByWhite?: number[];
         capturedByBlack?: number[];
+        moveHistory?: string[];
       };
 
       setOnlineGame((prev) => ({
@@ -112,6 +113,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         status: payload.status === 'paused' ? 'playing' : payload.status,
         lastMove: payload.lastMove,
         playerColor: prev?.playerColor, // preserve playerColor from game_created/game_joined
+        moveHistory: payload.moveHistory,
       }));
     });
 

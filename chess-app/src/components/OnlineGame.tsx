@@ -6,8 +6,7 @@ import Clock from './Clock';
 import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
-import type { Coord } from '../engine';
-import type { ChessMove } from '../engine/types';
+import { getLegalMoves, colorOf, type Coord, type ChessMove, type GameStatus } from '../engine';
 
 interface OnlineGameProps {
   onBackToLobby: () => void;
@@ -27,9 +26,9 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   const [board, setBoard] = useState<number[][]>(() => Array.from({ length: 8 }, () => Array(8).fill(0)));
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
+  const [legalMovesForSelected, setLegalMovesForSelected] = useState<ChessMove[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [gameStatus, setGameStatus] = useState<'normal' | 'check' | 'checkmate' | 'stalemate' | 'white_time_win' | 'black_time_win'>('normal');
-  const [moveHistory, setMoveHistory] = useState<string[]>([]);
   const [capturedByWhite, setCapturedByWhite] = useState<number[]>([]);
   const [capturedByBlack, setCapturedByBlack] = useState<number[]>([]);
   const [enPassantTarget, setEnPassantTarget] = useState<Coord | null>(null);
@@ -102,21 +101,45 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     console.log('[OnlineGame] handleSelectSquare: row=', row, 'col=', col, 'piece=', piece, 'isMyPiece=', isMyPiece, 'myColor=', myColor.current);
 
     if (selectedSquare) {
-      // Try to move — compute UCI directly from selected → target squares
-      const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
-      console.log('[OnlineGame] Sending move:', uci, 'gameId:', onlineGame?.gameId);
-      if (onlineGame?.gameId) {
-        sendMove(uci, onlineGame.gameId);
+      // Check if this is a legal move target
+      const isLegalTarget = legalMovesForSelected.some(m => m.to.row === row && m.to.col === col);
+      if (isLegalTarget) {
+        // Try to move — compute UCI directly from selected → target squares
+        const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
+        console.log('[OnlineGame] Sending move:', uci, 'gameId:', onlineGame?.gameId);
+        if (onlineGame?.gameId) {
+          sendMove(uci, onlineGame.gameId);
+        }
       }
       setSelectedSquare(null);
+      setLegalMovesForSelected([]);
       return;
     }
 
-    // Select a piece
+    // Select a piece — compute legal moves
     if (isMyPiece) {
       setSelectedSquare({ row, col });
+      const moveContext = {
+        board,
+        turn: onlineGame?.turn ?? 'w',
+        selectedSquare: null,
+        legalMovesForSelected: [],
+        lastMove: null,
+        moveHistory: [],
+        capturedByWhite: [],
+        capturedByBlack: [],
+        gameOver: false,
+        gameStatus: 'normal' as GameStatus,
+        enPassantTarget: enPassantTarget,
+        castlingRights: castlingRights,
+        halfmoveClock: 0,
+        fullmoveNumber: 1,
+      } as any;
+      const moves = getLegalMoves(moveContext, row, col);
+      setLegalMovesForSelected(moves);
+      console.log('[OnlineGame] Selected piece at', row, col, 'legal moves:', moves.length);
     }
-  }, [board, selectedSquare, gameOver, onlineGame?.gameId, sendMove]);
+  }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
@@ -150,6 +173,26 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   const whiteName = onlineGame?.white?.displayName || 'White';
   const blackName = onlineGame?.black?.displayName || 'Black';
+
+  const handleSavePGN = useCallback(() => {
+    const moves = onlineGame?.moveHistory ?? [];
+    const result = gameOver ? (gameStatus === 'checkmate' ? (myColor.current === 'white' ? '0-1' : '1-0') : '1/2-1/2') : '*';
+    let pgn = `[Event "Online Chess Game"]\n[Site "Chess App"]\n[Date "${new Date().toISOString().slice(0, 10)}"]\n[Round "1"]\n[White "${whiteName}"]\n[Black "${blackName}"]\n[Result "${result}"]\n\n`;
+    for (let i = 0; i < moves.length; i += 2) {
+      const moveNum = Math.floor(i / 2) + 1;
+      pgn += moveNum + '. ' + moves[i];
+      if (moves[i + 1]) pgn += ' ' + moves[i + 1];
+      pgn += i % 2 === 1 ? '\n\n' : ' ';
+    }
+    pgn += result + '\n';
+    const blob = new Blob([pgn], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chess-game-${new Date().toISOString().slice(0, 10)}.pgn`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [onlineGame?.moveHistory, gameOver, gameStatus, whiteName, blackName]);
 
   return (
     <div id="app" style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
@@ -237,7 +280,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               board,
               turn: onlineGame?.turn ?? 'w',
               selectedSquare,
-              legalMovesForSelected: [],
+              legalMovesForSelected,
               lastMove,
               moveHistory: [],
               capturedByWhite,
@@ -283,8 +326,13 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         {/* Right sidebar */}
         <div className="sidebar-right" style={{ width: '200px' }}>
           <div className="panel">
-            <h3>Move History</h3>
-            <MoveHistory moves={moveHistory} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <h3 style={{ margin: 0 }}>Moves</h3>
+              <button className="btn" onClick={handleSavePGN} style={{ padding: '4px 10px', fontSize: '12px' }}>
+                Save PGN
+              </button>
+            </div>
+            <MoveHistory moves={onlineGame?.moveHistory ?? []} />
           </div>
         </div>
       </div>

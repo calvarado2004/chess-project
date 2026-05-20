@@ -93,6 +93,7 @@ export interface GameStatePayload {
   lastMove?: string;
   capturedByWhite?: number[];
   capturedByBlack?: number[];
+  moveHistory?: string[];
 }
 
 export interface GameOverPayload {
@@ -144,6 +145,7 @@ export interface GameRoomState {
   createdAt: number;
   capturedByWhite: number[];
   capturedByBlack: number[];
+  moveHistory: string[];
 }
 
 // ===================== Lobby State =====================

@@ -92,8 +92,10 @@ export class WsGameServer {
     ws.on('message', (data) => {
       try {
         const msg = JSON.parse(data.toString()) as WsMessage;
+        console.log('[WS] Received message:', JSON.stringify(msg));
         this.handleMessage(ws, userId, username, msg, send);
-      } catch {
+      } catch (err) {
+        console.error('[WS] Error processing message:', err);
         send({ type: 'error', payload: { message: 'Invalid message format' } });
       }
     });
@@ -114,6 +116,7 @@ export class WsGameServer {
     msg: WsMessage,
     send: (msg: WsMessage) => void
   ): void {
+    console.log('[WS] handleMessage: type=', msg.type, 'keys=', Object.keys(msg));
     switch (msg.type) {
       case 'pong':
         break; // Heartbeat response, ignored
@@ -194,16 +197,20 @@ export class WsGameServer {
       }
 
       case 'move': {
+        console.log('[WS] move case: userId=', userId, 'payload=', JSON.stringify(msg.payload));
         const payload = msg.payload as MovePayload;
         const { uci } = payload;
+        console.log('[WS] move: uci=', uci);
 
         const gameId = this.playerRooms.get(userId);
+        console.log('[WS] move: gameId from playerRooms=', gameId);
         if (!gameId) {
           send({ type: 'error', payload: { message: 'Not in a game' } });
           return;
         }
 
         const room = this.rooms.get(gameId);
+        console.log('[WS] move: room=', room ? 'found' : 'NOT FOUND');
         if (!room) {
           send({ type: 'error', payload: { message: 'Game not found' } });
           return;
@@ -211,11 +218,13 @@ export class WsGameServer {
 
         // Determine player color
         const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
+        console.log('[WS] move: playerColor=', playerColor);
         if (!playerColor) {
           send({ type: 'error', payload: { message: 'You are not a player in this game' } });
           return;
         }
 
+        console.log('[WS] move: calling makeMove');
         const result = room.makeMove(playerColor, uci);
         if (!result.success) {
           send({ type: 'error', payload: { message: result.message } });
