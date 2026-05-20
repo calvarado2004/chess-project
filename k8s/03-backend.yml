@@ -50,6 +50,8 @@ spec:
                 secretKeyRef:
                   name: chess-project-secrets
                   key: node-env
+            - name: DB_SSL
+              value: "false"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
