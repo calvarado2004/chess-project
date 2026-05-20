@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
 import { useAuth } from '../context/AuthContext';
 import Board from './Board';
@@ -6,7 +6,17 @@ import Clock from './Clock';
 import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
-import { getLegalMoves, type Coord, type ChessMove, type EngineEval, type EngineStatus } from '../engine';
+import {
+  colorOf,
+  getLegalMoves,
+  parseUCIMove,
+  type ChessMove,
+  type Coord,
+  type EngineEval,
+  type EngineStatus,
+  type GameContext,
+  type GameStatus,
+} from '../engine';
 
 interface OnlineGameProps {
   onBackToLobby: () => void;
@@ -34,7 +44,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
   const [legalMovesForSelected, setLegalMovesForSelected] = useState<ChessMove[]>([]);
   const [gameOver, setGameOver] = useState(false);
-  const [gameStatus, setGameStatus] = useState<'normal' | 'check' | 'checkmate' | 'stalemate' | 'white_time_win' | 'black_time_win'>('normal');
+  const [gameStatus, setGameStatus] = useState<GameStatus>('normal');
   const [capturedByWhite, setCapturedByWhite] = useState<number[]>([]);
   const [capturedByBlack, setCapturedByBlack] = useState<number[]>([]);
   const [enPassantTarget, setEnPassantTarget] = useState<Coord | null>(null);
@@ -146,8 +156,11 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
     // Only update board when FEN changes (prevents clearing selection on every game_state update)
     if (onlineGame.fen !== prevFenRef.current) {
-      const newBoard = parseFENBoard(onlineGame.fen);
+      const newContext = parseFENGameContext(onlineGame.fen);
+      const newBoard = newContext.board;
       setBoard(newBoard);
+      setEnPassantTarget(newContext.enPassantTarget);
+      setCastlingRights(newContext.castlingRights);
       prevFenRef.current = onlineGame.fen;
 
       // If the selected square no longer has a piece on the new board, clear selection
@@ -163,7 +176,8 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     // Always update captured pieces
     if (onlineGame.capturedByWhite) setCapturedByWhite(onlineGame.capturedByWhite);
     if (onlineGame.capturedByBlack) setCapturedByBlack(onlineGame.capturedByBlack);
-  }, [onlineGame?.fen, onlineGame?.capturedByWhite, onlineGame?.capturedByBlack, user?.id, onlineGame?.white?.id, onlineGame?.black?.id, onlineGame?.playerColor, selectedSquare]);
+    setLastMove(onlineGame.lastMove ? parseUCIMove(onlineGame.lastMove) : null);
+  }, [onlineGame?.fen, onlineGame?.capturedByWhite, onlineGame?.capturedByBlack, onlineGame?.lastMove, user?.id, onlineGame?.white?.id, onlineGame?.black?.id, onlineGame?.playerColor, selectedSquare]);
 
   // Game over detection
   useEffect(() => {
@@ -195,51 +209,43 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
 
+  const getCurrentGameContext = useCallback((): GameContext | null => {
+    if (!onlineGame?.fen) return null;
+    return parseFENGameContext(onlineGame.fen);
+  }, [onlineGame?.fen]);
+
+  const getSelectionMoves = useCallback((row: number, col: number): ChessMove[] => {
+    const moveCtx = getCurrentGameContext();
+    if (!moveCtx) return [];
+    return getLegalMoves(moveCtx, row, col);
+  }, [getCurrentGameContext]);
+
   const handleSelectSquare = useCallback((row: number, col: number) => {
     if (gameOver) return;
     if (!myColor.current) return;
 
     const piece = board[row]?.[col];
-    const isMyPiece = piece !== undefined && piece !== 0 &&
-      (myColor.current === 'white' ? (piece >= 1 && piece <= 6) : (piece >= 7 && piece <= 12));
+    const myTurnColor = myColor.current === 'white' ? 'w' : 'b';
+    const isMyPiece = piece !== undefined && piece !== 0 && colorOf(piece) === myTurnColor;
 
     // Only allow selecting/moving if it's my turn (same as local game)
-    const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
+    const isMyTurn = onlineGame?.turn === myTurnColor;
     if (!isMyTurn && !selectedSquare) return;
 
     if (selectedSquare) {
       // Check if this is a legal move target
-      const isLegalTarget = legalMovesForSelected.some(m => m.to.row === row && m.to.col === col);
-      if (isLegalTarget) {
-        const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
+      const move = legalMovesForSelected.find(m => m.to.row === row && m.to.col === col);
+      if (move) {
+        const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}${move.promotion ?? ''}`;
         if (onlineGame?.gameId) {
           sendMove(uci, onlineGame.gameId);
         }
+        setSelectedSquare(null);
+        setLegalMovesForSelected([]);
       } else if (isMyPiece && isMyTurn) {
         // Switch selection to the newly clicked piece
         setSelectedSquare({ row, col });
-        try {
-          const moveCtx = {
-            board,
-            turn: onlineGame?.turn ?? 'w',
-            selectedSquare: null,
-            legalMovesForSelected: [],
-            lastMove: null,
-            moveHistory: [],
-            capturedByWhite: [],
-            capturedByBlack: [],
-            gameOver: false,
-            gameStatus: 'normal',
-            enPassantTarget,
-            castlingRights,
-            halfmoveClock: 0,
-            fullmoveNumber: 1,
-          };
-          const moves = getLegalMoves(moveCtx as any, row, col);
-          setLegalMovesForSelected(moves);
-        } catch {
-          setLegalMovesForSelected([]);
-        }
+        setLegalMovesForSelected(getSelectionMoves(row, col));
       } else {
         // Clicked empty square, opponent piece, or not my turn — deselect
         setSelectedSquare(null);
@@ -251,34 +257,13 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     // Select a piece — only if it's my turn (same as local game)
     if (isMyPiece && isMyTurn) {
       setSelectedSquare({ row, col });
-      try {
-        const moveCtx = {
-          board,
-          turn: onlineGame?.turn ?? 'w',
-          selectedSquare: null,
-          legalMovesForSelected: [],
-          lastMove: null,
-          moveHistory: [],
-          capturedByWhite: [],
-          capturedByBlack: [],
-          gameOver: false,
-          gameStatus: 'normal',
-          enPassantTarget,
-          castlingRights,
-          halfmoveClock: 0,
-          fullmoveNumber: 1,
-        };
-        const moves = getLegalMoves(moveCtx as any, row, col);
-        setLegalMovesForSelected(moves);
-      } catch {
-        setLegalMovesForSelected([]);
-      }
+      setLegalMovesForSelected(getSelectionMoves(row, col));
     } else if (selectedSquare) {
       // Not my piece or not my turn — deselect
       setSelectedSquare(null);
       setLegalMovesForSelected([]);
     }
-  }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
+  }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, getSelectionMoves, sendMove]);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
@@ -444,9 +429,9 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 }
 
 // ===================== Helpers =====================
-function parseFENBoard(fen: string): number[][] {
+function parseFENGameContext(fen: string): GameContext {
   const board: number[][] = [];
-  const [pieceRow] = fen.split(' ');
+  const [pieceRow, turn = 'w', castling = '-', ep = '-', halfmove = '0', fullmove = '1'] = fen.split(' ');
   const rows = pieceRow.split('/');
 
   for (const row of rows) {
@@ -472,6 +457,28 @@ function parseFENBoard(fen: string): number[][] {
     board.push(boardRow);
   }
 
-  return board;
+  return {
+    board,
+    turn: turn === 'b' ? 'b' : 'w',
+    selectedSquare: null,
+    legalMovesForSelected: [],
+    lastMove: null,
+    moveHistory: [],
+    capturedByWhite: [],
+    capturedByBlack: [],
+    gameOver: false,
+    gameStatus: 'normal',
+    enPassantTarget: ep === '-' ? null : {
+      row: 8 - parseInt(ep[1], 10),
+      col: ep.charCodeAt(0) - 97,
+    },
+    castlingRights: {
+      wK: castling.includes('K'),
+      wQ: castling.includes('Q'),
+      bK: castling.includes('k'),
+      bQ: castling.includes('q'),
+    },
+    halfmoveClock: parseInt(halfmove, 10) || 0,
+    fullmoveNumber: parseInt(fullmove, 10) || 1,
+  };
 }
-

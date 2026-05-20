@@ -132,6 +132,11 @@ export class GameRoom {
       return { success: false, message: 'Invalid square coordinates' };
     }
 
+    const sourcePiece = this.gameContext.board[fromRank]?.[fromFile] ?? 0;
+    if (sourcePiece === 0 || colorOf(sourcePiece) !== expectedColor) {
+      return { success: false, message: 'Illegal move' };
+    }
+
     // Deep clone game context for validation
     const cloned = cloneState(this.gameContext);
 
