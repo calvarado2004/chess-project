@@ -4,8 +4,9 @@
 import {
   EMPTY, W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
   B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING,
-  PIECE_TYPE, colorOf, isWhite, initBoard,
+  PIECE_TYPE, colorOf, getLegalMoves, isWhite, initBoard,
 } from './index';
+import type { CastlingRights, Coord, GameContext } from './index';
 
 export interface PGNHeader {
   [tag: string]: string;
@@ -103,7 +104,7 @@ export function replayMovesFromPGN(moves: string[]): {
   gameOver: boolean;
   gameStatus: string;
   castlingRights: { wK: boolean; wQ: boolean; bK: boolean; bQ: boolean };
-  enPassantTarget: { row: number; col: number } | null;
+  enPassantTarget: Coord | null;
   lastMove: { from: { row: number; col: number }; to: { row: number; col: number } } | null;
 } {
   const board = initBoard();
@@ -111,8 +112,8 @@ export function replayMovesFromPGN(moves: string[]): {
   const moveHistory: string[] = [];
   let gameOver = false;
   let gameStatus = 'normal';
-  const castlingRights = { wK: true, wQ: true, bK: true, bQ: true };
-  let enPassantTarget: { row: number; col: number } | null = null;
+  const castlingRights: CastlingRights = { wK: true, wQ: true, bK: true, bQ: true };
+  let enPassantTarget: Coord | null = null;
   let lastMove: { from: { row: number; col: number }; to: { row: number; col: number } } | null = null;
 
   for (const san of moves) {
@@ -120,7 +121,7 @@ export function replayMovesFromPGN(moves: string[]): {
     if (!move) continue;
 
     const moveCoords = { from: { row: move.fromRow, col: move.fromCol }, to: { row: move.toRow, col: move.toCol } };
-    applyMoveToBoard(board, move, castlingRights, enPassantTarget);
+    enPassantTarget = applyMoveToBoard(board, move, castlingRights);
     lastMove = moveCoords;
     moveHistory.push(san);
     turn = turn === 'w' ? 'b' : 'w';
@@ -146,8 +147,8 @@ function parseSANMove(
   board: number[][],
   san: string,
   turn: 'w' | 'b',
-  castlingRights: { wK: boolean; wQ: boolean; bK: boolean; bQ: boolean },
-  epTarget: { row: number; col: number } | null
+  castlingRights: CastlingRights,
+  epTarget: Coord | null
 ): SANMove | null {
   const pieceIsWhite = turn === 'w';
 
@@ -204,13 +205,17 @@ function parseSANMove(
   // Disambiguation (remaining chars between piece and destination)
   const disambig = rest.slice(offset);
 
+  if (toRow < 0 || toRow > 7 || toCol < 0 || toCol > 7) {
+    return null;
+  }
+
   // Find the piece
   const pieceValue = pieceIsWhite
     ? { p: W_PAWN, n: W_KNIGHT, b: W_BISHOP, r: W_ROOK, q: W_QUEEN, k: W_KING }[pieceType]!
     : { p: B_PAWN, n: B_KNIGHT, b: B_BISHOP, r: B_ROOK, q: B_QUEEN, k: B_KING }[pieceType]!;
 
-  let fromRow = -1;
-  let fromCol = -1;
+  const candidates: SANMove[] = [];
+  const context = createReplayContext(board, turn, castlingRights, epTarget);
 
   // Search for matching piece
   for (let r = 0; r < 8; r++) {
@@ -237,30 +242,39 @@ function parseSANMove(
         if (r !== expectedRow) matches = false;
       }
 
-      if (matches && toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
-        // Check if destination is valid (empty or enemy)
-        const destPiece = board[toRow][toCol];
-        if (destPiece === EMPTY || colorOf(destPiece) !== turn) {
-          fromRow = r;
-          fromCol = c;
-          break;
-        }
+      if (!matches) continue;
+
+      const legalMove = getLegalMoves(context, r, c).find((move) =>
+        move.to.row === toRow &&
+        move.to.col === toCol &&
+        (!promotion || move.promotion === promotion)
+      );
+
+      if (legalMove) {
+        candidates.push({
+          fromRow: r,
+          fromCol: c,
+          toRow,
+          toCol,
+          promotion,
+          capture,
+          disambiguation: disambig || undefined,
+          castle: legalMove.castle,
+        });
       }
     }
-    if (fromRow >= 0) break;
   }
 
-  if (fromRow < 0) return null;
+  if (candidates.length === 0) return null;
 
-  return { fromRow, fromCol, toRow, toCol, promotion, capture, disambiguation: disambig || undefined };
+  return candidates[0];
 }
 
 function applyMoveToBoard(
   board: number[][],
   move: SANMove,
-  castlingRights: { wK: boolean; wQ: boolean; bK: boolean; bQ: boolean },
-  epTarget: { row: number; col: number } | null
-): void {
+  castlingRights: CastlingRights,
+): Coord | null {
   const piece = board[move.fromRow][move.fromCol];
   const pieceIsWhite = isWhite(piece);
 
@@ -313,8 +327,32 @@ function applyMoveToBoard(
 
   // Update en passant target
   if (PIECE_TYPE[piece] === 'p' && Math.abs(move.toRow - move.fromRow) === 2) {
-    epTarget = { row: (move.fromRow + move.toRow) / 2, col: move.fromCol };
-  } else {
-    epTarget = null;
+    return { row: (move.fromRow + move.toRow) / 2, col: move.fromCol };
   }
+
+  return null;
+}
+
+function createReplayContext(
+  board: number[][],
+  turn: 'w' | 'b',
+  castlingRights: CastlingRights,
+  enPassantTarget: Coord | null,
+): GameContext {
+  return {
+    board: board.map((row) => [...row]),
+    turn,
+    selectedSquare: null,
+    legalMovesForSelected: [],
+    lastMove: null,
+    moveHistory: [],
+    capturedByWhite: [],
+    capturedByBlack: [],
+    gameOver: false,
+    gameStatus: 'normal',
+    enPassantTarget: enPassantTarget ? { ...enPassantTarget } : null,
+    castlingRights: { ...castlingRights },
+    halfmoveClock: 0,
+    fullmoveNumber: 1,
+  };
 }
