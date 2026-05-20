@@ -24,7 +24,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     formatTime,
   } = useGameWebSocket();
 
-  const [board, setBoard] = useState<number[][]>([]);
+  const [board, setBoard] = useState<number[][]>(() => Array.from({ length: 8 }, () => Array(8).fill(0)));
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
   const [legalMoves, setLegalMoves] = useState<ChessMove[]>([]);
   const [gameOver, setGameOver] = useState(false);
@@ -43,7 +43,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   // Parse FEN to board
   useEffect(() => {
-    if (!onlineGame?.fen) return;
+    if (!onlineGame || !onlineGame.fen) return;
     const newBoard = parseFENBoard(onlineGame.fen);
     setBoard(newBoard);
 
