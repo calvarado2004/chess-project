@@ -188,15 +188,15 @@ function parseSANMove(
   // Piece type (first char, or pawn if empty)
   let pieceType = 'p';
   let offset = 0;
+  let sourceFile: number | null = null;
   if (rest.length > 0 && 'KNBRQ'.includes(rest[0].toUpperCase())) {
     pieceType = rest[0].toLowerCase();
     offset = 1;
   } else if (rest.length > 0 && 'abcdefgh'.includes(rest[0])) {
-    // Pawn move with no disambiguation (e.g. "d4") — the first char is the file,
-    // not a piece type. The destination was already parsed from the last 2 chars,
-    // so there's nothing left for disambiguation.
+    // Pawn move with source file specified (e.g. "d4" means pawn on d-file moves to d4)
+    // The first char is the source file, not a piece type.
     pieceType = 'p';
-    offset = 0;
+    sourceFile = rest.charCodeAt(0) - 97;
     // Reset rest to empty since the entire string was just the destination
     rest = '';
   }
@@ -220,12 +220,18 @@ function parseSANMove(
 
       // Apply disambiguation filters
       let matches = true;
+      // Source file from pawn move (e.g. "d4" → pawn on d-file)
+      if (sourceFile !== null && c !== sourceFile) {
+        matches = false;
+      }
+      // File disambiguation (e.g. "Rdxe4" → R on d-file)
       if (disambig.includes('a') || disambig.includes('b') || disambig.includes('c') ||
           disambig.includes('d') || disambig.includes('e') || disambig.includes('f') ||
           disambig.includes('g') || disambig.includes('h')) {
         const expectedCol = disambig.charCodeAt(0) - 97;
         if (c !== expectedCol) matches = false;
       }
+      // Rank disambiguation (e.g. "R1e4" → R on 1st rank)
       if (disambig.match(/\d/)) {
         const expectedRow = 8 - parseInt(disambig, 10);
         if (r !== expectedRow) matches = false;
