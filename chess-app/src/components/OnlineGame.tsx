@@ -6,7 +6,7 @@ import Clock from './Clock';
 import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
 import EvalBar from './EvalBar';
-import type { Coord, ChessMove } from '../engine';
+import type { Coord } from '../engine';
 
 interface OnlineGameProps {
   onBackToLobby: () => void;
@@ -26,7 +26,6 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
   const [board, setBoard] = useState<number[][]>(() => Array.from({ length: 8 }, () => Array(8).fill(0)));
   const [selectedSquare, setSelectedSquare] = useState<Coord | null>(null);
-  const [legalMoves, setLegalMoves] = useState<ChessMove[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [gameStatus, setGameStatus] = useState<'normal' | 'check' | 'checkmate' | 'stalemate' | 'white_time_win' | 'black_time_win'>('normal');
   const [moveHistory, setMoveHistory] = useState<string[]>([]);
@@ -95,36 +94,20 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       (myColor.current === 'white' ? (piece >= 1 && piece <= 6) : (piece >= 7 && piece <= 12));
 
     if (selectedSquare) {
-      // Try to move
-      const move = legalMoves.find(
-        (m) => m.to.row === row && m.to.col === col
-      );
-      if (move) {
-        const uci = `${String.fromCharCode(97 + move.from.col)}${8 - move.from.row}${String.fromCharCode(97 + move.to.col)}${8 - move.to.row}${move.promotion || ''}`;
-        if (onlineGame?.gameId) {
-          sendMove(uci, onlineGame.gameId);
-        }
-        setSelectedSquare(null);
-        setLegalMoves([]);
-        return;
+      // Try to move — compute UCI directly from selected → target squares
+      const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}`;
+      if (onlineGame?.gameId) {
+        sendMove(uci, onlineGame.gameId);
       }
-
-      // Select different piece
-      if (isMyPiece) {
-        setSelectedSquare({ row, col });
-        // We can't compute legal moves without the full game context,
-        // so we'll just allow any move attempt to the server
-        setLegalMoves([]);
-      } else {
-        setSelectedSquare(null);
-        setLegalMoves([]);
-      }
-    } else {
-      if (isMyPiece) {
-        setSelectedSquare({ row, col });
-      }
+      setSelectedSquare(null);
+      return;
     }
-  }, [board, selectedSquare, legalMoves, gameOver, onlineGame?.gameId, sendMove]);
+
+    // Select a piece
+    if (isMyPiece) {
+      setSelectedSquare({ row, col });
+    }
+  }, [board, selectedSquare, gameOver, onlineGame?.gameId, sendMove]);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
