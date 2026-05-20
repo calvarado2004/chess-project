@@ -203,6 +203,10 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     const isMyPiece = piece !== undefined && piece !== 0 &&
       (myColor.current === 'white' ? (piece >= 1 && piece <= 6) : (piece >= 7 && piece <= 12));
 
+    // Only allow selecting/moving if it's my turn (same as local game)
+    const isMyTurn = onlineGame?.turn === (myColor.current === 'white' ? 'w' : 'b');
+    if (!isMyTurn && !selectedSquare) return;
+
     if (selectedSquare) {
       // Check if this is a legal move target
       const isLegalTarget = legalMovesForSelected.some(m => m.to.row === row && m.to.col === col);
@@ -211,7 +215,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         if (onlineGame?.gameId) {
           sendMove(uci, onlineGame.gameId);
         }
-      } else if (isMyPiece) {
+      } else if (isMyPiece && isMyTurn) {
         // Switch selection to the newly clicked piece
         setSelectedSquare({ row, col });
         try {
@@ -237,15 +241,15 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
           setLegalMovesForSelected([]);
         }
       } else {
-        // Clicked empty square or opponent piece — deselect
+        // Clicked empty square, opponent piece, or not my turn — deselect
         setSelectedSquare(null);
         setLegalMovesForSelected([]);
       }
       return;
     }
 
-    // Select a piece — compute legal moves
-    if (isMyPiece) {
+    // Select a piece — only if it's my turn (same as local game)
+    if (isMyPiece && isMyTurn) {
       setSelectedSquare({ row, col });
       try {
         const moveCtx = {
@@ -269,6 +273,10 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       } catch {
         setLegalMovesForSelected([]);
       }
+    } else if (selectedSquare) {
+      // Not my piece or not my turn — deselect
+      setSelectedSquare(null);
+      setLegalMovesForSelected([]);
     }
   }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, enPassantTarget, castlingRights, sendMove]);
 
@@ -323,7 +331,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   }, [onlineGame?.moveHistory, gameOver, gameStatus, whiteName, blackName]);
 
   return (
-    <div id="app" style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
+    <div id="app">
       {/* Notification */}
       {notification && (
         <div style={{
@@ -362,106 +370,73 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-        {/* Left sidebar */}
-        <div className="sidebar-left" style={{ width: '180px' }}>
-          <EvalBar eval={engineEval} engineStatus={engineStatus} />
-          <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
-        </div>
+      <div className="sidebar-left">
+        <EvalBar eval={engineEval} engineStatus={engineStatus} />
+        <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
+      </div>
 
-        {/* Main column */}
-        <div className="main-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Clock
-            color="black"
-            name={blackName}
-            timeFormatted={formatTime(clockDisplay.black)}
-            isActive={onlineGame?.turn === 'b' && onlineGame?.status === 'playing'}
-            icon="♚"
-          />
+      <div className="main-col">
+        <Clock color="black" name={blackName} timeFormatted={formatTime(clockDisplay.black)} isActive={onlineGame?.turn === 'b' && onlineGame?.status === 'playing'} icon="♚" />
 
-          {/* Status bar */}
-          {gameOver ? (
-            <div style={{
-              padding: '8px 16px', background: '#45475a', borderRadius: '6px',
-              marginBottom: '8px', color: '#cdd6f4', fontWeight: 600,
-            }}>
-              Game Over
-            </div>
-          ) : isMyTurn ? (
-            <div style={{
-              padding: '8px 16px', background: '#a6e3a133', border: '1px solid #a6e3a1',
-              borderRadius: '6px', marginBottom: '8px', color: '#a6e3a1', fontWeight: 600,
-            }}>
-              Your turn
-            </div>
-          ) : (
-            <div style={{
-              padding: '8px 16px', background: '#45475a', borderRadius: '6px',
-              marginBottom: '8px', color: '#a6adc8',
-            }}>
-              Opponent thinking...
-            </div>
-          )}
-
-          <Board
-            state={useMemo(() => ({
-              board,
-              turn: onlineGame?.turn ?? 'w',
-              selectedSquare,
-              legalMovesForSelected,
-              lastMove,
-              moveHistory: [],
-              capturedByWhite,
-              capturedByBlack,
-              gameOver,
-              gameStatus,
-              enPassantTarget,
-              castlingRights,
-            }), [board, onlineGame?.turn, selectedSquare, legalMovesForSelected, lastMove, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights])}
-            onSelectSquare={handleSelectSquare}
-          />
-
-          <Clock
-            color="white"
-            name={whiteName}
-            timeFormatted={formatTime(clockDisplay.white)}
-            isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'}
-            icon="♔"
-          />
-
-          {/* Controls */}
+        {/* Status bar */}
+        {gameOver ? (
           <div style={{
-            display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap', justifyContent: 'center',
+            padding: '8px 16px', background: '#45475a', borderRadius: '6px',
+            marginBottom: '8px', color: '#cdd6f4', fontWeight: 600,
           }}>
-            {!gameOver && onlineGame?.status === 'playing' && (
-              <>
-                <button className="btn" onClick={handleResign} style={{ background: '#f38ba8' }}>
-                  Resign
-                </button>
-                {!drawOffered && !drawReceived && isMyTurn && (
-                  <button className="btn" onClick={handleDrawOffer}>
-                    Draw
-                  </button>
-                )}
-              </>
-            )}
-            <button className="btn" onClick={onBackToLobby}>
-              Back to Lobby
-            </button>
+            Game Over
           </div>
-        </div>
+        ) : isMyTurn ? (
+          <div style={{
+            padding: '8px 16px', background: '#a6e3a133', border: '1px solid #a6e3a1',
+            borderRadius: '6px', marginBottom: '8px', color: '#a6e3a1', fontWeight: 600,
+          }}>
+            Your turn
+          </div>
+        ) : (
+          <div style={{
+            padding: '8px 16px', background: '#45475a', borderRadius: '6px',
+            marginBottom: '8px', color: '#a6adc8',
+          }}>
+            Opponent thinking...
+          </div>
+        )}
 
-        {/* Right sidebar */}
-        <div className="sidebar-right" style={{ width: '200px' }}>
-          <div className="panel">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <h3 style={{ margin: 0 }}>Moves</h3>
-              <button className="btn" onClick={handleSavePGN} style={{ padding: '4px 10px', fontSize: '12px' }}>
-                Save PGN
+        <Board state={{ board, turn: onlineGame?.turn ?? 'w', selectedSquare, legalMovesForSelected, lastMove, moveHistory: [], capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={handleSelectSquare} />
+
+        <Clock color="white" name={whiteName} timeFormatted={formatTime(clockDisplay.white)} isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'} icon="♔" />
+
+        {/* Controls */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {!gameOver && onlineGame?.status === 'playing' && (
+            <>
+              <button className="btn" onClick={handleResign} style={{ background: '#f38ba8' }}>
+                Resign
               </button>
-            </div>
-            <MoveHistory moves={onlineGame?.moveHistory ?? []} />
-          </div>
+              {!drawOffered && !drawReceived && isMyTurn && (
+                <button className="btn" onClick={handleDrawOffer}>
+                  Draw
+                </button>
+              )}
+            </>
+          )}
+          <button className="btn" onClick={onBackToLobby}>
+            Back to Lobby
+          </button>
+        </div>
+      </div>
+
+      <div className="sidebar-right">
+        <div className="panel">
+          <h3>Move History</h3>
+          <MoveHistory moves={onlineGame?.moveHistory ?? []} />
+          <button onClick={handleSavePGN} style={{
+            width: '100%', marginTop: '12px', padding: '8px', fontSize: '13px',
+            fontWeight: 600, background: '#89b4fa', color: '#1e1e2e',
+            border: 'none', borderRadius: '6px', cursor: 'pointer',
+          }}>
+            💾 Save PGN
+          </button>
         </div>
       </div>
     </div>
