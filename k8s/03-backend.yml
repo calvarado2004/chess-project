@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: chess-project-backend:latest
+          image: image-registry.openshift-image-registry.svc:5000/chess-project/backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

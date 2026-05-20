@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: chess
-          image: chess-project-chess:latest
+          image: image-registry.openshift-image-registry.svc:5000/chess-project/chess:latest
           imagePullPolicy: Always
           env:
             - name: BACKEND_HOST
