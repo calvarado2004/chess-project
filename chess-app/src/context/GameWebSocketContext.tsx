@@ -38,30 +38,40 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     });
 
     chessWs.on('game_created', (msg) => {
-      const payload = msg.payload as { gameId: string; waiting: boolean };
+      const payload = msg.payload as { gameId: string; waiting: boolean; timeControl?: number; color?: 'white' | 'black' };
+      const tc = payload.timeControl ?? 600;
       setOnlineGame({
         gameId: payload.gameId,
         white: null,
         black: null,
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         turn: 'w',
-        whiteTime: 600,
-        blackTime: 600,
+        whiteTime: tc,
+        blackTime: tc,
         status: 'waiting',
+        playerColor: payload.color,
       });
     });
 
     chessWs.on('game_joined', (msg) => {
-      const payload = msg.payload as { gameId: string };
+      const payload = msg.payload as {
+        gameId: string; timeControl?: number; increment?: number;
+        requesterColor?: 'white' | 'black'; matchColor?: 'white' | 'black';
+      };
+      const tc = payload.timeControl ?? 600;
+      // requesterColor is the color of the player who created the game
+      // The current player gets the opposite color
+      const playerColor = payload.requesterColor === 'white' ? 'black' : 'white';
       setOnlineGame({
         gameId: payload.gameId,
         white: null,
         black: null,
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         turn: 'w',
-        whiteTime: 600,
-        blackTime: 600,
+        whiteTime: tc,
+        blackTime: tc,
         status: 'waiting',
+        playerColor,
       });
     });
 
@@ -81,7 +91,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         capturedByBlack?: number[];
       };
 
-      setOnlineGame({
+      setOnlineGame((prev) => ({
         gameId: payload.gameId,
         white: payload.whitePlayer ? {
           id: payload.whitePlayer.id,
@@ -99,7 +109,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         blackTime: payload.blackTime,
         status: payload.status === 'paused' ? 'playing' : payload.status,
         lastMove: payload.lastMove,
-      });
+        playerColor: prev?.playerColor, // preserve playerColor from game_created/game_joined
+      }));
     });
 
     chessWs.on('game_over', (msg) => {

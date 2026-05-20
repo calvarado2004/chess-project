@@ -172,7 +172,7 @@ export class WsGameServer {
           // No match — create room and wait
           const gameId = this.createWaitingRoom(userId, username, color, timeControl, increment, send);
           if (gameId) {
-            send({ type: 'game_created', payload: { gameId, waiting: true }, gameId });
+            send({ type: 'game_created', payload: { gameId, waiting: true, timeControl, color }, gameId });
           }
         }
         break;
@@ -365,9 +365,13 @@ export class WsGameServer {
     this.playerRooms.set(entry.playerId, gameId);
 
     // Send game joined to both
-    const msg: WsMessage = { type: 'game_joined', payload: { gameId }, gameId };
-    requesterWs.send(JSON.stringify(msg));
-    entryWs.send(JSON.stringify(msg));
+    const gameJoinedMsg: WsMessage = {
+      type: 'game_joined',
+      payload: { gameId, timeControl, increment, requesterColor, matchColor },
+      gameId,
+    };
+    requesterWs.send(JSON.stringify(gameJoinedMsg));
+    entryWs.send(JSON.stringify(gameJoinedMsg));
 
     this.broadcastLobby();
   }

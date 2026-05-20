@@ -47,14 +47,16 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     const newBoard = parseFENBoard(onlineGame.fen);
     setBoard(newBoard);
 
-    // Determine my color
-    if (user && onlineGame.white && onlineGame.black) {
+    // Determine my color from playerColor or from player IDs
+    if (onlineGame.playerColor) {
+      myColor.current = onlineGame.playerColor;
+    } else if (user && onlineGame.white && onlineGame.black) {
       myColor.current = onlineGame.white.id === user.id ? 'white' : 'black';
     }
 
     // Parse move history from FEN is complex; use a simpler approach
     // We'll track moves as they come
-  }, [onlineGame?.fen, user?.id, onlineGame?.white?.id, onlineGame?.black?.id]);
+  }, [onlineGame?.fen, user?.id, onlineGame?.white?.id, onlineGame?.black?.id, onlineGame?.playerColor]);
 
   // Game over detection
   useEffect(() => {
