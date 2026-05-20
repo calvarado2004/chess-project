@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GameWebSocketProvider } from './context/GameWebSocketContext';
@@ -49,6 +49,7 @@ function AppRoutes() {
 
 function MainApp() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -65,7 +66,30 @@ function MainApp() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '12px 24px', background: '#1e1e2e', borderBottom: '1px solid #313244',
         }}>
-          <h1 style={{ margin: 0, fontSize: '20px', color: '#89b4fa' }}>♔ Chess</h1>
+          {/* Knight icon — clickable, goes home */}
+          <button
+            onClick={() => { navigate('/'); window.location.href = '/'; }}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
+              display: 'flex', alignItems: 'center', gap: '10px',
+            }}
+            title="Home"
+          >
+            <svg width="32" height="32" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M22 10C32.5 11 38.5 18 38 39H15C15 30 25 32.5 23 18"
+                fill="#89b4fa"
+              />
+              <path
+                d="M24 18C24.38 20.91 18.45 25.37 16 27C13 29 13.18 31.34 11 31C9.958 30.06 12.41 27.96 11 28C10 28 11.19 29.23 10 30C9 30 5.997 31 6 26C6 24 12 14 12 14C12 14 13.89 12.1 14 10.5C13.27 9.506 13.5 8.5 13.5 7.5C14.5 6.5 16.5 10 16.5 10L18.5 10C18.5 10 19.28 8.008 21 7C22 7 22 10 22 10"
+                fill="#89b4fa"
+              />
+              <circle cx="9.5" cy="25.5" r="1" fill="#1e1e2e" />
+              <ellipse cx="15" cy="15.5" rx="0.5" ry="1.5" fill="#1e1e2e"
+                transform="matrix(0.866 0.5 -0.5 0.866 9.693 -5.173)"
+              />
+            </svg>
+          </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {/* Avatar in top bar */}
             <img
