@@ -7,6 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "test:integration": "tsx --test tests/*.integration.ts",
     "migrate": "tsx src/db/migrate.ts"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "uuid": "^10.0.0",

@@ -1,34 +1,56 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 import jwt from 'jsonwebtoken';
 import { URL } from 'url';
-import { LobbyManager, buildLobbyStatePayload } from './lobby.js';
+import { Redis } from 'ioredis';
+import { v4 as uuidv4 } from 'uuid';
 import { GameRoom } from './rooms.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
+const REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
+const LOBBY_KEY = 'chess:lobby';
+const LOBBY_BROADCAST = 'chess:lobby:broadcast';
+const PLAYER_ROOM_KEY = 'chess:player_rooms';
 export class WsGameServer {
     wss;
-    lobby = new LobbyManager();
+    redis;
+    subscriber;
+    podId = process.env.HOSTNAME || uuidv4();
+    podChannel = `chess:pod:${this.podId}`;
     rooms = new Map();
-    playerRooms = new Map(); // playerId -> gameId
+    localClients = new Map();
+    playerRooms = new Map();
     constructor(server) {
-        this.wss = new WebSocketServer({
-            server,
-            path: '/ws',
-        });
+        this.redis = new Redis(REDIS_URL, { lazyConnect: false });
+        this.subscriber = new Redis(REDIS_URL, { lazyConnect: false });
+        this.setupRedisSubscriptions();
+        this.wss = new WebSocketServer({ server, path: '/ws' });
         this.wss.on('connection', (ws, req) => {
             this.handleConnection(ws, req);
         });
-        console.log('[WS] WebSocket server initialized on /ws');
+        console.log(`[WS] WebSocket server initialized on /ws, pod=${this.podId}`);
+    }
+    setupRedisSubscriptions() {
+        this.subscriber.subscribe(this.podChannel, LOBBY_BROADCAST).catch((err) => {
+            console.error('[WS] Redis subscribe failed:', err);
+        });
+        this.subscriber.on('message', (channel, data) => {
+            try {
+                if (channel === LOBBY_BROADCAST) {
+                    void this.broadcastLobbyLocal();
+                    return;
+                }
+                if (channel === this.podChannel) {
+                    void this.handlePodMessage(JSON.parse(data));
+                }
+            }
+            catch (err) {
+                console.error('[WS] Failed to process Redis message:', err);
+            }
+        });
     }
     handleConnection(ws, req) {
         const url = new URL(req.url || '/ws', `http://localhost`);
         const token = url.searchParams.get('token');
-        // Auth callback
-        const send = (message) => {
-            if (ws.readyState === 1) {
-                ws.send(JSON.stringify(message));
-            }
-        };
-        // If no token provided, wait for auth message
+        const send = (message) => this.sendToSocket(ws, message);
         if (!token) {
             ws.once('message', (data) => {
                 try {
@@ -46,17 +68,15 @@ export class WsGameServer {
             });
             return;
         }
-        // Token in URL
         this.handleAuth(ws, token, send);
     }
     handleAuth(ws, token, send) {
         try {
             const decoded = jwt.verify(token, JWT_SECRET);
-            // Store user info on the WebSocket connection
             ws.userId = decoded.userId;
             ws.username = decoded.username;
+            this.localClients.set(decoded.userId, { ws, username: decoded.username });
             send({ type: 'auth_ok', payload: { message: 'Authenticated' } });
-            // Set up message handler
             this.setupMessageHandler(ws, send);
         }
         catch {
@@ -70,337 +90,411 @@ export class WsGameServer {
         ws.on('message', (data) => {
             try {
                 const msg = JSON.parse(data.toString());
-                this.handleMessage(ws, userId, username, msg, send);
+                void this.handleMessage(ws, userId, username, msg, send);
             }
-            catch {
+            catch (err) {
+                console.error('[WS] Error processing message:', err);
                 send({ type: 'error', payload: { message: 'Invalid message format' } });
             }
         });
-        ws.on('pong', () => {
-            // Client responded to heartbeat
-        });
         ws.on('close', () => {
-            this.handleDisconnect(userId, ws);
+            void this.handleDisconnect(userId);
         });
     }
-    handleMessage(ws, userId, username, msg, send) {
+    async handleMessage(ws, userId, username, msg, send) {
         switch (msg.type) {
             case 'pong':
-                break; // Heartbeat response, ignored
-            case 'lobby_join': {
-                const timeControl = msg.payload?.timeControl || 600;
-                const increment = msg.payload?.increment || 0;
-                const color = msg.payload?.color || 'any';
-                // Leave current room if in one
-                this.leaveRoom(userId, send);
-                // Join lobby
-                this.lobby.join({
-                    playerId: userId,
-                    username,
-                    displayName: username,
-                    color,
-                    timeControl,
-                    increment,
-                    ws,
+                break;
+            case 'lobby_join':
+                await this.leaveRoom(userId, send, false);
+                await this.joinLobby(userId, username, ws, msg.payload);
+                await this.publishLobby();
+                break;
+            case 'lobby_leave':
+                await this.leaveLobby(userId);
+                await this.publishLobby();
+                break;
+            case 'game_create':
+                await this.handleGameCreate(userId, username, msg.payload, send);
+                break;
+            case 'game_join':
+                await this.handleGameJoin(userId, username, msg.payload, send);
+                break;
+            case 'move':
+                await this.handleMove(userId, msg.payload.uci, send);
+                break;
+            case 'resign':
+                await this.handleRoomAction(userId, send, 'remote_resign', (room, color) => room.resign(color));
+                break;
+            case 'draw_offer':
+                await this.handleRoomAction(userId, send, 'remote_draw_offer', (room, color) => {
+                    if (room.state.drawOfferFrom) {
+                        send({ type: 'error', payload: { message: 'Draw already offered' } });
+                        return;
+                    }
+                    room.state.drawOfferFrom = color;
+                    const opponentColor = color === 'white' ? 'black' : 'white';
+                    const opponent = room.getPlayer(opponentColor);
+                    opponent?.ws.send(JSON.stringify({ type: 'draw_offer', payload: { from: color }, gameId: room.state.gameId }));
                 });
-                // Broadcast updated lobby to all
-                this.broadcastLobby();
                 break;
-            }
-            case 'lobby_leave': {
-                this.lobby.leave(userId);
-                this.broadcastLobby();
+            case 'draw_accept':
+                await this.handleRoomAction(userId, send, 'remote_draw_accept', (room, color) => {
+                    if (!room.state.drawOfferFrom || room.state.drawOfferFrom === color)
+                        return;
+                    room.acceptDraw();
+                });
                 break;
-            }
-            case 'game_create': {
-                const payload = msg.payload;
-                const timeControl = payload.timeControl || 600;
-                const increment = payload.increment || 0;
-                const color = payload.color || 'any';
-                // Try to find a matching player in lobby
-                const matchColor = color === 'white' ? 'black' : color === 'black' ? 'white' : null;
-                let match = null;
-                if (matchColor) {
-                    const entry = this.lobby.findMatchingPlayer(userId, matchColor, timeControl);
-                    if (entry) {
-                        match = { entry, theirColor: matchColor };
-                    }
-                }
-                if (match) {
-                    // Match found — create game
-                    this.createMatchedGame(userId, username, match.entry, match.theirColor, timeControl, increment, send);
-                }
-                else {
-                    // No match — create room and wait
-                    const gameId = this.createWaitingRoom(userId, username, color, timeControl, increment, send);
-                    if (gameId) {
-                        send({ type: 'game_created', payload: { gameId, waiting: true }, gameId });
-                    }
-                }
+            case 'draw_decline':
+                await this.handleRoomAction(userId, send, 'remote_draw_decline', (room) => {
+                    const offerFrom = room.state.drawOfferFrom;
+                    room.state.drawOfferFrom = null;
+                    if (!offerFrom)
+                        return;
+                    room.getPlayer(offerFrom)?.ws.send(JSON.stringify({ type: 'draw_decline', payload: {}, gameId: room.state.gameId }));
+                });
                 break;
-            }
-            case 'game_join': {
-                const payload = msg.payload;
-                const { gameId, color } = payload;
-                const entry = this.lobby.findByGameId(gameId);
-                if (!entry || entry.playerId === userId) {
-                    send({ type: 'error', payload: { message: 'Game not found or you are not in the lobby' } });
-                    return;
-                }
-                // Create matched game
-                this.createMatchedGame(userId, username, entry, color, entry.timeControl, entry.increment, send);
-                break;
-            }
-            case 'move': {
-                const payload = msg.payload;
-                const { uci } = payload;
-                const gameId = this.playerRooms.get(userId);
-                if (!gameId) {
-                    send({ type: 'error', payload: { message: 'Not in a game' } });
-                    return;
-                }
-                const room = this.rooms.get(gameId);
-                if (!room) {
-                    send({ type: 'error', payload: { message: 'Game not found' } });
-                    return;
-                }
-                // Determine player color
-                const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
-                if (!playerColor) {
-                    send({ type: 'error', payload: { message: 'You are not a player in this game' } });
-                    return;
-                }
-                const result = room.makeMove(playerColor, uci);
-                if (!result.success) {
-                    send({ type: 'error', payload: { message: result.message } });
-                }
-                break;
-            }
-            case 'resign': {
-                const gameId = this.playerRooms.get(userId);
-                if (!gameId) {
-                    send({ type: 'error', payload: { message: 'Not in a game' } });
-                    return;
-                }
-                const room = this.rooms.get(gameId);
-                if (!room)
-                    return;
-                const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
-                if (!playerColor) {
-                    send({ type: 'error', payload: { message: 'You are not a player in this game' } });
-                    return;
-                }
-                room.resign(playerColor);
-                break;
-            }
-            case 'draw_offer': {
-                const gameId = this.playerRooms.get(userId);
-                if (!gameId)
-                    return;
-                const room = this.rooms.get(gameId);
-                if (!room)
-                    return;
-                const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
-                if (!playerColor)
-                    return;
-                if (room.state.drawOfferFrom) {
-                    send({ type: 'error', payload: { message: 'Draw already offered' } });
-                    return;
-                }
-                room.state.drawOfferFrom = playerColor;
-                const opponentColor = playerColor === 'white' ? 'black' : 'white';
-                const opponent = room.getPlayer(opponentColor);
-                if (opponent?.ws.readyState === 1) {
-                    opponent.ws.send(JSON.stringify({
-                        type: 'draw_offer',
-                        payload: { from: playerColor },
-                        gameId,
-                    }));
-                }
-                break;
-            }
-            case 'draw_accept': {
-                const gameId = this.playerRooms.get(userId);
-                if (!gameId)
-                    return;
-                const room = this.rooms.get(gameId);
-                if (!room || !room.state.drawOfferFrom)
-                    return;
-                const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
-                if (!playerColor || room.state.drawOfferFrom === playerColor)
-                    return;
-                room.acceptDraw();
-                break;
-            }
-            case 'draw_decline': {
-                const gameId = this.playerRooms.get(userId);
-                if (!gameId)
-                    return;
-                const room = this.rooms.get(gameId);
-                if (!room)
-                    return;
-                room.state.drawOfferFrom = null;
-                break;
-            }
             default:
                 send({ type: 'error', payload: { message: `Unknown message type: ${msg.type}` } });
         }
     }
-    createMatchedGame(requesterId, requesterName, entry, matchColor, timeControl, increment, send) {
+    async joinLobby(playerId, username, ws, payload) {
+        const gameId = uuidv4();
+        const entry = {
+            playerId,
+            username,
+            displayName: username,
+            color: payload.color || 'any',
+            timeControl: payload.timeControl || 600,
+            increment: payload.increment || 0,
+            gameId,
+            podId: this.podId,
+            createdAt: Date.now(),
+        };
+        this.localClients.set(playerId, { ws, username });
+        await this.redis.hset(LOBBY_KEY, playerId, JSON.stringify(entry));
+        return gameId;
+    }
+    async leaveLobby(playerId) {
+        await this.redis.hdel(LOBBY_KEY, playerId);
+    }
+    async handleGameCreate(userId, username, payload, send) {
+        const timeControl = payload.timeControl || 600;
+        const increment = payload.increment || 0;
+        const requestedColor = payload.color || 'any';
+        const matchColor = requestedColor === 'white' ? 'black' : requestedColor === 'black' ? 'white' : null;
+        const match = matchColor ? await this.findMatchingLobbyEntry(userId, matchColor, timeControl) : null;
+        if (match) {
+            await this.createMatchedGame(userId, username, match, matchColor, timeControl, increment, send);
+            return;
+        }
+        const ws = this.findWsForPlayer(userId);
+        if (!ws) {
+            send({ type: 'error', payload: { message: 'Could not find player connection' } });
+            return;
+        }
+        const gameId = await this.joinLobby(userId, username, ws, {
+            color: requestedColor,
+            timeControl,
+            increment,
+        });
+        send({ type: 'game_created', payload: { gameId, waiting: true, timeControl, color: requestedColor }, gameId });
+        await this.publishLobby();
+    }
+    async handleGameJoin(userId, username, payload, send) {
+        const entry = await this.findLobbyEntryByGameId(payload.gameId);
+        if (!entry || entry.playerId === userId) {
+            send({ type: 'error', payload: { message: 'Game not found or you are not in the lobby' } });
+            return;
+        }
+        await this.createMatchedGame(userId, username, entry, payload.color, entry.timeControl, entry.increment, send);
+    }
+    async createMatchedGame(requesterId, requesterName, entry, matchColor, timeControl, increment, send) {
         const gameId = entry.gameId;
         const requesterColor = matchColor === 'white' ? 'black' : 'white';
-        // Remove both from lobby
-        this.lobby.leave(requesterId);
-        this.lobby.leave(entry.playerId);
-        // Create room
+        const requesterWs = this.findWsForPlayer(requesterId);
+        if (!requesterWs) {
+            send({ type: 'error', payload: { message: 'Could not find player connection' } });
+            return;
+        }
+        const entryWs = entry.podId === this.podId
+            ? this.findWsForPlayer(entry.playerId)
+            : this.createRemoteSocket(entry.playerId, entry.podId);
+        if (!entryWs) {
+            send({ type: 'error', payload: { message: 'Could not find opponent connection' } });
+            return;
+        }
+        await this.redis.hdel(LOBBY_KEY, requesterId, entry.playerId);
         const room = new GameRoom(gameId, timeControl, timeControl, increment);
-        const whitePlayer = {
-            id: requesterColor === 'white' ? requesterId : entry.playerId,
-            username: requesterColor === 'white' ? requesterName : entry.username,
-            displayName: requesterColor === 'white' ? requesterName : entry.displayName,
-            color: requesterColor,
-            ws: requesterColor === 'white' ? this.wss.clients.values().next().value : entry.ws,
+        if (requesterColor === 'white') {
+            room.setPlayer('white', this.createRoomPlayer(requesterId, requesterName, 'white', requesterWs, timeControl));
+            room.setPlayer('black', this.createRoomPlayer(entry.playerId, entry.username, 'black', entryWs, timeControl));
+        }
+        else {
+            room.setPlayer('white', this.createRoomPlayer(entry.playerId, entry.username, 'white', entryWs, timeControl));
+            room.setPlayer('black', this.createRoomPlayer(requesterId, requesterName, 'black', requesterWs, timeControl));
+        }
+        this.rooms.set(gameId, room);
+        await this.setPlayerRoom(requesterId, { gameId, ownerPodId: this.podId });
+        await this.setPlayerRoom(entry.playerId, { gameId, ownerPodId: this.podId }, entry.podId);
+        const requesterMsg = {
+            type: 'game_joined',
+            payload: { gameId, timeControl, increment, requesterColor, matchColor, playerColor: requesterColor },
+            gameId,
+        };
+        const entryMsg = {
+            type: 'game_joined',
+            payload: { gameId, timeControl, increment, requesterColor, matchColor, playerColor: matchColor },
+            gameId,
+        };
+        this.sendToSocket(requesterWs, requesterMsg);
+        entryWs.send(JSON.stringify(entryMsg));
+        await this.publishLobby();
+    }
+    createRoomPlayer(id, username, color, ws, timeControl) {
+        return {
+            id,
+            username,
+            displayName: username,
+            color,
+            ws,
             timeLeft: timeControl,
             connected: true,
             disconnectTimer: null,
         };
-        // Actually set up players properly
-        const requesterWs = this.findWsForPlayer(requesterId);
-        const entryWs = this.findWsForPlayer(entry.playerId);
-        if (!requesterWs || !entryWs) {
-            send({ type: 'error', payload: { message: 'Could not find player connections' } });
+    }
+    async handleMove(userId, uci, send) {
+        const roomRef = await this.getPlayerRoom(userId);
+        if (!roomRef) {
+            send({ type: 'error', payload: { message: 'Not in a game' } });
             return;
         }
-        if (requesterColor === 'white') {
-            room.setPlayer('white', {
-                id: requesterId, username: requesterName, displayName: requesterName,
-                color: 'white', ws: requesterWs, timeLeft: timeControl, connected: true, disconnectTimer: null,
-            });
-            room.setPlayer('black', {
-                id: entry.playerId, username: entry.username, displayName: entry.displayName,
-                color: 'black', ws: entryWs, timeLeft: timeControl, connected: true, disconnectTimer: null,
-            });
+        if (roomRef.ownerPodId !== this.podId) {
+            await this.publishToPod(roomRef.ownerPodId, { type: 'remote_move', userId, gameId: roomRef.gameId, uci });
+            return;
+        }
+        this.applyMoveToLocalRoom(userId, roomRef.gameId, uci, send);
+    }
+    applyMoveToLocalRoom(userId, gameId, uci, send) {
+        const room = this.rooms.get(gameId);
+        if (!room) {
+            send({ type: 'error', payload: { message: 'Game not found' } });
+            return;
+        }
+        const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
+        if (!playerColor) {
+            send({ type: 'error', payload: { message: 'You are not a player in this game' } });
+            return;
+        }
+        const result = room.makeMove(playerColor, uci);
+        if (!result.success) {
+            send({ type: 'error', payload: { message: result.message } });
+        }
+    }
+    async handleRoomAction(userId, send, remoteType, localAction) {
+        const roomRef = await this.getPlayerRoom(userId);
+        if (!roomRef) {
+            send({ type: 'error', payload: { message: 'Not in a game' } });
+            return;
+        }
+        if (roomRef.ownerPodId !== this.podId) {
+            await this.publishToPod(roomRef.ownerPodId, { type: remoteType, userId, gameId: roomRef.gameId });
+            return;
+        }
+        const room = this.rooms.get(roomRef.gameId);
+        if (!room)
+            return;
+        const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
+        if (!playerColor)
+            return;
+        localAction(room, playerColor);
+    }
+    async handlePodMessage(message) {
+        if (message.type === 'send') {
+            const client = this.localClients.get(message.userId);
+            if (client?.ws.readyState === WebSocket.OPEN)
+                client.ws.send(message.data);
+            return;
+        }
+        if (message.type === 'set_player_room') {
+            this.playerRooms.set(message.userId, message.room);
+            return;
+        }
+        if (message.type === 'clear_player_room') {
+            this.playerRooms.delete(message.userId);
+            return;
+        }
+        const send = (msg) => {
+            const client = this.localClients.get(message.userId);
+            if (client)
+                this.sendToSocket(client.ws, msg);
+        };
+        if (message.type === 'remote_move') {
+            this.applyMoveToLocalRoom(message.userId, message.gameId, message.uci, send);
+            return;
+        }
+        const room = this.rooms.get(message.gameId);
+        if (!room)
+            return;
+        const color = room.state.white?.id === message.userId ? 'white' : room.state.black?.id === message.userId ? 'black' : null;
+        if (!color)
+            return;
+        if (message.type === 'remote_resign')
+            room.resign(color);
+        if (message.type === 'remote_draw_offer') {
+            room.state.drawOfferFrom = color;
+            room.getPlayer(color === 'white' ? 'black' : 'white')?.ws.send(JSON.stringify({
+                type: 'draw_offer',
+                payload: { from: color },
+                gameId: message.gameId,
+            }));
+        }
+        if (message.type === 'remote_draw_accept' && room.state.drawOfferFrom && room.state.drawOfferFrom !== color)
+            room.acceptDraw();
+        if (message.type === 'remote_draw_decline') {
+            const offerFrom = room.state.drawOfferFrom;
+            room.state.drawOfferFrom = null;
+            if (offerFrom) {
+                room.getPlayer(offerFrom)?.ws.send(JSON.stringify({ type: 'draw_decline', payload: {}, gameId: message.gameId }));
+            }
+        }
+    }
+    createRemoteSocket(userId, podId) {
+        return {
+            readyState: WebSocket.OPEN,
+            send: (data) => {
+                const payload = typeof data === 'string' ? data : data.toString();
+                void this.publishToPod(podId, { type: 'send', userId, data: payload });
+            },
+        };
+    }
+    async findMatchingLobbyEntry(requesterId, color, timeControl) {
+        const entries = await this.getLobbyEntries();
+        return entries.find((entry) => entry.playerId !== requesterId &&
+            (entry.color === color || entry.color === 'any') &&
+            entry.timeControl === timeControl) || null;
+    }
+    async findLobbyEntryByGameId(gameId) {
+        const entries = await this.getLobbyEntries();
+        return entries.find((entry) => entry.gameId === gameId) || null;
+    }
+    async getLobbyEntries() {
+        const rawEntries = await this.redis.hvals(LOBBY_KEY);
+        return rawEntries.map((entry) => JSON.parse(entry));
+    }
+    async publishLobby() {
+        await this.redis.publish(LOBBY_BROADCAST, String(Date.now()));
+        await this.broadcastLobbyLocal();
+    }
+    async broadcastLobbyLocal() {
+        const players = (await this.getLobbyEntries()).map((entry) => ({
+            id: entry.playerId,
+            username: entry.username,
+            displayName: entry.displayName,
+            color: entry.color,
+            timeControl: entry.timeControl,
+            increment: entry.increment,
+            gameId: entry.gameId,
+        }));
+        const message = { type: 'lobby_state', payload: { players } };
+        this.broadcastLocal(message);
+    }
+    async getPlayerRoom(userId) {
+        const local = this.playerRooms.get(userId);
+        if (local)
+            return local;
+        const raw = await this.redis.hget(PLAYER_ROOM_KEY, userId);
+        if (!raw)
+            return null;
+        const room = JSON.parse(raw);
+        this.playerRooms.set(userId, room);
+        return room;
+    }
+    async setPlayerRoom(userId, room, podId = this.podId) {
+        await this.redis.hset(PLAYER_ROOM_KEY, userId, JSON.stringify(room));
+        if (podId === this.podId) {
+            this.playerRooms.set(userId, room);
         }
         else {
-            room.setPlayer('white', {
-                id: entry.playerId, username: entry.username, displayName: entry.displayName,
-                color: 'white', ws: entryWs, timeLeft: timeControl, connected: true, disconnectTimer: null,
-            });
-            room.setPlayer('black', {
-                id: requesterId, username: requesterName, displayName: requesterName,
-                color: 'black', ws: requesterWs, timeLeft: timeControl, connected: true, disconnectTimer: null,
-            });
+            await this.publishToPod(podId, { type: 'set_player_room', userId, room });
         }
-        this.rooms.set(gameId, room);
-        this.playerRooms.set(requesterId, gameId);
-        this.playerRooms.set(entry.playerId, gameId);
-        // Send game joined to both
-        const msg = { type: 'game_joined', payload: { gameId }, gameId };
-        requesterWs.send(JSON.stringify(msg));
-        entryWs.send(JSON.stringify(msg));
-        this.broadcastLobby();
     }
-    createWaitingRoom(playerId, username, color, timeControl, increment, send) {
-        const gameId = this.lobby.findWaitingGame(color, timeControl);
-        if (gameId) {
-            // There's a waiting game — join it
-            const entry = this.lobby.findByGameId(gameId);
-            if (entry && entry.playerId !== playerId) {
-                const matchColor = color === 'white' ? 'black' : 'white';
-                this.createMatchedGame(playerId, username, entry, matchColor, timeControl, increment, send);
-                return null;
-            }
+    async clearPlayerRoom(userId, podId = this.podId) {
+        await this.redis.hdel(PLAYER_ROOM_KEY, userId);
+        if (podId === this.podId) {
+            this.playerRooms.delete(userId);
         }
-        // Create new waiting entry
-        const newGameId = this.lobby.join({
-            playerId,
-            username,
-            displayName: username,
-            color,
-            timeControl,
-            increment,
-            ws: this.findWsForPlayer(playerId),
-        });
-        return newGameId;
+        else {
+            await this.publishToPod(podId, { type: 'clear_player_room', userId });
+        }
     }
-    leaveRoom(playerId, send) {
-        const gameId = this.playerRooms.get(playerId);
-        if (!gameId)
+    async leaveRoom(userId, send, resign = true) {
+        const roomRef = await this.getPlayerRoom(userId);
+        if (!roomRef)
             return;
-        const room = this.rooms.get(gameId);
-        if (room) {
-            const playerColor = room.state.white?.id === playerId ? 'white' : room.state.black?.id === playerId ? 'black' : null;
-            if (playerColor && room.state.status === 'playing') {
+        if (roomRef.ownerPodId !== this.podId) {
+            if (resign) {
+                await this.publishToPod(roomRef.ownerPodId, { type: 'remote_resign', userId, gameId: roomRef.gameId });
+            }
+            await this.clearPlayerRoom(userId);
+            return;
+        }
+        const room = this.rooms.get(roomRef.gameId);
+        if (room && resign) {
+            const playerColor = room.state.white?.id === userId ? 'white' : room.state.black?.id === userId ? 'black' : null;
+            if (playerColor && room.state.status === 'playing')
                 room.resign(playerColor);
-            }
-            room.cleanup();
-            this.rooms.delete(gameId);
         }
-        this.playerRooms.delete(playerId);
-        this.lobby.leave(playerId);
+        await this.clearPlayerRoom(userId);
+        send({ type: 'game_over', payload: { result: '0-1', reason: 'resign', fen: room?.state.fen || '' }, gameId: roomRef.gameId });
     }
-    handleDisconnect(playerId, ws) {
-        // Check if player is in a room
-        const gameId = this.playerRooms.get(playerId);
-        if (gameId) {
-            const room = this.rooms.get(gameId);
-            if (room) {
-                const playerColor = room.state.white?.id === playerId ? 'white' : room.state.black?.id === playerId ? 'black' : null;
-                if (playerColor) {
-                    room.handleDisconnect(playerColor);
-                }
-            }
+    async handleDisconnect(playerId) {
+        this.localClients.delete(playerId);
+        await this.leaveLobby(playerId);
+        await this.publishLobby();
+        const roomRef = await this.getPlayerRoom(playerId);
+        if (!roomRef)
+            return;
+        if (roomRef.ownerPodId === this.podId) {
+            const room = this.rooms.get(roomRef.gameId);
+            const playerColor = room?.state.white?.id === playerId ? 'white' : room?.state.black?.id === playerId ? 'black' : null;
+            if (room && playerColor)
+                room.handleDisconnect(playerColor);
         }
-        // Remove from lobby
-        this.lobby.leave(playerId);
-        this.broadcastLobby();
     }
     findWsForPlayer(playerId) {
-        for (const client of this.wss.clients) {
-            if (client.userId === playerId) {
-                return client;
-            }
-        }
-        return null;
+        return this.localClients.get(playerId)?.ws || null;
     }
-    broadcastLobby() {
-        const state = buildLobbyStatePayload(this.lobby.getState());
-        const message = { type: 'lobby_state', payload: state };
+    sendToSocket(ws, message) {
+        if (ws.readyState === WebSocket.OPEN)
+            ws.send(JSON.stringify(message));
+    }
+    broadcastLocal(message) {
         const data = JSON.stringify(message);
         for (const client of this.wss.clients) {
-            if (client.readyState === 1) {
+            if (client.readyState === WebSocket.OPEN)
                 client.send(data);
-            }
         }
     }
-    // Heartbeat
+    async publishToPod(podId, message) {
+        await this.redis.publish(`chess:pod:${podId}`, JSON.stringify(message));
+    }
     startHeartbeat(intervalMs = 30_000) {
         setInterval(() => {
             for (const client of this.wss.clients) {
-                if (client.readyState === 1) {
+                if (client.readyState === WebSocket.OPEN)
                     client.ping();
-                }
             }
         }, intervalMs);
     }
     cleanup() {
-        for (const room of this.rooms.values()) {
+        for (const room of this.rooms.values())
             room.cleanup();
-        }
         this.rooms.clear();
         this.playerRooms.clear();
-        this.lobby.clear();
         this.wss.close();
+        this.subscriber.disconnect();
+        this.redis.disconnect();
     }
 }
-LobbyManager.prototype.findWaitingGame = function (color, timeControl) {
-    for (const entry of this.entries.values()) {
-        if (entry.color === color || entry.color === 'any') {
-            if (entry.timeControl === timeControl) {
-                return entry.gameId;
-            }
-        }
-    }
-    return null;
-};
 //# sourceMappingURL=server.js.map

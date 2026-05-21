@@ -1,25 +1,44 @@
 export declare class WsGameServer {
     private wss;
-    private lobby;
+    private redis;
+    private subscriber;
+    private podId;
+    private podChannel;
     private rooms;
+    private localClients;
     private playerRooms;
     constructor(server: ReturnType<typeof import('http').createServer>);
+    private setupRedisSubscriptions;
     private handleConnection;
     private handleAuth;
     private setupMessageHandler;
     private handleMessage;
+    private joinLobby;
+    private leaveLobby;
+    private handleGameCreate;
+    private handleGameJoin;
     private createMatchedGame;
-    private createWaitingRoom;
+    private createRoomPlayer;
+    private handleMove;
+    private applyMoveToLocalRoom;
+    private handleRoomAction;
+    private handlePodMessage;
+    private createRemoteSocket;
+    private findMatchingLobbyEntry;
+    private findLobbyEntryByGameId;
+    private getLobbyEntries;
+    private publishLobby;
+    private broadcastLobbyLocal;
+    private getPlayerRoom;
+    private setPlayerRoom;
+    private clearPlayerRoom;
     private leaveRoom;
     private handleDisconnect;
     private findWsForPlayer;
-    private broadcastLobby;
+    private sendToSocket;
+    private broadcastLocal;
+    private publishToPod;
     startHeartbeat(intervalMs?: number): void;
     cleanup(): void;
-}
-declare module './lobby.js' {
-    interface LobbyManager {
-        findWaitingGame(color: 'white' | 'black' | 'any', timeControl: number): string | null;
-    }
 }
 //# sourceMappingURL=server.d.ts.map

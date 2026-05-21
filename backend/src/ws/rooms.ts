@@ -209,8 +209,7 @@ export class GameRoom {
     // Broadcast move to opponent
     const fromSq = rowColToFileRank(matchingMove.from.row, matchingMove.from.col);
     const toSq = rowColToFileRank(matchingMove.to.row, matchingMove.to.col);
-    const opponentColor = playerColor === 'white' ? 'black' : 'white';
-    this.broadcastToOpponent(opponentColor, {
+    this.broadcastToOpponent(playerColor, {
       type: 'opponent_move',
       payload: { uci, san, from: fromSq, to: toSq },
       gameId: this.state.gameId,

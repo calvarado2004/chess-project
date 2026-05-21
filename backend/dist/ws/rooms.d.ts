@@ -16,12 +16,15 @@ export declare class GameRoom {
     };
     private getAllLegalMoves;
     private isInCheck;
+    private getCapturedPieceForMove;
+    private buildSAN;
     private isSquareAttackedBy;
     private persistMove;
     resign(playerColor: 'white' | 'black'): void;
     acceptDraw(): void;
     private endGame;
     private persistGameResult;
+    private persistRatedGameHistory;
     private buildGameStateMessage;
     private broadcastToOpponent;
     broadcast(message: WsMessage): void;

@@ -1,5 +1,6 @@
 import { query } from '../db/index.js';
-import { createInitialState, getLegalMoves, applyMoveToBoard, cloneState, PIECE_TYPE, colorOf, rowColToFileRank, generateFEN, } from '../engine/index.js';
+import { recordGameResult } from '../services/gameHistoryService.js';
+import { createInitialState, getLegalMoves, applyMoveToBoard, cloneState, PIECE_TYPE, colorOf, FILES, RANKS, rowColToFileRank, generateFEN, } from '../engine/index.js';
 const DISCONNECT_TIMEOUT = 30_000; // 30 seconds grace period
 export class GameRoom {
     state;
@@ -23,6 +24,7 @@ export class GameRoom {
             createdAt: Date.now(),
             capturedByWhite: [],
             capturedByBlack: [],
+            moveHistory: [],
         };
         this.gameContext = createInitialState();
     }
@@ -97,6 +99,10 @@ export class GameRoom {
             toRank < 0 || toRank > 7) {
             return { success: false, message: 'Invalid square coordinates' };
         }
+        const sourcePiece = this.gameContext.board[fromRank]?.[fromFile] ?? 0;
+        if (sourcePiece === 0 || colorOf(sourcePiece) !== expectedColor) {
+            return { success: false, message: 'Illegal move' };
+        }
         // Deep clone game context for validation
         const cloned = cloneState(this.gameContext);
         // Find legal moves for the source square
@@ -109,6 +115,8 @@ export class GameRoom {
         if (!matchingMove) {
             return { success: false, message: 'Illegal move' };
         }
+        const capturedBefore = this.getCapturedPieceForMove(matchingMove);
+        let san = this.buildSAN(matchingMove, capturedBefore);
         // Apply the move and track captured piece
         const capturedPiece = applyMoveToBoard(cloned.board, matchingMove);
         if (capturedPiece !== 0) {
@@ -118,23 +126,6 @@ export class GameRoom {
             else {
                 this.state.capturedByBlack = [...(this.state.capturedByBlack || []), capturedPiece];
             }
-        }
-        // Build SAN-like notation
-        const fromSq = rowColToFileRank(matchingMove.from.row, matchingMove.from.col);
-        const toSq = rowColToFileRank(matchingMove.to.row, matchingMove.to.col);
-        let san = '';
-        if (matchingMove.castle === 'K')
-            san = 'O-O';
-        else if (matchingMove.castle === 'Q')
-            san = 'O-O-O';
-        else {
-            const piece = cloned.board[matchingMove.from.row][matchingMove.from.col];
-            const pType = PIECE_TYPE[piece];
-            if (pType !== 'p')
-                san += pType.toUpperCase();
-            san += fromSq + 'x' + toSq;
-            if (matchingMove.promotion)
-                san += '=' + matchingMove.promotion.toUpperCase();
         }
         // Switch turn
         cloned.turn = cloned.turn === 'w' ? 'b' : 'w';
@@ -152,13 +143,12 @@ export class GameRoom {
         this.state.turn = cloned.turn;
         this.state.lastMove = uci;
         this.state.moveNumber = cloned.fullmoveNumber;
-        // Persist move to DB
-        this.persistMove(uci, san, cloned.turn === 'w' ? 'b' : 'w');
         // Check game end conditions
         const allMoves = this.getAllLegalMoves(cloned.turn);
         if (allMoves.length === 0) {
             const inCheck = this.isInCheck(cloned.turn);
             if (inCheck) {
+                san += '#';
                 const winner = cloned.turn === 'w' ? '0-1' : '1-0';
                 this.endGame(winner, 'checkmate');
             }
@@ -166,9 +156,15 @@ export class GameRoom {
                 this.endGame('1/2-1/2', 'stalemate');
             }
         }
+        else if (this.isInCheck(cloned.turn)) {
+            san += '+';
+        }
+        // Persist move to DB
+        this.persistMove(uci, san, cloned.turn === 'w' ? 'b' : 'w');
         // Broadcast move to opponent
-        const opponentColor = playerColor === 'white' ? 'black' : 'white';
-        this.broadcastToOpponent(opponentColor, {
+        const fromSq = rowColToFileRank(matchingMove.from.row, matchingMove.from.col);
+        const toSq = rowColToFileRank(matchingMove.to.row, matchingMove.to.col);
+        this.broadcastToOpponent(playerColor, {
             type: 'opponent_move',
             payload: { uci, san, from: fromSq, to: toSq },
             gameId: this.state.gameId,
@@ -201,6 +197,53 @@ export class GameRoom {
             }
         }
         return false;
+    }
+    getCapturedPieceForMove(move) {
+        const piece = this.gameContext.board[move.from.row][move.from.col];
+        if (move.enPassant) {
+            const capturedRow = colorOf(piece) === 'w' ? move.to.row + 1 : move.to.row - 1;
+            return this.gameContext.board[capturedRow]?.[move.to.col] ?? 0;
+        }
+        return this.gameContext.board[move.to.row]?.[move.to.col] ?? 0;
+    }
+    buildSAN(move, capturedPiece) {
+        const piece = this.gameContext.board[move.from.row][move.from.col];
+        const pieceType = PIECE_TYPE[piece];
+        const toSq = rowColToFileRank(move.to.row, move.to.col);
+        if (move.castle === 'K')
+            return 'O-O';
+        if (move.castle === 'Q')
+            return 'O-O-O';
+        const isCapture = capturedPiece !== 0 || move.enPassant;
+        if (pieceType === 'p') {
+            return `${isCapture ? `${FILES[move.from.col]}x` : ''}${toSq}${move.promotion ? `=${move.promotion.toUpperCase()}` : ''}`;
+        }
+        const candidates = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if (r === move.from.row && c === move.from.col)
+                    continue;
+                const candidatePiece = this.gameContext.board[r][c];
+                if (candidatePiece === 0 || colorOf(candidatePiece) !== colorOf(piece))
+                    continue;
+                if (PIECE_TYPE[candidatePiece] !== pieceType)
+                    continue;
+                const context = cloneState(this.gameContext);
+                candidates.push(...getLegalMoves(context, r, c).filter((candidate) => candidate.to.row === move.to.row && candidate.to.col === move.to.col));
+            }
+        }
+        let disambiguation = '';
+        if (candidates.length > 0) {
+            const sameFile = candidates.some((candidate) => candidate.from.col === move.from.col);
+            const sameRank = candidates.some((candidate) => candidate.from.row === move.from.row);
+            if (!sameFile)
+                disambiguation = FILES[move.from.col];
+            else if (!sameRank)
+                disambiguation = RANKS[move.from.row];
+            else
+                disambiguation = rowColToFileRank(move.from.row, move.from.col);
+        }
+        return `${pieceType.toUpperCase()}${disambiguation}${isCapture ? 'x' : ''}${toSq}`;
     }
     isSquareAttackedBy(row, col, byColor) {
         const { board } = this.gameContext;
@@ -276,6 +319,8 @@ export class GameRoom {
         catch (err) {
             console.error('[Room] Failed to persist move:', err);
         }
+        // Track SAN in room state for frontend broadcast
+        this.state.moveHistory = [...this.state.moveHistory, san];
     }
     resign(playerColor) {
         const winner = playerColor === 'white' ? '0-1' : '1-0';
@@ -300,10 +345,25 @@ export class GameRoom {
     async persistGameResult(result, reason) {
         try {
             await query('UPDATE games SET status = $1, result = $2, finished_at = now() WHERE id = $3', ['finished', result, this.state.gameId]);
+            await this.persistRatedGameHistory(result);
         }
         catch (err) {
             console.error('[Room] Failed to persist game result:', err);
         }
+    }
+    async persistRatedGameHistory(result) {
+        if (!this.state.white || !this.state.black)
+            return;
+        const ratings = await query('SELECT id, elo_rating FROM users WHERE id = ANY($1::uuid[])', [[this.state.white.id, this.state.black.id]]);
+        const ratingById = new Map(ratings.rows.map((row) => [row.id, row.elo_rating]));
+        const whiteResult = result === '1-0' ? 'win' : result === '0-1' ? 'loss' : 'draw';
+        const blackResult = result === '0-1' ? 'win' : result === '1-0' ? 'loss' : 'draw';
+        const duration = Math.max(0, Math.round((Date.now() - this.state.createdAt) / 1000));
+        const moveCount = this.state.moveHistory.length;
+        const whiteElo = ratingById.get(this.state.white.id) ?? 1200;
+        const blackElo = ratingById.get(this.state.black.id) ?? 1200;
+        await recordGameResult(this.state.white.id, this.state.gameId, this.state.black.displayName || this.state.black.username, blackElo, 'w', whiteResult, moveCount, duration);
+        await recordGameResult(this.state.black.id, this.state.gameId, this.state.white.displayName || this.state.white.username, whiteElo, 'b', blackResult, moveCount, duration);
     }
     buildGameStateMessage() {
         return {
@@ -331,6 +391,7 @@ export class GameRoom {
                 lastMove: this.state.lastMove || undefined,
                 capturedByWhite: this.state.capturedByWhite,
                 capturedByBlack: this.state.capturedByBlack,
+                moveHistory: this.state.moveHistory,
             },
             gameId: this.state.gameId,
         };

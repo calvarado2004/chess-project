@@ -15,10 +15,23 @@ services:
       retries: 5
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
   backend:
     build: ./backend
     environment:
       DATABASE_URL: postgresql://chess:chess@postgres:5432/chess
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change-me-in-production-too}
       JWT_EXPIRES_IN: 15m
@@ -26,6 +39,8 @@ services:
       CORS_ORIGIN: http://localhost:5173
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
@@ -47,3 +62,4 @@ services:
 
 volumes:
   pgdata:
+  redisdata:

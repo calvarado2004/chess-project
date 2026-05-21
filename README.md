@@ -16,17 +16,21 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 │         └──────────┬─────────────┘                                 │
 │                    ▼                                               │
 │  ┌──────────────────────────────────────┐                         │
-│  │  Backend API + WebSocket Server       │                         │
+│  │  Backend API + WebSocket Server Pods  │                         │
 │  │  (Node.js + Express + ws)             │                         │
-│  │  - REST: auth, profiles, lobby        │                         │
-│  │  - WS:  move sync, chat, heartbeats   │                         │
-│  └──────────────────┬───────────────────┘                         │
-│                     │                                               │
-│  ┌──────────────────▼───────────────────┐                         │
-│  │  PostgreSQL 18 (Docker container)     │                         │
-│  │  - users, sessions, games, moves      │                         │
-│  │  - game_history (ELO tracking)        │                         │
-│  └──────────────────────────────────────┘                         │
+│  │  - REST: auth, profiles, history      │                         │
+│  │  - WS:  moves, lobby, heartbeats      │                         │
+│  └───────────────┬──────────────┬───────┘                         │
+│                  │              │                                  │
+│  ┌───────────────▼────────┐  ┌──▼────────────────┐                │
+│  │ Redis 7                │  │ PostgreSQL 18      │                │
+│  │ - lobby presence       │  │ - users, sessions  │                │
+│  │ - pod routing/pubsub   │  │ - games, moves     │                │
+│  │ - room coordination    │  │ - game_history     │                │
+│  └────────────────────────┘  └───────────────────┘                │
+│                                                                     │
+│  Durable game records remain in PostgreSQL; realtime fanout and     │
+│  ephemeral online state are coordinated through Redis.              │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -43,6 +47,13 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **Study mode**: `PGNLoader.tsx` and `engine/pgn.ts` parse PGN, replay moves through legal source-square resolution, and expose move-by-move navigation.
 - **History/profile**: `GameHistory.tsx` shows the last 50 rated games and last-10 Stockfish performance; `Profile.tsx` shows the current Elo summary.
 
+### Browser And Database Boundary
+
+- The browser never connects to the database directly and does not contain database credentials, connection strings, SQL, or database client libraries.
+- Frontend data access goes through the same-origin HTTP API under `/api/...` and realtime game traffic goes through `/ws`.
+- The backend is the only runtime that knows which database is used. It owns `DATABASE_URL`, validates requests, executes database queries, and returns API/WebSocket responses to the browser.
+- This keeps the browser independent of the storage implementation: the frontend does not know or care whether the backend uses PostgreSQL or a different database behind the API.
+
 ### Backend Runtime
 
 - **HTTP server**: `backend/src/server.ts` wires Express middleware, REST routes, health checks, and the WebSocket server onto the same HTTP server.
@@ -50,9 +61,9 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **Game history service**: `services/gameHistoryService.ts` records rated Stockfish and multiplayer results, updates user Elo totals, and returns last-50 history plus aggregate stats.
 - **Elo engine**: `engine/elo.ts` implements expected score, K-factor, rating deltas, rating caps, and performance rating from recent rated games.
 - **Server chess engine**: `engine/logic.ts` and `engine/notation.ts` validate online moves and generate FEN/SAN from legal board state.
-- **Lobby manager**: `ws/lobby.ts` keeps the current in-memory waiting list. Because this is not shared across pods yet, backend and frontend are intentionally deployed with one replica.
-- **Game rooms**: `ws/rooms.ts` owns live game state, clocks, legal move enforcement, draw/resign/checkmate/stalemate handling, SAN move persistence, game-over broadcasts, and multiplayer history recording.
-- **WebSocket server**: `ws/server.ts` authenticates socket clients, routes lobby/game messages, reconnects players, and sends heartbeats.
+- **Redis coordination**: `ws/server.ts` stores lobby presence and player-to-room ownership in Redis, and uses Redis pub/sub to route WebSocket messages between backend pods.
+- **Game rooms**: `ws/rooms.ts` owns live game state, clocks, legal move enforcement, draw/resign/checkmate/stalemate handling, SAN move persistence, game-over broadcasts, and multiplayer history recording on the backend pod that owns the game.
+- **WebSocket server**: `ws/server.ts` authenticates socket clients, routes lobby/game messages across pods, reconnects players, and sends heartbeats.
 
 ### Data Model
 
@@ -64,9 +75,9 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 
 ### Deployment Topology
 
-- **Docker Compose** runs `postgres`, `backend`, and `chess`; the frontend Nginx container proxies `/api` and `/ws` to the backend service.
-- **OpenShift** uses Docker build objects under `k8s/openshift/`, deployments under `k8s/03-backend.yml` and `k8s/04-frontend.yml`, a persistent Postgres StatefulSet, and an edge-terminated frontend Route.
-- **Replica policy** is one backend and one frontend replica until the lobby/room state is moved out of process, for example to Redis or database-backed pub/sub.
+- **Docker Compose** runs `postgres`, `redis`, `backend`, and `chess`; each frontend Nginx container is stateless and proxies `/api` and `/ws` to the backend service.
+- **OpenShift** uses Docker build objects under `k8s/openshift/`, deployments under `k8s/03-backend.yml` and `k8s/04-frontend.yml`, persistent StatefulSets for Postgres and Redis, and an edge-terminated frontend Route.
+- **Replica policy** runs multiple frontend pods and multiple backend pods. Backend pods coordinate lobby state, player room ownership, and cross-pod WebSocket fanout through Redis while durable records stay in PostgreSQL.
 
 ## Runtime Flows
 
@@ -84,6 +95,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 | **Frontend** | React 19, TypeScript, Vite 8, react-router-dom |
 | **Backend** | Node.js 20, Express, TypeScript, `ws` (WebSocket) |
 | **Database** | PostgreSQL 18 |
+| **Realtime Coordination** | Redis 7 |
 | **Chess Engine** | Stockfish.js (client-side Web Worker) |
 | **Containerization** | Docker, Docker Compose, Nginx (frontend proxy) |
 | **Auth** | JWT (access + refresh tokens), bcrypt |
@@ -143,7 +155,7 @@ chess-project/
 │   │   └── server.ts          # Express app + WebSocket attachment
 │   └── Dockerfile             # Multi-stage build (node → node)
 │
-├── docker-compose.yml         # Orchestration (postgres, backend, chess)
+├── docker-compose.yml         # Orchestration (postgres, redis, backend, chess)
 └── k8s/                       # Kubernetes/OpenShift manifests and build configs
 ```
 
@@ -154,6 +166,7 @@ chess-project/
 | `chess` | nginx:alpine | 3001:80 | Frontend SPA + API/WS proxy (BACKEND_HOST env) |
 | `backend` | node:20-alpine | 3000 | REST API + WebSocket server |
 | `postgres` | postgres:18-alpine | 5432 | PostgreSQL database |
+| `redis` | redis:7-alpine | 6379 | Realtime lobby and WebSocket coordination |
 
 ## OpenShift Deployment
 
@@ -171,6 +184,7 @@ All Kubernetes manifests live in `k8s/`. They target OpenShift with the `px-csi-
 oc apply -f k8s/00-namespace.yml
 oc apply -f k8s/01-secret.yml
 oc apply -f k8s/02-postgres.yml
+oc apply -f k8s/06-redis.yml
 oc apply -f k8s/03-backend.yml
 oc apply -f k8s/04-frontend.yml
 ```
@@ -239,8 +253,9 @@ oc apply -f k8s/03-backend.yml -f k8s/04-frontend.yml -n chess-project
 | `00-namespace.yml` | Namespace `chess-project` |
 | `01-secret.yml` | Secret with DB creds, JWT secrets, CORS origin |
 | `02-postgres.yml` | PVC (5Gi, `px-csi-db`), headless Service, StatefulSet |
-| `03-backend.yml` | Service (HTTP + WS ports) + Deployment (1 replica while lobby state is in-memory, `imagePullPolicy: Always`) |
-| `04-frontend.yml` | Service + Deployment (1 replica while lobby state is in-memory, BACKEND_HOST env, `imagePullPolicy: Always`) + OpenShift Route (TLS edge termination) |
+| `06-redis.yml` | PVC (1Gi, `px-csi-db`), headless Service, StatefulSet for Redis append-only realtime coordination |
+| `03-backend.yml` | Service (HTTP + WS ports) + Deployment (2 replicas, REDIS_URL env, spread constraints, PDB, HPA, `imagePullPolicy: Always`) |
+| `04-frontend.yml` | Service + Deployment (2 stateless frontend replicas, BACKEND_HOST env, `imagePullPolicy: Always`) + OpenShift Route (TLS edge termination) |
 
 ## Quick Start
 
@@ -250,6 +265,29 @@ docker compose up --build
 
 # Access the app
 open http://localhost:3001
+```
+
+## Lobby Integration Test
+
+The backend has a formal WebSocket integration test for the scaled lobby path:
+
+- two authenticated WebSocket clients connect through configurable endpoints;
+- one client creates a lobby game and the other observes it through lobby state;
+- the second client joins the game;
+- a move is sent and verified on both clients, including opponent-only fanout.
+
+Run it against Docker Compose after starting Redis and at least two backend replicas:
+
+```bash
+docker compose up --build -d --scale backend=2
+cd backend
+npm run test:integration
+```
+
+By default the test connects both clients through the frontend proxy at `ws://localhost:3001/ws`, which exercises the public Compose route. To target explicit endpoints, set `WS_URL_A` and `WS_URL_B`:
+
+```bash
+WS_URL_A=ws://localhost:3001/ws WS_URL_B=ws://localhost:3001/ws npm run test:integration
 ```
 
 ## Development
@@ -265,6 +303,9 @@ npm run dev
 
 # Database (PostgreSQL via Docker)
 docker compose up postgres
+
+# Realtime coordination (Redis via Docker)
+docker compose up redis
 ```
 
 ## API Endpoints
