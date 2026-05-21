@@ -332,4 +332,4 @@ game_history       — id, user_id, game_id, opponent, opponent_elo, player_colo
 
 ## License
 
-MIT
+Apache License 2.0. See [LICENSE](LICENSE).
