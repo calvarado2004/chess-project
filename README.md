@@ -7,27 +7,27 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │  Browser (User A)         Browser (User B)                          │
-│  ┌──────────────────┐     ┌──────────────────┐                     │
-│  │ React Frontend   │     │ React Frontend   │                     │
-│  │ (Vite dev /      │     │ (Vite dev /      │                     │
-│  │  nginx prod)     │     │  nginx prod)     │                     │
-│  └──────┬───────────┘     └──────┬───────────┘                     │
+│  ┌──────────────────┐     ┌──────────────────┐                      │
+│  │ React Frontend   │     │ React Frontend   │                      │
+│  │ (Vite dev /      │     │ (Vite dev /      │                      │
+│  │  nginx prod)     │     │  nginx prod)     │                      │
+│  └──────┬───────────┘     └──────┬───────────┘                      │
 │         │ WebSocket (ws)         │ WebSocket (ws)                   │
-│         └──────────┬─────────────┘                                 │
-│                    ▼                                               │
-│  ┌──────────────────────────────────────┐                         │
-│  │  Backend API + WebSocket Server Pods  │                         │
-│  │  (Node.js + Express + ws)             │                         │
-│  │  - REST: auth, profiles, history      │                         │
-│  │  - WS:  moves, lobby, heartbeats      │                         │
-│  └───────────────┬──────────────┬───────┘                         │
-│                  │              │                                  │
-│  ┌───────────────▼────────┐  ┌──▼────────────────┐                │
-│  │ Redis 7                │  │ PostgreSQL 18      │                │
-│  │ - lobby presence       │  │ - users, sessions  │                │
-│  │ - pod routing/pubsub   │  │ - games, moves     │                │
-│  │ - room coordination    │  │ - game_history     │                │
-│  └────────────────────────┘  └───────────────────┘                │
+│         └──────────┬─────────────┘                                  │
+│                    ▼                                                │
+│  ┌───────────────────────────────────────┐                          │
+│  │  Backend API + WebSocket Server Pods  │                          │
+│  │  (Node.js + Express + ws)             │                          │
+│  │  - REST: auth, profiles, history      │                          │
+│  │  - WS:  moves, lobby, heartbeats      │                          │
+│  └───────────────┬──────────────┬────────┘                          │
+│                  │              │                                   │
+│  ┌───────────────▼────────┐  ┌──▼─────────────────┐                 │
+│  │ Redis 7                │  │ PostgreSQL 18      │                 │
+│  │ - lobby presence       │  │ - users, sessions  │                 │
+│  │ - pod routing/pubsub   │  │ - games, moves     │                 │
+│  │ - room coordination    │  │ - game_history     │                 │
+│  └────────────────────────┘  └────────────────────┘                 │
 │                                                                     │
 │  Durable game records remain in PostgreSQL; realtime fanout and     │
 │  ephemeral online state are coordinated through Redis.              │
