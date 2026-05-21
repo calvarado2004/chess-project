@@ -3,6 +3,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+RUN npm install -g npm@11.15.0
+
 # Copy package files and install dependencies
 COPY package.json package-lock.json* ./
 RUN npm ci

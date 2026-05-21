@@ -808,6 +808,19 @@ function parseUCIMove(str: string): ChessMove | null {
   };
 }
 
+function resolveUCIMove(str: string): ChessMove | null {
+  const parsed = parseUCIMove(str);
+  if (!parsed) return null;
+
+  const legalMove = getLegalMoves(parsed.from.row, parsed.from.col).find((move) =>
+    move.to.row === parsed.to.row &&
+    move.to.col === parsed.to.col &&
+    move.promotion === parsed.promotion
+  );
+
+  return legalMove ?? null;
+}
+
 // ===================== Main Hook =====================
 export interface UseChessGameReturn {
   board: number[][];
@@ -871,7 +884,7 @@ export function useChessGame(): UseChessGameReturn {
     if (!lastEngineBestMove) return;
     const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
     if (!isEngineTurn) return;
-    const move = parseUCIMove(lastEngineBestMove);
+    const move = resolveUCIMove(lastEngineBestMove);
     if (move) executeMove(move);
     state.lastEngineBestMove = null;
     lastEngineBestMoveRef.current = null;
