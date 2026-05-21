@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import axios from 'axios';
 import {
   isAuthenticated,
   getAccessToken,
   getUser,
+  setUser as persistUser,
   clearTokens,
   type StoredUser,
 } from '../lib/auth';
@@ -64,10 +66,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshUser = useCallback(async () => {
     try {
       const u = await apiGetCurrentUser();
+      persistUser(u);
       setUser(u);
-    } catch {
-      clearTokens();
-      setUser(null);
+      setAccessToken(getAccessToken());
+    } catch (error) {
+      if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+        clearTokens();
+        setUser(null);
+        setAccessToken(null);
+      } else {
+        console.error('Failed to refresh user profile', error);
+      }
     }
   }, []);
 
