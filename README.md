@@ -71,6 +71,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 ## Runtime Flows
 
 - **Stockfish game result**: local hook detects a completed Stockfish game, determines human result and Stockfish Elo, posts `/api/users/me/history/stockfish`, then refreshes the user profile so the top bar and profile Elo update.
+- **Stockfish retract**: human players can retract their latest move against Stockfish up to 3 times per game. Any Stockfish game where a retract is used is treated as unrated and is not posted to ELO history.
 - **Multiplayer move**: client sends UCI over WebSocket, backend validates the source piece and legal move, applies the move on cloned server state, persists SAN, broadcasts state, and rejects illegal moves.
 - **Multiplayer game finish**: room end states update `games`, record a rated `game_history` row for each player, broadcast `game_over`, and leave the final state available to clients.
 - **PGN replay**: the PGN loader strips headers/comments/NAGs, resolves each SAN move against legal moves from replay state, applies the move, and keeps FEN-related context such as castling and en passant current.

@@ -21,7 +21,8 @@ export default function LocalGame() {
     selectedSquare, legalMovesForSelected, lastMove,
     moveHistory, capturedByWhite, capturedByBlack,
     enPassantTarget, castlingRights,
-    selectSquare, resetGame, setGameMode, setStrength,
+    retractsRemaining, retractUsed, canRetract,
+    selectSquare, retractMove, resetGame, setGameMode, setStrength,
     formatTime, generatePGN,
   } = useChessGame();
 
@@ -56,6 +57,7 @@ export default function LocalGame() {
 
   useEffect(() => {
     if (!gameOver || (gameMode !== 'hwe' && gameMode !== 'hbe')) return;
+    if (retractUsed) return;
 
     const gameKey = `${gameMode}-${strengthLevel}-${moveHistory.length}-${gameStatus}`;
     if (recordedGameKey.current === gameKey) return;
@@ -86,7 +88,7 @@ export default function LocalGame() {
       .catch((err: unknown) => {
         console.error('Failed to record Stockfish game', err);
       });
-  }, [gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, strengthLevel, turn]);
+  }, [gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, retractUsed, strengthLevel, turn]);
 
   const handleSavePGN = useCallback(() => {
     const pgn = generatePGN();
@@ -113,7 +115,13 @@ export default function LocalGame() {
         <StatusBar gameStatus={gameStatus} turn={turn} />
         <Board state={{ board, turn, selectedSquare, legalMovesForSelected, lastMove, moveHistory, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={selectSquare} orientation={boardOrientation} />
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clock.whiteTime)} isActive={clock.running && turn === 'w'} icon="♔" />
-        <Controls onNewGame={handleNewGame} />
+        <Controls
+          onNewGame={handleNewGame}
+          onRetractMove={retractMove}
+          canRetract={canRetract}
+          retractsRemaining={retractsRemaining}
+          showRetract={gameMode === 'hwe' || gameMode === 'hbe'}
+        />
       </div>
 
       <div className="sidebar-right">
@@ -127,6 +135,11 @@ export default function LocalGame() {
         />
         <div className="panel">
           <h3>Move History</h3>
+          {retractUsed && (
+            <p style={{ margin: '0 0 8px', color: '#f9e2af', fontSize: '12px', lineHeight: 1.4 }}>
+              Retract used: this Stockfish game will not count for ELO.
+            </p>
+          )}
           <MoveHistory moves={moveHistory} />
           <button
             onClick={handleSavePGN}

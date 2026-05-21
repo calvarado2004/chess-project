@@ -30,6 +30,7 @@ React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stock
 - `src/hooks/useChessGame.ts` is the source of truth for local board behavior.
 - It owns board state, selected square, legal move list, captures, clocks, Stockfish worker lifecycle, sounds, SAN move history, PGN export, and game-end detection.
 - Stockfish games post completed results to `/api/users/me/history/stockfish` with the selected Stockfish Elo, player color, result, move count, and duration.
+- Human players can retract their latest move against Stockfish up to 3 times per game. Using any retract makes that Stockfish game unrated, so it is not posted to ELO history.
 - Human-as-black games flip the board so black pieces are at the bottom.
 
 ### Online Multiplayer

@@ -42,7 +42,34 @@ const state = {
   engineStatus: 'unavailable' as EngineStatus,
   engineEval: null as EngineEval | null,
   lastEngineBestMove: null as string | null,
+  retractSnapshots: [] as GameSnapshot[],
+  retractCount: 0,
+  retractUsed: false,
 };
+
+const MAX_STOCKFISH_RETRACTS = 3;
+
+interface GameSnapshot {
+  board: number[][];
+  turn: 'w' | 'b';
+  selectedSquare: Coord | null;
+  legalMovesForSelected: ChessMove[];
+  lastMove: ChessMove | null;
+  moveHistory: string[];
+  capturedByWhite: number[];
+  capturedByBlack: number[];
+  gameOver: boolean;
+  gameStatus: GameStatus;
+  enPassantTarget: Coord | null;
+  castlingRights: { wK: boolean; wQ: boolean; bK: boolean; bQ: boolean };
+  halfmoveClock: number;
+  fullmoveNumber: number;
+  whiteTime: number;
+  blackTime: number;
+  clockRunning: boolean;
+  engineEval: EngineEval | null;
+  lastEngineBestMove: string | null;
+}
 
 function initBoard(): number[][] {
   const b = Array.from({ length: 8 }, () => Array(8).fill(EMPTY));
@@ -71,11 +98,79 @@ function resetState(timeControlMinutes: number = 10) {
   state.fullmoveNumber = 1;
   state.engineEval = null;
   state.lastEngineBestMove = null;
+  state.retractSnapshots = [];
+  state.retractCount = 0;
+  state.retractUsed = false;
   clockRunning = false;
   if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
   whiteTime = timeControlMinutes * 60;
   blackTime = timeControlMinutes * 60;
   clockRef.current = { whiteTime, blackTime, running: false };
+}
+
+function cloneCoord(coord: Coord | null): Coord | null {
+  return coord ? { ...coord } : null;
+}
+
+function cloneMove(move: ChessMove | null): ChessMove | null {
+  return move
+    ? {
+        ...move,
+        from: { ...move.from },
+        to: { ...move.to },
+      }
+    : null;
+}
+
+function createSnapshot(): GameSnapshot {
+  return {
+    board: state.board.map((row) => [...row]),
+    turn: state.turn,
+    selectedSquare: cloneCoord(state.selectedSquare),
+    legalMovesForSelected: state.legalMovesForSelected.map((move) => cloneMove(move)!),
+    lastMove: cloneMove(state.lastMove),
+    moveHistory: [...state.moveHistory],
+    capturedByWhite: [...state.capturedByWhite],
+    capturedByBlack: [...state.capturedByBlack],
+    gameOver: state.gameOver,
+    gameStatus: state.gameStatus,
+    enPassantTarget: cloneCoord(enPassantTarget),
+    castlingRights: { ...state.castlingRights },
+    halfmoveClock: state.halfmoveClock,
+    fullmoveNumber: state.fullmoveNumber,
+    whiteTime,
+    blackTime,
+    clockRunning,
+    engineEval: state.engineEval ? { ...state.engineEval } : null,
+    lastEngineBestMove: state.lastEngineBestMove,
+  };
+}
+
+function restoreSnapshot(snapshot: GameSnapshot) {
+  state.board = snapshot.board.map((row) => [...row]);
+  state.turn = snapshot.turn;
+  state.selectedSquare = cloneCoord(snapshot.selectedSquare);
+  state.legalMovesForSelected = snapshot.legalMovesForSelected.map((move) => cloneMove(move)!);
+  state.lastMove = cloneMove(snapshot.lastMove);
+  state.moveHistory = [...snapshot.moveHistory];
+  state.capturedByWhite = [...snapshot.capturedByWhite];
+  state.capturedByBlack = [...snapshot.capturedByBlack];
+  state.gameOver = snapshot.gameOver;
+  state.gameStatus = snapshot.gameStatus;
+  state.enPassantTarget = cloneCoord(snapshot.enPassantTarget);
+  enPassantTarget = cloneCoord(snapshot.enPassantTarget);
+  state.castlingRights = { ...snapshot.castlingRights };
+  state.halfmoveClock = snapshot.halfmoveClock;
+  state.fullmoveNumber = snapshot.fullmoveNumber;
+  whiteTime = snapshot.whiteTime;
+  blackTime = snapshot.blackTime;
+  state.engineEval = snapshot.engineEval ? { ...snapshot.engineEval } : null;
+  state.lastEngineBestMove = snapshot.lastEngineBestMove;
+  lastEngineBestMoveRef.current = snapshot.lastEngineBestMove;
+  engineEvalRef.current = state.engineEval;
+  clockRef.current = { whiteTime, blackTime, running: snapshot.clockRunning };
+
+  if (snapshot.clockRunning && !state.gameOver) startClock();
 }
 
 // ===================== Attack Detection =====================
@@ -282,6 +377,14 @@ function getAllLegalMoves(color: 'w' | 'b'): ChessMove[] {
   return all;
 }
 
+function isStockfishMode(): boolean {
+  return state.gameMode === 'hwe' || state.gameMode === 'hbe';
+}
+
+function isHumanTurnInStockfishMode(): boolean {
+  return (state.gameMode === 'hwe' && state.turn === 'w') || (state.gameMode === 'hbe' && state.turn === 'b');
+}
+
 // ===================== Move Execution =====================
 function applyMoveToBoard(move: ChessMove) {
   const piece = state.board[move.from.row][move.from.col];
@@ -378,6 +481,27 @@ function executeMove(move: ChessMove) {
   if (!state.gameOver && ((state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w'))) {
     requestEngineMove();
   }
+}
+
+function retractHumanStockfishMove(): boolean {
+  if (!isStockfishMode()) return false;
+  if (state.retractCount >= MAX_STOCKFISH_RETRACTS) return false;
+  const snapshot = state.retractSnapshots.pop();
+  if (!snapshot) return false;
+
+  if (engine && currentEngineRequest) engine.postMessage('stop');
+  currentEngineRequest = null;
+  state.engineStatus = engineReady ? 'ready' : state.engineStatus;
+  engineStatusRef.current = state.engineStatus;
+  stopClock();
+  restoreSnapshot(snapshot);
+  state.retractCount++;
+  state.retractUsed = true;
+  state.selectedSquare = null;
+  state.legalMovesForSelected = [];
+  requestAnalysis();
+  renderTrigger.current();
+  return true;
 }
 
 function buildSAN(move: ChessMove, piece: number, captured: number): string {
@@ -706,7 +830,11 @@ export interface UseChessGameReturn {
   whiteName: string;
   blackName: string;
   lastEngineBestMove: string | null;
+  retractsRemaining: number;
+  retractUsed: boolean;
+  canRetract: boolean;
   selectSquare: (row: number, col: number) => void;
+  retractMove: () => boolean;
   resetGame: (timeControlMinutes?: number) => void;
   setGameMode: (mode: GameMode) => void;
   setStrength: (level: string) => void;
@@ -758,7 +886,12 @@ export function useChessGame(): UseChessGameReturn {
 
     if (state.selectedSquare && state.legalMovesForSelected.some(m => m.to.row === row && m.to.col === col)) {
       const move = state.legalMovesForSelected.find(m => m.to.row === row && m.to.col === col);
-      if (move) executeMove(move);
+      if (move) {
+        if (isHumanTurnInStockfishMode()) {
+          state.retractSnapshots.push(createSnapshot());
+        }
+        executeMove(move);
+      }
       return;
     }
 
@@ -796,6 +929,8 @@ export function useChessGame(): UseChessGameReturn {
   const setWhiteName = useCallback((name: string) => { state.whiteName = name; renderTrigger.current(); }, []);
   const setBlackName = useCallback((name: string) => { state.blackName = name; renderTrigger.current(); }, []);
 
+  const retractMove = useCallback(() => retractHumanStockfishMove(), []);
+
   const formatTime = useCallback((seconds: number): string => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -823,7 +958,11 @@ export function useChessGame(): UseChessGameReturn {
     whiteName: state.whiteName,
     blackName: state.blackName,
     lastEngineBestMove,
+    retractsRemaining: Math.max(0, MAX_STOCKFISH_RETRACTS - state.retractCount),
+    retractUsed: state.retractUsed,
+    canRetract: isStockfishMode() && state.retractCount < MAX_STOCKFISH_RETRACTS && state.retractSnapshots.length > 0,
     selectSquare,
+    retractMove,
     resetGame,
     setGameMode,
     setStrength,
