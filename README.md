@@ -27,6 +27,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 │  │ - lobby presence       │  │ - users, sessions  │                 │
 │  │ - pod routing/pubsub   │  │ - games, moves     │                 │
 │  │ - room coordination    │  │ - game_history     │                 │
+│  │ - lobby chat pub/sub   │  │                    │                 │
 │  └────────────────────────┘  └────────────────────┘                 │
 │                                                                     │
 │  Durable game records remain in PostgreSQL; realtime fanout and     │
@@ -41,7 +42,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **SPA shell**: `chess-app/src/App.tsx` owns authenticated routing, top navigation, and the shared `GameWebSocketProvider`.
 - **Auth state**: `chess-app/src/context/AuthContext.tsx` loads the stored JWT user, refreshes `/api/users/me`, and exposes profile updates to the UI.
 - **API client**: `chess-app/src/lib/api.ts` wraps REST calls, attaches access tokens, refreshes expired tokens, records Stockfish games, and fetches Elo/history data.
-- **WebSocket client**: `chess-app/src/context/GameWebSocketContext.tsx` maintains the online game session, lobby state, draw offers, move sync, and game-over events.
+- **WebSocket client**: `chess-app/src/context/GameWebSocketContext.tsx` maintains the online game session, lobby state, lobby chat messages, draw offers, move sync, and game-over events.
 - **Local engine hook**: `chess-app/src/hooks/useChessGame.ts` is the source of truth for local board behavior, Stockfish turns, legal move guards, SAN generation, clocks, sounds, and local Stockfish result recording.
 - **Board UI**: `Board.tsx` and `Square.tsx` render selected squares, legal targets, last move, check/checkmate clues, flipped orientation, coordinates, and text-rendered chess symbols for mobile compatibility.
 - **Study mode**: `PGNLoader.tsx` and `engine/pgn.ts` parse PGN, replay moves through legal source-square resolution, and expose move-by-move navigation.
@@ -115,6 +116,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **Game History** — Last 50 rated games, rating deltas, opponent rating, color, moves, and duration
 - **Stockfish Performance** — Last 10 Stockfish games contribute a performance rating using Stockfish's selected ELO
 - **Profile Page** — View and edit display name, avatar, and ELO stats
+- **Lobby Chat** — Realtime text chat with emoji picker for users waiting in the lobby; messages auto-expire after 10 minutes, delivered across pods via Redis pub/sub
 - **Responsive Layouts** — Desktop, tablet, and phone layouts for the board, clocks, panels, and history views
 
 ## Project Structure
@@ -127,7 +129,7 @@ chess-project/
 │   │   │   ├── Board.tsx      # Chess board with square interaction
 │   │   │   ├── Clock.tsx      # Chess clock display
 │   │   │   ├── GameHistory.tsx # Last 50 games and Stockfish performance
-│   │   │   ├── Lobby.tsx      # Online lobby with matchmaking
+│   │   │   ├── Lobby.tsx      # Online lobby with matchmaking and realtime chat (emoji picker, 10-min expiry)
 │   │   │   ├── LocalGame.tsx  # Local/Stockfish game view
 │   │   │   ├── OnlineGame.tsx # Online multiplayer game view
 │   │   │   ├── PGNLoader.tsx  # PGN file/game loader
@@ -330,10 +332,12 @@ docker compose up redis
 |-----------|------|-------------|
 | Client → Server | `auth` | Send JWT token on connect |
 | Client → Server | `lobby_join` / `lobby_leave` | Enter/exit waiting lobby |
+| Client → Server | `lobby_chat` | Send a chat message to all lobby users (supports emoji, max 500 chars) |
 | Client → Server | `game_create` / `game_join` | Create/join a game |
 | Client → Server | `move` | Send chess move (UCI format) |
 | Client → Server | `resign` / `draw_offer` / `draw_accept` / `draw_decline` | Game actions |
 | Server → Client | `lobby_state` | List of waiting players |
+| Server → Client | `lobby_chat` | Chat message from a lobby user (includes sender, timestamp; auto-expired after 10 min) |
 | Server → Client | `game_state` | Board state, clocks, turn |
 | Server → Client | `opponent_move` | Other player's move |
 | Server → Client | `game_over` | Game finished with result |

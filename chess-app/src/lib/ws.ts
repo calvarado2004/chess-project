@@ -202,6 +202,11 @@ export class ChessWebSocket {
     });
   }
 
+  // ===================== Chat Actions =====================
+  sendLobbyChat(message: string): void {
+    this.send({ type: 'lobby_chat', payload: { message } });
+  }
+
   // ===================== Game Actions =====================
   sendMove(uci: string, gameId: string): void {
     // gameId is tracked server-side via playerRooms; don't include it in the message

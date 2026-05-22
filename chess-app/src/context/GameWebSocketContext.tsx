@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import { ChessWebSocket, type OnlineGame } from '../lib/ws';
-import type { LobbyPlayer } from '../lib/ws-types';
+import type { LobbyPlayer, LobbyChatMessage } from '../lib/ws-types';
 import { getAccessToken } from '../lib/auth';
 
 interface GameWebSocketContextType {
   ws: ChessWebSocket | null;
   lobbyPlayers: LobbyPlayer[];
+  lobbyChatMessages: LobbyChatMessage[];
   onlineGame: OnlineGame | null;
   drawOfferFrom: 'white' | 'black' | null;
   drawDeclinedCount: number;
@@ -21,6 +22,8 @@ interface GameWebSocketContextType {
   offerDraw: (gameId: string) => void;
   acceptDraw: (gameId: string) => void;
   declineDraw: (gameId: string) => void;
+  sendLobbyChat: (message: string) => void;
+  clearLobbyChat: () => void;
   formatTime: (seconds: number) => string;
 }
 
@@ -29,6 +32,7 @@ const GameWebSocketContext = createContext<GameWebSocketContextType | null>(null
 export function GameWebSocketProvider({ children }: { children: ReactNode }) {
   const [ws, setWs] = useState<ChessWebSocket | null>(null);
   const [lobbyPlayers, setLobbyPlayers] = useState<LobbyPlayer[]>([]);
+  const [lobbyChatMessages, setLobbyChatMessages] = useState<LobbyChatMessage[]>([]);
   const [onlineGame, setOnlineGame] = useState<OnlineGame | null>(null);
   const [drawOfferFrom, setDrawOfferFrom] = useState<'white' | 'black' | null>(null);
   const [drawDeclinedCount, setDrawDeclinedCount] = useState(0);
@@ -176,6 +180,15 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
       setDrawOfferFrom(null);
       setDrawDeclinedCount((count) => count + 1);
     });
+
+    chessWs.on('lobby_chat', (msg) => {
+      const now = Date.now();
+      const tenMinutes = 10 * 60 * 1000;
+      setLobbyChatMessages((prev) => [
+        ...prev.filter((m) => now - m.timestamp < tenMinutes),
+        msg.payload as LobbyChatMessage,
+      ].slice(-99));
+    });
   }, []);
 
   const connect = useCallback(async (): Promise<boolean> => {
@@ -207,6 +220,15 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     }
   }, [connect]);
 
+  // Purge chat messages older than 10 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cutoff = Date.now() - 10 * 60 * 1000;
+      setLobbyChatMessages((prev) => prev.filter((m) => m.timestamp >= cutoff));
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
   const disconnect = useCallback(() => {
     wsRef.current?.disconnect();
     wsRef.current = null;
@@ -216,6 +238,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     setDrawOfferFrom(null);
     setDrawDeclinedCount(0);
     setLobbyPlayers([]);
+    setLobbyChatMessages([]);
   }, []);
 
   // Cleanup on unmount
@@ -264,6 +287,14 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     setDrawOfferFrom(null);
   }, [ws]);
 
+  const sendLobbyChat = useCallback((message: string) => {
+    ws?.sendLobbyChat(message);
+  }, [ws]);
+
+  const clearLobbyChat = useCallback(() => {
+    setLobbyChatMessages([]);
+  }, []);
+
   const formatTime = useCallback((seconds: number): string => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -275,6 +306,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
       value={{
         ws,
         lobbyPlayers,
+        lobbyChatMessages,
         onlineGame,
         drawOfferFrom,
         drawDeclinedCount,
@@ -290,6 +322,8 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         offerDraw,
         acceptDraw,
         declineDraw,
+        sendLobbyChat,
+        clearLobbyChat,
         formatTime,
       }}
     >

@@ -1,22 +1,32 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
+import type { LobbyChatMessage } from '../lib/ws-types';
 
 interface LobbyProps {
   onJoinGame?: () => void;
 }
+
+const EMOJI_CATEGORIES: { label: string; emojis: string[] }[] = [
+  { label: '😀 Smileys', emojis: ['😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '😍', '🥰', '😘', '😗', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '😎', '🤓', '🧐', '😏'] },
+  { label: '👋 Hands', emojis: ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏'] },
+  { label: '❤️ Hearts', emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟'] },
+  { label: '⚡ Objects', emojis: ['⚡', '🔥', '💯', '✨', '🎉', '🎊', '🎈', '🎁', '🏆', '🥇', '🎯', '🚀', '💡', '⭐', '🌟', '💫', '🎵', '🎶', '♟️', '♔', '♚', '♛', '♜', '♝'] },
+];
 
 export default function Lobby({ onJoinGame }: LobbyProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const {
     lobbyPlayers,
+    lobbyChatMessages,
     isConnected,
     joinLobby,
     leaveLobby,
     createGame,
     joinGame,
+    sendLobbyChat,
     onlineGame,
   } = useGameWebSocket();
 
@@ -24,6 +34,10 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
   const [increment, setIncrement] = useState(0);
   const [colorPref, setColorPref] = useState<'white' | 'black' | 'any'>('any');
   const [isInLobby, setIsInLobby] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
 
   const handleJoinLobby = useCallback(() => {
     joinLobby({ timeControl, increment, color: colorPref });
@@ -42,6 +56,43 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
   const handleJoinPlayer = useCallback((playerId: string, gameId: string, playerColor: 'white' | 'black') => {
     joinGame(gameId, playerColor);
   }, [joinGame]);
+
+  const handleSendChat = useCallback(() => {
+    const trimmed = chatInput.trim();
+    if (!trimmed) return;
+    sendLobbyChat(trimmed);
+    setChatInput('');
+    setShowEmojiPicker(false);
+  }, [chatInput, sendLobbyChat]);
+
+  const insertEmoji = useCallback((emoji: string) => {
+    const input = chatInputRef.current;
+    if (input) {
+      const start = input.selectionStart ?? chatInput.length;
+      const end = input.selectionEnd ?? chatInput.length;
+      const newValue = chatInput.slice(0, start) + emoji + chatInput.slice(end);
+      setChatInput(newValue);
+      requestAnimationFrame(() => {
+        input.focus();
+        input.setSelectionRange(start + emoji.length, start + emoji.length);
+      });
+    } else {
+      setChatInput((prev) => prev + emoji);
+    }
+    setShowEmojiPicker(false);
+  }, [chatInput]);
+
+  const handleChatKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendChat();
+    }
+  }, [handleSendChat]);
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [lobbyChatMessages]);
 
   // Navigate to game when onlineGame is created
   useEffect(() => {
@@ -231,6 +282,204 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
           ))}
         </div>
       )}
+
+      {/* Chat Panel */}
+      <div style={{
+        marginTop: '20px',
+        background: '#313244',
+        borderRadius: '8px',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          padding: '10px 16px',
+          borderBottom: '1px solid #45475a',
+          fontSize: '13px',
+          fontWeight: 600,
+          color: '#a6adc8',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+        }}>
+          💬 Lobby Chat
+        </div>
+
+        {/* Messages */}
+        <div style={{
+          height: '250px',
+          overflowY: 'auto',
+          padding: '12px 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+        }}>
+          {lobbyChatMessages.length === 0 && (
+            <div style={{
+              color: '#6c7086',
+              fontSize: '13px',
+              textAlign: 'center',
+              marginTop: '40px',
+            }}>
+              No messages yet. Say hello!
+            </div>
+          )}
+          {lobbyChatMessages.map((msg, i) => {
+            const isMeMsg = isMe(msg.from);
+            const showTimestamp = i === 0 || (msg.timestamp - lobbyChatMessages[i - 1].timestamp) > 5 * 60 * 1000;
+            return (
+              <div key={i}>
+                {showTimestamp && (
+                  <div style={{
+                    color: '#6c7086',
+                    fontSize: '11px',
+                    textAlign: 'center',
+                    margin: '6px 0 4px',
+                  }}>
+                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <span style={{
+                    fontWeight: 600,
+                    color: isMeMsg ? '#89b4fa' : '#fab387',
+                    fontSize: '13px',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {msg.displayName}
+                  </span>
+                  <span style={{
+                    color: '#cdd6f4',
+                    fontSize: '13px',
+                    wordBreak: 'break-word',
+                  }}>
+                    {msg.message}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Input */}
+        <div style={{
+          padding: '12px 16px',
+          borderTop: '1px solid #45475a',
+          display: 'flex',
+          gap: '8px',
+          position: 'relative',
+        }}>
+          <input
+            ref={chatInputRef}
+            type="text"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={handleChatKeyDown}
+            placeholder="Type a message..."
+            maxLength={500}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              background: '#45475a',
+              border: 'none',
+              borderRadius: '6px',
+              color: '#cdd6f4',
+              fontSize: '14px',
+              outline: 'none',
+            }}
+          />
+          <button
+            onClick={() => setShowEmojiPicker((v) => !v)}
+            style={{
+              padding: '8px 10px',
+              background: showEmojiPicker ? '#89b4fa' : '#45475a',
+              color: showEmojiPicker ? '#1e1e2e' : '#cdd6f4',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '18px',
+              lineHeight: 1,
+            }}
+            title="Add emoji"
+          >
+            😀
+          </button>
+          <button
+            onClick={handleSendChat}
+            disabled={!chatInput.trim()}
+            style={{
+              padding: '8px 18px',
+              background: chatInput.trim() ? '#89b4fa' : '#45475a',
+              color: chatInput.trim() ? '#1e1e2e' : '#6c7086',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: chatInput.trim() ? 'pointer' : 'not-allowed',
+              fontWeight: 600,
+              fontSize: '14px',
+            }}
+          >
+            Send
+          </button>
+
+          {/* Emoji Picker Popup */}
+          {showEmojiPicker && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              right: '0',
+              marginBottom: '8px',
+              background: '#1e1e2e',
+              border: '1px solid #45475a',
+              borderRadius: '10px',
+              padding: '12px',
+              width: '320px',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+              zIndex: 1000,
+            }}>
+              {EMOJI_CATEGORIES.map((cat) => (
+                <div key={cat.label}>
+                  <div style={{
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#a6adc8',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    marginBottom: '6px',
+                  }}>
+                    {cat.label}
+                  </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(10, 1fr)',
+                    gap: '2px',
+                    marginBottom: '10px',
+                  }}>
+                    {cat.emojis.map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => insertEmoji(emoji)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          fontSize: '20px',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          borderRadius: '4px',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#45475a'; }}
+                        onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'none'; }}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

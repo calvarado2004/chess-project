@@ -11,6 +11,7 @@ export type ClientMessageType =
   | 'draw_offer'
   | 'draw_accept'
   | 'draw_decline'
+  | 'lobby_chat'
   | 'pong';
 
 export type ServerMessageType =
@@ -29,7 +30,8 @@ export type ServerMessageType =
   | 'lobby_player_left'
   | 'game_created'
   | 'draw_offer'
-  | 'draw_decline';
+  | 'draw_decline'
+  | 'lobby_chat';
 
 export interface WsMessage<T = unknown> {
   type: ClientMessageType | ServerMessageType;
@@ -71,4 +73,11 @@ export interface GameOverPayload {
 export interface ErrorPayload {
   message: string;
   code?: string;
+}
+
+export interface LobbyChatMessage {
+  from: string;
+  displayName: string;
+  message: string;
+  timestamp: number;
 }

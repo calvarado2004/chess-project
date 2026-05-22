@@ -12,6 +12,7 @@ export type ClientMessageType =
   | 'draw_offer'
   | 'draw_accept'
   | 'draw_decline'
+  | 'lobby_chat'
   | 'pong';
 
 // Server → Client message types
@@ -31,7 +32,8 @@ export type ServerMessageType =
   | 'lobby_player_left'
   | 'game_created'
   | 'game_joined_by_other'
-  | 'draw_decline';
+  | 'draw_decline'
+  | 'lobby_chat';
 
 // ===================== Message Structure =====================
 export interface WsMessage<T = unknown> {
@@ -62,6 +64,17 @@ export interface MovePayload {
 
 export interface DrawOfferPayload {
   reason?: string;
+}
+
+export interface LobbyChatPayload {
+  message: string;
+}
+
+export interface LobbyChatServerPayload {
+  from: string;
+  displayName: string;
+  message: string;
+  timestamp: number;
 }
 
 // ===================== Server Message Payloads =====================

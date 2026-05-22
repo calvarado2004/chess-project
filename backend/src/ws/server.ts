@@ -14,12 +14,15 @@ import type {
   LobbyPlayer,
   LobbyStatePayload,
   LobbyEntry,
+  LobbyChatPayload,
+  LobbyChatServerPayload,
 } from './types.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 const REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
 const LOBBY_KEY = 'chess:lobby';
 const LOBBY_BROADCAST = 'chess:lobby:broadcast';
+const LOBBY_CHAT_CHANNEL = 'chess:lobby:chat';
 const PLAYER_ROOM_KEY = 'chess:player_rooms';
 
 type PlayerColor = 'white' | 'black';
@@ -73,7 +76,7 @@ export class WsGameServer {
   }
 
   private setupRedisSubscriptions(): void {
-    this.subscriber.subscribe(this.podChannel, LOBBY_BROADCAST).catch((err: Error) => {
+    this.subscriber.subscribe(this.podChannel, LOBBY_BROADCAST, LOBBY_CHAT_CHANNEL).catch((err: Error) => {
       console.error('[WS] Redis subscribe failed:', err);
     });
 
@@ -81,6 +84,11 @@ export class WsGameServer {
       try {
         if (channel === LOBBY_BROADCAST) {
           void this.broadcastLobbyLocal();
+          return;
+        }
+        if (channel === LOBBY_CHAT_CHANNEL) {
+          const payload = JSON.parse(data) as LobbyChatServerPayload;
+          this.broadcastChatLocal(payload);
           return;
         }
         if (channel === this.podChannel) {
@@ -216,6 +224,27 @@ export class WsGameServer {
           room.getPlayer(offerFrom)?.ws.send(JSON.stringify({ type: 'draw_decline', payload: {}, gameId: room.state.gameId } as WsMessage));
         });
         break;
+
+      case 'lobby_chat': {
+        const chatPayload = msg.payload as LobbyChatPayload;
+        if (!chatPayload?.message || typeof chatPayload.message !== 'string') {
+          send({ type: 'error', payload: { message: 'Invalid chat message' } });
+          break;
+        }
+        const sanitized = chatPayload.message.trim().slice(0, 500);
+        if (!sanitized) {
+          break;
+        }
+        const serverPayload: LobbyChatServerPayload = {
+          from: userId,
+          displayName: username,
+          message: sanitized,
+          timestamp: Date.now(),
+        };
+        // Publish to Redis; every pod (including this one) broadcasts to its local clients
+        await this.redis.publish(LOBBY_CHAT_CHANNEL, JSON.stringify(serverPayload));
+        break;
+      }
 
       default:
         send({ type: 'error', payload: { message: `Unknown message type: ${msg.type}` } });
@@ -527,6 +556,11 @@ export class WsGameServer {
       gameId: entry.gameId,
     }));
     const message: WsMessage<LobbyStatePayload> = { type: 'lobby_state', payload: { players } };
+    this.broadcastLocal(message);
+  }
+
+  private broadcastChatLocal(payload: LobbyChatServerPayload): void {
+    const message: WsMessage<LobbyChatServerPayload> = { type: 'lobby_chat', payload };
     this.broadcastLocal(message);
   }
 
