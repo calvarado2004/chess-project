@@ -706,6 +706,7 @@ function generatePGN(): string {
 let engine: Worker | null = null;
 let engineReady = false;
 let currentEngineRequest: null | 'analysis' | 'move' = null;
+let engineReadyForMove = false;
 
 function initStockfish() {
   try {
@@ -721,6 +722,11 @@ function handleEngineMessage(msg: string) {
   if (msg === 'readyok') {
     engineReady = true; state.engineStatus = 'ready';
     configureStrength(); engine?.postMessage('ucinewgame');
+    // After ucinewgame, if it's the engine's turn, request its move
+    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
+    if (isEngineTurn && !state.gameOver) {
+      engineReadyForMove = true;
+    }
     engineStatusRef.current = 'ready'; renderTrigger.current();
     return;
   }
@@ -754,6 +760,17 @@ function parseEvalInfo(msg: string) {
 function handleBestMove(msg: string) {
   const parts = msg.split(' ');
   const bestmoveStr = parts[1];
+
+  // If we were waiting for the engine to be ready for a move (new game), trigger it now
+  if (engineReadyForMove) {
+    engineReadyForMove = false;
+    // The engine just finished ucinewgame, now request the first move
+    if (!state.gameOver) {
+      requestEngineMove();
+    }
+    return;
+  }
+
   if (currentEngineRequest === 'move') {
     currentEngineRequest = null;
     state.engineStatus = 'ready';
@@ -874,20 +891,9 @@ export function useChessGame(): UseChessGameReturn {
   useEffect(() => { setLastEngineBestMove(lastEngineBestMoveRef.current); }, [renderTick]);
 
   // Init
-  const engineMoveInitDone = useRef(false);
   useEffect(() => {
     state.board = initBoard();
     initStockfish();
-  }, []);
-
-  // Trigger engine first move when human plays Black vs Stockfish
-  useEffect(() => {
-    if (engineMoveInitDone.current) return;
-    engineMoveInitDone.current = true;
-    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
-    if (isEngineTurn && !state.gameOver) {
-      requestEngineMove();
-    }
   }, []);
 
   // Execute engine move when bestmove arrives
