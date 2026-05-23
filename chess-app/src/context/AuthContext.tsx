@@ -38,11 +38,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         .catch(() => {
           clearTokens();
+          window.location.href = '/login';
         })
         .finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
     }
+
+    // Periodically verify session is still valid (every 5 minutes)
+    const interval = setInterval(() => {
+      if (!getAccessToken()) return;
+      apiGetCurrentUser()
+        .then((u) => {
+          setUser(u);
+        })
+        .catch(() => {
+          clearTokens();
+          setUser(null);
+          setAccessToken(null);
+          window.location.href = '/login';
+        });
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const login = useCallback(async (username: string, password: string) => {

@@ -123,8 +123,19 @@ export class ChessWebSocket {
     }
 
     if (message.type === 'auth_error' && this.authPromise) {
-      this.authPromise.reject(new Error((message.payload as ErrorPayload).message));
+      const payload = message.payload as ErrorPayload;
+      this.authPromise.reject(new Error(payload.message));
       this.authPromise = null;
+      // Cancel any pending reconnect — the token is invalid, don't keep trying
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
+      this.connected = false;
+      // If the token is invalid/expired, redirect to login
+      if (payload.message.includes('Invalid') || payload.message.includes('expired')) {
+        window.location.href = '/login';
+      }
       return;
     }
 

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
 import { useAuth } from '../context/AuthContext';
 import Board from './Board';
@@ -27,6 +28,7 @@ interface OnlineGameProps {
 }
 
 export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const {
     onlineGame,
@@ -216,7 +218,13 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       setGameStatus('stalemate');
       showNotification('Draw!');
     }
-  }, [onlineGame?.status, (onlineGame as any)?.reason, myColor.current]);
+
+    // Navigate back to lobby after a delay (keeps session alive)
+    const timer = setTimeout(() => {
+      navigate('/lobby');
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [onlineGame?.status, (onlineGame as any)?.reason, myColor.current, navigate]);
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -470,9 +478,15 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
               )}
             </>
           )}
-          <button className="btn" onClick={handleBackToLobby}>
-            Back to Lobby
-          </button>
+          {gameOver ? (
+            <button className="btn" onClick={handleBackToLobby} style={{ background: '#a6e3a1' }}>
+              Play Again
+            </button>
+          ) : (
+            <button className="btn" onClick={handleBackToLobby}>
+              Back to Lobby
+            </button>
+          )}
         </div>
       </div>
 

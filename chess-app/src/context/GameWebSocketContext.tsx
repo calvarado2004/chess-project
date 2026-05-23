@@ -203,13 +203,21 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     const chessWs = new ChessWebSocket(token);
     setupHandlers(chessWs);
 
-    const result = await chessWs.connect();
-    if (result) {
-      wsRef.current = chessWs;
-      setWs(chessWs);
-      setIsConnected(true);
+    try {
+      const result = await chessWs.connect();
+      if (result) {
+        wsRef.current = chessWs;
+        setWs(chessWs);
+        setIsConnected(true);
+      }
+      return result;
+    } catch (error) {
+      // Connection failed (auth error, network error, etc.) — clear stale state
+      wsRef.current = null;
+      setWs(null);
+      setIsConnected(false);
+      return false;
     }
-    return result;
   }, [setupHandlers]);
 
   // Auto-connect on mount if token exists

@@ -15,6 +15,11 @@ import {
   rowColToFileRank,
   generateFEN,
   GameStatus,
+  EMPTY,
+  W_KING,
+  B_KING,
+  W_ROOK,
+  B_ROOK,
 } from '../engine/index.js';
 import type {
   GameRoomState,
@@ -170,6 +175,29 @@ export class GameRoom {
         this.state.capturedByBlack = [...(this.state.capturedByBlack || []), capturedPiece];
       }
     }
+
+    // Update castling rights when King or Rook moves, or when a Rook is captured on its starting square
+    if (sourcePiece === W_KING) { cloned.castlingRights.wK = false; cloned.castlingRights.wQ = false; }
+    if (sourcePiece === B_KING) { cloned.castlingRights.bK = false; cloned.castlingRights.bQ = false; }
+    if (sourcePiece === W_ROOK && matchingMove.from.row === 7 && matchingMove.from.col === 0) cloned.castlingRights.wQ = false;
+    if (sourcePiece === W_ROOK && matchingMove.from.row === 7 && matchingMove.from.col === 7) cloned.castlingRights.wK = false;
+    if (sourcePiece === B_ROOK && matchingMove.from.row === 0 && matchingMove.from.col === 0) cloned.castlingRights.bQ = false;
+    if (sourcePiece === B_ROOK && matchingMove.from.row === 0 && matchingMove.from.col === 7) cloned.castlingRights.bK = false;
+    // If a rook is captured on its starting square, that color loses the corresponding castling right
+    if (matchingMove.to.row === 7 && matchingMove.to.col === 0) cloned.castlingRights.wQ = false;
+    if (matchingMove.to.row === 7 && matchingMove.to.col === 7) cloned.castlingRights.wK = false;
+    if (matchingMove.to.row === 0 && matchingMove.to.col === 0) cloned.castlingRights.bQ = false;
+    if (matchingMove.to.row === 0 && matchingMove.to.col === 7) cloned.castlingRights.bK = false;
+
+    // Update en passant target
+    cloned.enPassantTarget = null;
+    if (PIECE_TYPE[sourcePiece] === 'p' && Math.abs(matchingMove.to.row - matchingMove.from.row) === 2) {
+      cloned.enPassantTarget = { row: (matchingMove.from.row + matchingMove.to.row) / 2, col: matchingMove.from.col };
+    }
+
+    // Update halfmove clock
+    if (PIECE_TYPE[sourcePiece] === 'p' || capturedPiece !== 0) cloned.halfmoveClock = 0;
+    else cloned.halfmoveClock++;
 
     // Switch turn
     cloned.turn = cloned.turn === 'w' ? 'b' : 'w';
