@@ -104,7 +104,7 @@ Screenshots:
 <p>
   <img src="../docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260">
   <img src="../docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260">
-  <img src="../docs/screenshots/ios-ipad-home.png" alt="iPad home screen" width="360">
+  <img src="../docs/screenshots/ios-ipad-home.png" alt="iPad local game settings" width="360">
 </p>
 
 ```bash
@@ -114,6 +114,20 @@ npm run cap:open:ios
 ```
 
 Run `cap:sync` after frontend or Capacitor config changes before opening Android Studio or Xcode.
+
+Route and browser regression tests:
+
+```bash
+npm run test:browser
+```
+
+Run the route suite against the production frontend served by Docker Compose:
+
+```bash
+PLAYWRIGHT_BASE_URL=http://localhost:3001 npm run test:browser -- tests/offline-routes.spec.ts
+```
+
+The external route mode uses the live Compose backend for auth and catches production-only routing failures, including `/lobby` rendering the Home page after clicking Online Multiplayer.
 
 Android debug build:
 

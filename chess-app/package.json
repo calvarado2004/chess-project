@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:browser": "playwright test",
+    "test:browser:external": "playwright test",
     "cap:sync": "npm run build && cap sync",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios"

@@ -148,7 +148,7 @@ Mobile screenshots:
 <p>
   <img src="docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260">
   <img src="docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260">
-  <img src="docs/screenshots/ios-ipad-home.png" alt="iPad home screen" width="360">
+  <img src="docs/screenshots/ios-ipad-home.png" alt="iPad local game settings" width="360">
 </p>
 
 Mobile workflow:
@@ -362,6 +362,25 @@ By default the test connects both clients through the frontend proxy at `ws://lo
 ```bash
 WS_URL_A=ws://localhost:3001/ws WS_URL_B=ws://localhost:3001/ws npm run test:integration
 ```
+
+## Frontend Route Tests
+
+Browser tests cover offline route access, protected online route redirects, authenticated lobby rendering, the Online Multiplayer home card, deep-link/refresh behavior, chess rules, en passant, castling guards, and the Stockfish 18 worker flow.
+
+```bash
+cd chess-app
+npm run test:browser
+```
+
+To run the same route coverage against a built frontend, start Docker Compose and set `PLAYWRIGHT_BASE_URL`:
+
+```bash
+docker compose up -d --build
+cd chess-app
+PLAYWRIGHT_BASE_URL=http://localhost:3001 npm run test:browser -- tests/offline-routes.spec.ts
+```
+
+This production-route check catches regressions where the browser URL changes to `/lobby` but the SPA shell renders the Home page instead of the Lobby.
 
 ## Development
 

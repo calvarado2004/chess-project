@@ -17,11 +17,33 @@ function storedUser(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 async function seedAuthenticatedUser(page: import('@playwright/test').Page, accessToken = 'test-token') {
-  await page.goto('/');
-  await page.evaluate(({ user, token }) => {
+  if (process.env.PLAYWRIGHT_BASE_URL) {
+    const randomSuffix = `${Date.now().toString(36)}_${Math.floor(Math.random() * 46656).toString(36)}`;
+    const username = `rt_${randomSuffix}`.slice(0, 20);
+    await page.goto('/register');
+    await page.locator('#reg-username').fill(username);
+    await page.locator('#reg-email').fill(`${username}@example.com`);
+    await page.locator('#reg-password').fill('CodexTest123!');
+    await page.getByRole('button', { name: /Create Account/i }).click();
+    await expect(page).toHaveURL(/\/$/);
+    return;
+  }
+
+  const user = storedUser();
+
+  await page.route('**/api/users/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(user),
+    });
+  });
+
+  await page.addInitScript(({ user, token }) => {
     localStorage.setItem('chess_access_token', token);
+    sessionStorage.setItem('chess_refresh_token', 'test-refresh-token');
     localStorage.setItem('chess_user', JSON.stringify(user));
-  }, { user: storedUser(), token: accessToken });
+  }, { user, token: accessToken });
 }
 
 test('offline-capable routes render without login', async ({ page }) => {

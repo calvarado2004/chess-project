@@ -1,5 +1,5 @@
 import { BrowserRouter, HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GameWebSocketProvider } from './context/GameWebSocketContext';
 import Login from './components/Login';
@@ -43,12 +43,25 @@ function AppRoutes() {
           )
         }
       />
-      <Route path="*" element={<MainApp />} />
+      <Route path="/" element={<MainApp><Home /></MainApp>} />
+      <Route
+        path="/lobby"
+        element={<MainApp><ProtectedRoute><Lobby onJoinGame={() => navigate('/online')} /></ProtectedRoute></MainApp>}
+      />
+      <Route path="/local" element={<MainApp><LocalGame /></MainApp>} />
+      <Route
+        path="/online"
+        element={<MainApp><ProtectedRoute><OnlineGame onBackToLobby={() => navigate('/lobby')} /></ProtectedRoute></MainApp>}
+      />
+      <Route path="/pgn" element={<MainApp><PGNLoader /></MainApp>} />
+      <Route path="/profile" element={<MainApp><ProtectedRoute><Profile /></ProtectedRoute></MainApp>} />
+      <Route path="/history" element={<MainApp><GameHistory /></MainApp>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-function MainApp() {
+function MainApp({ children }: { children: ReactNode }) {
   const { user, accessToken, logout } = useAuth();
   const navigate = useNavigate();
   const nativeApp = isNativeApp();
@@ -167,21 +180,7 @@ function MainApp() {
 
         {/* Content */}
         <div className="app-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/lobby"
-              element={<ProtectedRoute><Lobby onJoinGame={() => navigate('/online')} /></ProtectedRoute>}
-            />
-            <Route path="/local" element={<LocalGame />} />
-            <Route
-              path="/online"
-              element={<ProtectedRoute><OnlineGame onBackToLobby={() => navigate('/lobby')} /></ProtectedRoute>}
-            />
-            <Route path="/pgn" element={<PGNLoader />} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/history" element={<GameHistory />} />
-          </Routes>
+          {children}
         </div>
       </div>
     </GameWebSocketProvider>
