@@ -29,6 +29,13 @@ export interface ELOStats {
         date: string;
     }>;
 }
+export interface RecordStockfishGameInput {
+    stockfishElo: number;
+    playerColor: 'w' | 'b';
+    result: 'win' | 'loss' | 'draw';
+    moveCount: number;
+    gameDuration: number;
+}
 /**
  * Record a game result and update ELO rating.
  * Returns updated ELO stats.
@@ -42,4 +49,5 @@ export declare function getELOStats(userId: string): Promise<ELOStats>;
  * Get game history for a user.
  */
 export declare function getGameHistory(userId: string, limit?: number): Promise<GameHistoryEntry[]>;
+export declare function recordStockfishGameResult(userId: string, input: RecordStockfishGameInput): Promise<ELOStats>;
 //# sourceMappingURL=gameHistoryService.d.ts.map

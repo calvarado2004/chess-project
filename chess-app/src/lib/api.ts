@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, getApiUrl, getRefreshToken, setTokens, setUser, clearTokens, getUser, StoredUser } from './auth';
+import { getAccessToken, getApiUrl, getRefreshToken, setTokens, setUser, clearTokens, expireAuthSession, getUser, StoredUser } from './auth';
 
 const api = axios.create({
   baseURL: '/',
@@ -53,8 +53,7 @@ api.interceptors.response.use(
 
       const refreshToken = getRefreshToken();
       if (!refreshToken) {
-        clearTokens();
-        window.location.replace('/login');
+        expireAuthSession();
         return Promise.reject(error);
       }
 
@@ -74,9 +73,8 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        clearTokens();
+        expireAuthSession();
         processQueue(refreshError, null);
-        window.location.replace('/login');
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

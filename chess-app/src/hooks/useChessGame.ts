@@ -35,7 +35,7 @@ const state = {
   castlingRights: { wK: true, wQ: true, bK: true, bQ: true },
   halfmoveClock: 0,
   fullmoveNumber: 1,
-  gameMode: 'hvh' as GameMode,
+  gameMode: 'hwe' as GameMode,
   strengthLevel: 'elo-800',
   whiteName: 'You',
   blackName: 'Stockfish',
@@ -106,6 +106,19 @@ function resetState(timeControlMinutes: number = 10) {
   whiteTime = timeControlMinutes * 60;
   blackTime = timeControlMinutes * 60;
   clockRef.current = { whiteTime, blackTime, running: false };
+}
+
+function configurePlayerNames() {
+  if (state.gameMode === 'hwe') {
+    state.whiteName = 'You';
+    state.blackName = 'Stockfish';
+  } else if (state.gameMode === 'hbe') {
+    state.whiteName = 'Stockfish';
+    state.blackName = 'You';
+  } else {
+    state.whiteName = 'White';
+    state.blackName = 'Black';
+  }
 }
 
 function cloneCoord(coord: Coord | null): Coord | null {
@@ -478,8 +491,8 @@ function executeMove(move: ChessMove) {
 
   // Stockfish
   requestAnalysis();
-  if (!state.gameOver && ((state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w'))) {
-    requestEngineMove();
+  if (!state.gameOver) {
+    startEngineTurnIfNeeded();
   }
 }
 
@@ -710,7 +723,7 @@ let pendingNewGame = false;
 
 function initStockfish() {
   try {
-    engine = new Worker(new URL('/stockfish.js', import.meta.url), { type: 'classic' });
+    engine = new Worker('/stockfish.js', { type: 'classic' });
     engine.onmessage = (e) => handleEngineMessage(e.data);
     engine.onerror = () => { state.engineStatus = 'error'; engineStatusRef.current = 'error'; renderTrigger.current(); };
     engine.postMessage('uci');
@@ -726,6 +739,7 @@ function handleEngineMessage(msg: string) {
     if (!pendingNewGame) pendingNewGame = true;
     engine?.postMessage('ucinewgame');
     engineStatusRef.current = 'ready'; renderTrigger.current();
+    startEngineTurnIfNeeded();
     return;
   }
   if (msg.startsWith('info') && msg.includes('score')) { parseEvalInfo(msg); return; }
@@ -763,10 +777,7 @@ function handleBestMove(msg: string) {
   if (pendingNewGame && bestmoveStr === 'none') {
     pendingNewGame = false;
     // The engine finished ucinewgame, now request the first move if it's engine's turn
-    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
-    if (isEngineTurn && !state.gameOver && engine && engineReady) {
-      requestEngineMove();
-    }
+    startEngineTurnIfNeeded();
     return;
   }
 
@@ -813,6 +824,21 @@ function requestEngineMove() {
   engineStatusRef.current = 'thinking';
   engine.postMessage('position fen ' + generateFEN());
   engine.postMessage(`go movetime ${movetime}`);
+}
+
+function isEngineTurn(): boolean {
+  return (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
+}
+
+function startEngineTurnIfNeeded() {
+  if (!isEngineTurn() || state.gameOver) {
+    return;
+  }
+  if (!engine || !engineReady) {
+    return;
+  }
+  if (currentEngineRequest === 'move') return;
+  requestEngineMove();
 }
 
 function parseUCIMove(str: string): ChessMove | null {
@@ -939,13 +965,17 @@ export function useChessGame(): UseChessGameReturn {
 
   const resetGame = useCallback((timeControlMinutes: number = 10) => {
     resetState(timeControlMinutes);
+    configurePlayerNames();
     if (engine && engineReady) engine.postMessage('ucinewgame');
+    startEngineTurnIfNeeded();
     renderTrigger.current();
   }, []);
 
   const setGameMode = useCallback((mode: GameMode) => {
     state.gameMode = mode;
     resetState();
+    configurePlayerNames();
+    startEngineTurnIfNeeded();
     renderTrigger.current();
   }, []);
 

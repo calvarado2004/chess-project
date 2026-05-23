@@ -3,14 +3,6 @@ export interface ELOResult {
     eloChange: number;
     performanceRating: number | null;
 }
-export interface GameRecord {
-    result: 'win' | 'loss' | 'draw';
-    opponentRating: number;
-    playerRating: number;
-    moveCount: number;
-    gameDuration: number;
-    playerColor: 'w' | 'b';
-}
 /**
  * Calculate expected score against an opponent of given rating.
  * ELO formula: E = 1 / (1 + 10^((R_opponent - R_player) / 400))
@@ -50,6 +42,9 @@ export declare function calculateELOStats(currentRating: number, gamesPlayed: nu
     result: 'win' | 'loss' | 'draw';
     opponentRating: number;
     performance_elo?: number | null;
+    opponent?: string;
+    eloChange?: number;
+    created_at?: string | Date;
 }>): {
     rating: number;
     games: number;

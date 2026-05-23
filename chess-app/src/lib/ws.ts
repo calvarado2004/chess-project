@@ -7,6 +7,7 @@ import type {
   GameOverPayload,
   ErrorPayload,
 } from './ws-types.js';
+import { expireAuthSession } from './auth.js';
 
 type MessageHandler = (message: WsMessage) => void;
 
@@ -25,6 +26,8 @@ export interface OnlineGame {
   whiteTime: number;
   blackTime: number;
   status: 'playing' | 'finished' | 'waiting';
+  result?: string;
+  reason?: string;
   lastMove?: string;
   playerColor?: 'white' | 'black';
   moveHistory?: string[];
@@ -134,7 +137,7 @@ export class ChessWebSocket {
       this.connected = false;
       // If the token is invalid/expired, redirect to login
       if (payload.message.includes('Invalid') || payload.message.includes('expired')) {
-        window.location.href = '/login';
+        expireAuthSession();
       }
       return;
     }

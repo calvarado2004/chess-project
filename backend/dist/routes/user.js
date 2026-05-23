@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { validate } from '../middleware/validate.js';
 import { authenticate, optionalAuth } from '../middleware/auth.js';
 import { getPublicUser, getCurrentUser, updateDisplayName, updateAvatar } from '../services/userService.js';
-import { getELOStats, getGameHistory } from '../services/gameHistoryService.js';
+import { getELOStats, getGameHistory, recordStockfishGameResult } from '../services/gameHistoryService.js';
 const router = Router();
 // GET /api/users/me — Current user profile (requires auth)
 router.get('/me', authenticate, async (req, res) => {
@@ -51,9 +51,24 @@ router.get('/me/history', authenticate, async (req, res) => {
         res.status(401).json({ error: 'Not authenticated' });
         return;
     }
-    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const limit = Math.min(parseInt(req.query.limit) || 50, 50);
     const history = await getGameHistory(req.userId, limit);
     res.json(history);
+});
+// POST /api/users/me/history/stockfish — Record a completed local Stockfish game
+router.post('/me/history/stockfish', authenticate, validate(z.object({
+    stockfishElo: z.number().int().min(500).max(2400),
+    playerColor: z.enum(['w', 'b']),
+    result: z.enum(['win', 'loss', 'draw']),
+    moveCount: z.number().int().min(0).max(1000),
+    gameDuration: z.number().int().min(0).max(86400),
+})), async (req, res) => {
+    if (!req.userId) {
+        res.status(401).json({ error: 'Not authenticated' });
+        return;
+    }
+    const stats = await recordStockfishGameResult(req.userId, req.body);
+    res.status(201).json(stats);
 });
 // GET /api/users/:id — Public profile (must be last to avoid matching /me)
 router.get('/:userId', optionalAuth, async (req, res) => {

@@ -6,6 +6,7 @@ import {
   getUser,
   setUser as persistUser,
   clearTokens,
+  AUTH_SESSION_EXPIRED_EVENT,
   type StoredUser,
 } from '../lib/auth';
 import { login as apiLogin, register as apiRegister, logout as apiLogout, getCurrentUser as apiGetCurrentUser, updateProfile as apiUpdateProfile } from '../lib/api';
@@ -40,6 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const handleSessionExpired = () => {
+      setUser(null);
+      setAccessToken(null);
+      redirectingToLogin = false;
+    };
+    window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired);
+
     // If we have tokens but no user state yet, validate them
     if (isAuthenticated() && !user) {
       apiGetCurrentUser()
@@ -62,17 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .catch(forceRedirectToLogin);
     }, 2 * 60 * 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired);
+    };
   }, []);
 
   const login = useCallback(async (username: string, password: string) => {
     const result = await apiLogin(username, password);
+    redirectingToLogin = false;
     setUser(result.user);
     setAccessToken(result.accessToken);
   }, []);
 
   const register = useCallback(async (username: string, email: string, password: string, displayName?: string) => {
     const result = await apiRegister(username, email, password, displayName);
+    redirectingToLogin = false;
     setUser(result.user);
     setAccessToken(result.accessToken);
   }, []);

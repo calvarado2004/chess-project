@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useChessGame } from '../hooks/useChessGame';
 import { STRENGTH_MAP } from '../engine';
 import { recordStockfishGame } from '../lib/api';
@@ -14,6 +15,7 @@ import Controls from './Controls';
 import type { GameMode } from '../engine';
 
 export default function LocalGame() {
+  const location = useLocation();
   const { refreshUser } = useAuth();
   const {
     board, turn, gameMode, gameStatus, gameOver, strengthLevel,
@@ -29,7 +31,21 @@ export default function LocalGame() {
   const [timeControl, setTimeControl] = useState(10);
   const gameStartedAt = useRef(Date.now());
   const recordedGameKey = useRef<string | null>(null);
+  const appliedRouteMode = useRef(false);
   const boardOrientation = gameMode === 'hbe' ? 'black' : 'white';
+
+  useEffect(() => {
+    if (appliedRouteMode.current) return;
+    appliedRouteMode.current = true;
+
+    const routeState = location.state as { gameMode?: GameMode } | null;
+    if (routeState?.gameMode && routeState.gameMode !== gameMode) {
+      setGameMode(routeState.gameMode);
+      gameStartedAt.current = Date.now();
+      recordedGameKey.current = null;
+      resetGame(timeControl);
+    }
+  }, [gameMode, location.state, resetGame, setGameMode, timeControl]);
 
   const handleNewGame = useCallback(() => {
     gameStartedAt.current = Date.now();

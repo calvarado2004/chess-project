@@ -1,5 +1,5 @@
-export type ClientMessageType = 'auth' | 'lobby_join' | 'lobby_leave' | 'game_create' | 'game_join' | 'move' | 'resign' | 'draw_offer' | 'draw_accept' | 'draw_decline' | 'pong';
-export type ServerMessageType = 'auth_ok' | 'auth_error' | 'lobby_state' | 'game_joined' | 'game_state' | 'opponent_move' | 'game_over' | 'error' | 'ping' | 'opponent_disconnected' | 'opponent_reconnected' | 'lobby_player_joined' | 'lobby_player_left' | 'game_created' | 'game_joined_by_other';
+export type ClientMessageType = 'auth' | 'lobby_join' | 'lobby_leave' | 'game_create' | 'game_join' | 'move' | 'resign' | 'draw_offer' | 'draw_accept' | 'draw_decline' | 'lobby_chat' | 'pong';
+export type ServerMessageType = 'auth_ok' | 'auth_error' | 'lobby_state' | 'game_joined' | 'game_state' | 'opponent_move' | 'game_over' | 'error' | 'ping' | 'opponent_disconnected' | 'opponent_reconnected' | 'lobby_player_joined' | 'lobby_player_left' | 'game_created' | 'game_joined_by_other' | 'draw_decline' | 'lobby_chat';
 export interface WsMessage<T = unknown> {
     type: ClientMessageType | ServerMessageType;
     payload: T;
@@ -22,6 +22,15 @@ export interface MovePayload {
 }
 export interface DrawOfferPayload {
     reason?: string;
+}
+export interface LobbyChatPayload {
+    message: string;
+}
+export interface LobbyChatServerPayload {
+    from: string;
+    displayName: string;
+    message: string;
+    timestamp: number;
 }
 export interface LobbyStatePayload {
     players: LobbyPlayer[];
@@ -58,6 +67,7 @@ export interface GameStatePayload {
     lastMove?: string;
     capturedByWhite?: number[];
     capturedByBlack?: number[];
+    moveHistory?: string[];
 }
 export interface GameOverPayload {
     result: string;
@@ -102,6 +112,7 @@ export interface GameRoomState {
     createdAt: number;
     capturedByWhite: number[];
     capturedByBlack: number[];
+    moveHistory: string[];
 }
 export interface LobbyEntry {
     playerId: string;

@@ -63,6 +63,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [notification, setNotification] = useState('');
   const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
+  const [gameOverMessage, setGameOverMessage] = useState('Game Over');
 
   const myColor = useRef<'white' | 'black' | null>(null);
   const engineRef = useRef<Worker | null>(null);
@@ -72,7 +73,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   // ===================== Stockfish =====================
   useEffect(() => {
     try {
-      const worker = new Worker(new URL('/stockfish.js', import.meta.url), { type: 'classic' });
+      const worker = new Worker('/stockfish.js', { type: 'classic' });
       worker.onmessage = (e) => {
         const msg = e.data;
         if (msg === 'uciok') {
@@ -201,22 +202,34 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   useEffect(() => {
     if (!onlineGame || onlineGame.status !== 'finished') return;
     setGameOver(true);
-    const reason = (onlineGame as any)?.reason;
+    const reason = onlineGame.reason;
+    const result = onlineGame.result;
+    const winner = result === '1-0' ? 'White' : result === '0-1' ? 'Black' : null;
+    const mySideWon = Boolean(
+      winner &&
+      ((winner === 'White' && myColor.current === 'white') || (winner === 'Black' && myColor.current === 'black'))
+    );
+
     if (reason === 'checkmate') {
-      const winner = myColor.current === 'white' ? 'Black' : 'White';
       setGameStatus('checkmate');
-      showNotification(`Checkmate — ${winner} wins!`);
+      const message = `Checkmate — ${winner ?? 'Opponent'} wins!`;
+      setGameOverMessage(message);
+      showNotification(message);
     } else if (reason === 'resign') {
-      const winner = myColor.current === 'white' ? 'White' : 'Black';
       setGameStatus('checkmate');
-      showNotification(`${winner} wins by resignation!`);
+      const message = mySideWon ? 'Opponent Resigned' : 'You Resigned';
+      setGameOverMessage(message);
+      showNotification(message);
     } else if (reason === 'timeout') {
-      const winner = myColor.current === 'white' ? 'White' : 'Black';
-      setGameStatus(myColor.current === 'white' ? 'black_time_win' : 'white_time_win');
-      showNotification(`${winner} wins on time!`);
+      setGameStatus(winner === 'White' ? 'white_time_win' : 'black_time_win');
+      const message = `${winner ?? 'Opponent'} wins on time!`;
+      setGameOverMessage(message);
+      showNotification(message);
     } else if (reason === 'draw' || reason === 'stalemate') {
       setGameStatus('stalemate');
-      showNotification('Draw!');
+      const message = reason === 'stalemate' ? 'Stalemate! Draw' : 'Draw!';
+      setGameOverMessage(message);
+      showNotification(message);
     }
 
     // Navigate back to lobby after a delay (keeps session alive)
@@ -224,7 +237,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       navigate('/lobby');
     }, 3000);
     return () => clearTimeout(timer);
-  }, [onlineGame?.status, (onlineGame as any)?.reason, myColor.current, navigate]);
+  }, [onlineGame?.status, onlineGame?.reason, onlineGame?.result, myColor.current, navigate]);
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -442,7 +455,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
             padding: '8px 16px', background: '#45475a', borderRadius: '6px',
             marginBottom: '8px', color: '#cdd6f4', fontWeight: 600,
           }}>
-            Game Over
+            {gameOverMessage}
           </div>
         ) : isMyTurn ? (
           <div style={{

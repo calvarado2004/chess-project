@@ -1,7 +1,8 @@
 import { Pool } from 'pg';
+const useSSL = process.env.NODE_ENV === 'production' && process.env.DB_SSL !== 'false';
 const config = {
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+    ssl: useSSL ? { rejectUnauthorized: false } : undefined,
 };
 const pool = new Pool(config);
 pool.on('error', (err) => {

@@ -12,7 +12,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ gameStatus, turn }) => {
     return <div className="status-bar"><span className="checkmate">Checkmate — {winner} wins</span></div>;
   }
   if (gameStatus === 'stalemate') {
-    return <div className="status-bar"><span className="stalemate">Stalemate — Draw</span></div>;
+    return <div className="status-bar"><span className="stalemate">Stalemate! Draw</span></div>;
   }
   if (gameStatus === 'white_time_win') {
     return <div className="status-bar"><span className="time-win">White wins on time</span></div>;

@@ -36,7 +36,7 @@ export async function recordGameResult(userId, gameId, opponent, opponentElo, pl
         moveCount, gameDuration,
     ]);
     // Get updated game history for stats
-    const historyResult = await query(`SELECT result, opponent_elo, performance_elo, opponent, created_at 
+    const historyResult = await query(`SELECT result, opponent_elo, performance_elo, opponent, elo_change, created_at
      FROM game_history 
      WHERE user_id = $1 
      ORDER BY created_at DESC 
@@ -46,6 +46,7 @@ export async function recordGameResult(userId, gameId, opponent, opponentElo, pl
         opponentRating: row.opponent_elo,
         performance_elo: row.performance_elo,
         opponent: row.opponent,
+        eloChange: row.elo_change,
         created_at: row.created_at,
     }));
     return calculateELOStats(newRating, newGames, newWins, newLosses, newDraws, history);
@@ -59,16 +60,17 @@ export async function getELOStats(userId) {
         throw new Error('User not found');
     }
     const user = userResult.rows[0];
-    const historyResult = await query(`SELECT result, opponent_elo, performance_elo, opponent, created_at 
+    const historyResult = await query(`SELECT result, opponent_elo, performance_elo, opponent, elo_change, created_at
      FROM game_history 
      WHERE user_id = $1 
      ORDER BY created_at DESC 
-     LIMIT 100`, [userId]);
+     LIMIT 50`, [userId]);
     const history = historyResult.rows.map((row) => ({
         result: row.result,
         opponentRating: row.opponent_elo,
         performance_elo: row.performance_elo,
         opponent: row.opponent,
+        eloChange: row.elo_change,
         created_at: row.created_at,
     }));
     return calculateELOStats(user.elo_rating, user.elo_games, user.elo_wins, user.elo_losses, user.elo_draws, history);
@@ -76,7 +78,7 @@ export async function getELOStats(userId) {
 /**
  * Get game history for a user.
  */
-export async function getGameHistory(userId, limit = 20) {
+export async function getGameHistory(userId, limit = 50) {
     const result = await query(`SELECT id, game_id, opponent, opponent_elo, player_color, result, 
             player_elo_before, player_elo_after, elo_change, performance_elo,
             move_count, game_duration_s, created_at
@@ -99,5 +101,20 @@ export async function getGameHistory(userId, limit = 20) {
         game_duration_s: row.game_duration_s,
         created_at: row.created_at.toISOString(),
     }));
+}
+export async function recordStockfishGameResult(userId, input) {
+    const resultCode = input.result === 'draw'
+        ? '1/2-1/2'
+        : (input.result === 'win') === (input.playerColor === 'w')
+            ? '1-0'
+            : '0-1';
+    const gameResult = await query(`INSERT INTO games (white_player_id, black_player_id, status, result, time_control, increment, finished_at)
+     VALUES ($1, $2, 'finished', $3, 0, 0, now())
+     RETURNING id`, [
+        input.playerColor === 'w' ? userId : null,
+        input.playerColor === 'b' ? userId : null,
+        resultCode,
+    ]);
+    return recordGameResult(userId, gameResult.rows[0].id, `Stockfish ${input.stockfishElo}`, input.stockfishElo, input.playerColor, input.result, input.moveCount, input.gameDuration);
 }
 //# sourceMappingURL=gameHistoryService.js.map

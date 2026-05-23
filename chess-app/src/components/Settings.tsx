@@ -20,9 +20,9 @@ const Settings: React.FC<SettingsProps> = ({
     <div className="setting-row">
       <label htmlFor="gameMode">Game Mode</label>
       <select id="gameMode" value={gameMode} onChange={e => onGameModeChange(e.target.value as GameMode)}>
+        <option value="hwe">Human vs Stockfish (White)</option>
+        <option value="hbe">Human vs Stockfish (Black)</option>
         <option value="hvh">Human vs Human (Local)</option>
-        <option value="hwe">Human (White) vs Stockfish</option>
-        <option value="hbe">Human (Black) vs Stockfish</option>
         <option value="online">Online Multiplayer</option>
       </select>
     </div>

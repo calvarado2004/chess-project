@@ -7,6 +7,7 @@ interface HomeProps {
 
 export default function Home({ onOnline }: HomeProps) {
   const navigate = useNavigate();
+  const [showStockfishPicker, setShowStockfishPicker] = useState(false);
 
   const cards = [
     {
@@ -14,14 +15,14 @@ export default function Home({ onOnline }: HomeProps) {
       title: 'Local Game',
       description: 'Play Human vs Human on the same device',
       color: '#89b4fa',
-      action: () => navigate('/local'),
+      action: () => navigate('/local', { state: { gameMode: 'hvh' } }),
     },
     {
       icon: '🤖',
       title: 'vs Stockfish',
       description: 'Challenge the engine — pick your color',
       color: '#a6e3a1',
-      action: () => navigate('/local'),
+      action: () => setShowStockfishPicker(true),
     },
     {
       icon: '🌐',
@@ -111,7 +112,7 @@ export default function Home({ onOnline }: HomeProps) {
       </div>
 
       {/* Stockfish color picker modal trigger */}
-      <StockfishColorPicker />
+      <StockfishColorPicker show={showStockfishPicker} onShowChange={setShowStockfishPicker} />
     </div>
   );
 }
@@ -120,8 +121,7 @@ export default function Home({ onOnline }: HomeProps) {
  * Inline color picker for Stockfish mode.
  * Shown after clicking "vs Stockfish" card.
  */
-function StockfishColorPicker() {
-  const [show, setShow] = useState(false);
+function StockfishColorPicker({ show, onShowChange }: { show: boolean; onShowChange: (show: boolean) => void }) {
   const navigate = useNavigate();
 
   if (!show) return null;
@@ -132,7 +132,7 @@ function StockfishColorPicker() {
       background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center',
       justifyContent: 'center', zIndex: 999,
     }}
-      onClick={() => setShow(false)}
+      onClick={() => onShowChange(false)}
     >
       <div style={{
         background: '#1e1e2e', padding: '32px', borderRadius: '12px',
@@ -145,8 +145,8 @@ function StockfishColorPicker() {
           <button
             onClick={() => {
               // Navigate to local with White vs Stockfish
-              navigate('/local');
-              setShow(false);
+              navigate('/local', { state: { gameMode: 'hwe' } });
+              onShowChange(false);
             }}
             style={{
               padding: '12px 28px', background: '#ffffff22', color: '#fff',
@@ -159,8 +159,8 @@ function StockfishColorPicker() {
           <button
             onClick={() => {
               // Navigate to local with Black vs Stockfish
-              navigate('/local');
-              setShow(false);
+              navigate('/local', { state: { gameMode: 'hbe' } });
+              onShowChange(false);
             }}
             style={{
               padding: '12px 28px', background: '#00000044', color: '#cdd6f4',
@@ -172,7 +172,7 @@ function StockfishColorPicker() {
           </button>
         </div>
         <button
-          onClick={() => setShow(false)}
+          onClick={() => onShowChange(false)}
           style={{
             marginTop: '16px', background: 'none', border: 'none',
             color: '#a6adc8', cursor: 'pointer', fontSize: '14px',

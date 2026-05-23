@@ -29,6 +29,7 @@ export declare class WsGameServer {
     private getLobbyEntries;
     private publishLobby;
     private broadcastLobbyLocal;
+    private broadcastChatLocal;
     private getPlayerRoom;
     private setPlayerRoom;
     private clearPlayerRoom;

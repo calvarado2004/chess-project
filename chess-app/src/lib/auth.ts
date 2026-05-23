@@ -1,6 +1,7 @@
 const ACCESS_TOKEN_KEY = 'chess_access_token';
 const REFRESH_TOKEN_KEY = 'chess_refresh_token';
 const USER_KEY = 'chess_user';
+export const AUTH_SESSION_EXPIRED_EVENT = 'chess_auth_session_expired';
 
 export interface StoredUser {
   id: string;
@@ -41,6 +42,14 @@ export function clearTokens(): void {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+}
+
+export function expireAuthSession(): void {
+  clearTokens();
+  window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT));
+  if (window.location.pathname !== '/login') {
+    window.location.replace('/login');
+  }
 }
 
 export function isAuthenticated(): boolean {

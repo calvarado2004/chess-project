@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { query } from '../db/index.js';
 import { AuthRequest } from '../middleware/auth.js';
@@ -52,11 +53,34 @@ async function comparePassword(password: string, hash: string): Promise<boolean>
   return bcrypt.compare(password, hash);
 }
 
+function getJwtExpiresIn(value: string, fallbackSeconds: number): jwt.SignOptions['expiresIn'] {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue)
+    ? numericValue
+    : (value || fallbackSeconds) as jwt.SignOptions['expiresIn'];
+}
+
+function getRefreshExpiryDate(): Date {
+  const expiresIn = getJwtExpiresIn(JWT_REFRESH_EXPIRES_IN, 604800);
+  if (typeof expiresIn === 'number') {
+    return new Date(Date.now() + expiresIn * 1000);
+  }
+
+  const match = String(expiresIn).match(/^(\d+)([smhd])$/);
+  if (!match) {
+    return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  }
+
+  const amount = Number(match[1]);
+  const multiplier = { s: 1000, m: 60_000, h: 3_600_000, d: 86_400_000 }[match[2] as 's' | 'm' | 'h' | 'd'];
+  return new Date(Date.now() + amount * multiplier);
+}
+
 function generateAccessToken(user: UserRow): string {
   return jwt.sign(
     { userId: user.id, username: user.username },
     JWT_SECRET,
-    { expiresIn: Number(JWT_EXPIRES_IN) || 900 } as jwt.SignOptions
+    { expiresIn: getJwtExpiresIn(JWT_EXPIRES_IN, 900) } as jwt.SignOptions
   );
 }
 
@@ -64,12 +88,12 @@ function generateRefreshToken(user: UserRow): string {
   return jwt.sign(
     { userId: user.id, username: user.username },
     JWT_REFRESH_SECRET,
-    { expiresIn: Number(JWT_REFRESH_EXPIRES_IN) || 604800 } as jwt.SignOptions
+    { expiresIn: getJwtExpiresIn(JWT_REFRESH_EXPIRES_IN, 604800) } as jwt.SignOptions
   );
 }
 
 function hashToken(token: string): string {
-  return bcrypt.hashSync(token, BCRYPT_ROUNDS);
+  return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 // ===================== Registration =====================
@@ -108,7 +132,7 @@ export async function registerUser(
   // Store refresh token hash
   await query(
     'INSERT INTO user_sessions (user_id, token_hash, expires_at) VALUES ($1, $2, $3)',
-    [user.id, hashToken(refreshToken), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]
+    [user.id, hashToken(refreshToken), getRefreshExpiryDate()]
   );
 
   return {
@@ -151,7 +175,7 @@ export async function loginUser(username: string, password: string): Promise<{ u
   // Store refresh token hash
   await query(
     'INSERT INTO user_sessions (user_id, token_hash, expires_at) VALUES ($1, $2, $3)',
-    [user.id, hashToken(refreshToken), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]
+    [user.id, hashToken(refreshToken), getRefreshExpiryDate()]
   );
 
   return {
