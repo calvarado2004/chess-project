@@ -82,6 +82,7 @@ function initBoard(): number[][] {
 }
 
 function resetState(timeControlMinutes: number = 10) {
+  clearPendingEngineMoveDelay();
   state.board = initBoard();
   state.turn = 'w';
   state.selectedSquare = null;
@@ -92,7 +93,7 @@ function resetState(timeControlMinutes: number = 10) {
   state.capturedByBlack = [];
   state.gameOver = false;
   state.gameStatus = 'normal';
-  state.enPassantTarget = null;
+  setEnPassantTarget(null);
   state.castlingRights = { wK: true, wQ: true, bK: true, bQ: true };
   state.halfmoveClock = 0;
   state.fullmoveNumber = 1;
@@ -123,6 +124,11 @@ function configurePlayerNames() {
 
 function cloneCoord(coord: Coord | null): Coord | null {
   return coord ? { ...coord } : null;
+}
+
+function setEnPassantTarget(target: Coord | null) {
+  enPassantTarget = cloneCoord(target);
+  state.enPassantTarget = cloneCoord(target);
 }
 
 function cloneMove(move: ChessMove | null): ChessMove | null {
@@ -170,8 +176,7 @@ function restoreSnapshot(snapshot: GameSnapshot) {
   state.capturedByBlack = [...snapshot.capturedByBlack];
   state.gameOver = snapshot.gameOver;
   state.gameStatus = snapshot.gameStatus;
-  state.enPassantTarget = cloneCoord(snapshot.enPassantTarget);
-  enPassantTarget = cloneCoord(snapshot.enPassantTarget);
+  setEnPassantTarget(snapshot.enPassantTarget);
   state.castlingRights = { ...snapshot.castlingRights };
   state.halfmoveClock = snapshot.halfmoveClock;
   state.fullmoveNumber = snapshot.fullmoveNumber;
@@ -374,12 +379,14 @@ function getLegalMoves(row: number, col: number): ChessMove[] {
   const legal: ChessMove[] = [];
   for (const move of pseudo) {
     const savedBoard = state.board.map(r => [...r]);
-    const savedEP = enPassantTarget;
+    const savedEP = cloneCoord(enPassantTarget);
+    const savedStateEP = cloneCoord(state.enPassantTarget);
     const savedCR = { ...state.castlingRights };
     applyMoveToBoard(move);
     if (!isInCheck(color)) legal.push(move);
     state.board = savedBoard;
     enPassantTarget = savedEP;
+    state.enPassantTarget = savedStateEP;
     state.castlingRights = savedCR;
   }
   return legal;
@@ -418,10 +425,11 @@ function applyMoveToBoard(move: ChessMove) {
   if (move.promotion) {
     state.board[move.to.row][move.to.col] = colorOf(piece) === 'w' ? W_QUEEN : B_QUEEN;
   }
-  enPassantTarget = null;
+  let nextEnPassantTarget: Coord | null = null;
   if (PIECE_TYPE[piece] === 'p' && Math.abs(move.to.row - move.from.row) === 2) {
-    enPassantTarget = { row: (move.from.row + move.to.row) / 2, col: move.from.col };
+    nextEnPassantTarget = { row: (move.from.row + move.to.row) / 2, col: move.from.col };
   }
+  setEnPassantTarget(nextEnPassantTarget);
 }
 
 function executeMove(move: ChessMove) {
@@ -506,6 +514,7 @@ function retractHumanStockfishMove(): boolean {
   const snapshot = state.retractSnapshots.pop();
   if (!snapshot) return false;
 
+  clearPendingEngineMoveDelay();
   if (engine && currentEngineRequest) engine.postMessage('stop');
   currentEngineRequest = null;
   state.engineStatus = engineReady ? 'ready' : state.engineStatus;
@@ -725,6 +734,29 @@ let engineReady = false;
 let currentEngineRequest: null | 'analysis' | 'move' = null;
 let pendingNewGame = false;
 let engineMoveCandidates = new Map<number, { move: string; scoreCp: number | null }>();
+const ENGINE_MOVE_DELAY_MIN_MS = 500;
+const ENGINE_MOVE_DELAY_MAX_MS = 3000;
+let engineMoveDelayTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearPendingEngineMoveDelay() {
+  if (!engineMoveDelayTimer) return;
+  clearTimeout(engineMoveDelayTimer);
+  engineMoveDelayTimer = null;
+  state.lastEngineBestMove = null;
+  lastEngineBestMoveRef.current = null;
+}
+
+function scheduleEngineMove(bestmoveStr: string) {
+  clearPendingEngineMoveDelay();
+  const delay = ENGINE_MOVE_DELAY_MIN_MS + Math.random() * (ENGINE_MOVE_DELAY_MAX_MS - ENGINE_MOVE_DELAY_MIN_MS);
+  engineMoveDelayTimer = setTimeout(() => {
+    engineMoveDelayTimer = null;
+    if (!isEngineTurn() || state.gameOver) return;
+    state.lastEngineBestMove = bestmoveStr;
+    lastEngineBestMoveRef.current = bestmoveStr;
+    renderTrigger.current();
+  }, delay);
+}
 
 function initStockfish() {
   try {
@@ -814,12 +846,12 @@ function handleBestMove(msg: string) {
 
   if (currentEngineRequest === 'move') {
     currentEngineRequest = null;
-    state.engineStatus = 'ready';
     if (bestmoveStr && bestmoveStr !== 'none') {
-      state.lastEngineBestMove = bestmoveStr;
-      lastEngineBestMoveRef.current = bestmoveStr;
+      scheduleEngineMove(bestmoveStr);
+    } else {
+      state.engineStatus = 'ready';
     }
-    engineStatusRef.current = 'ready'; renderTrigger.current();
+    engineStatusRef.current = state.engineStatus; renderTrigger.current();
   } else if (currentEngineRequest === 'analysis') {
     currentEngineRequest = null;
     if (state.engineStatus === 'analyzing') { state.engineStatus = 'ready'; engineStatusRef.current = 'ready'; renderTrigger.current(); }
@@ -849,6 +881,7 @@ function requestAnalysis() {
 
 function requestEngineMove() {
   if (!engine || !engineReady) return;
+  clearPendingEngineMoveDelay();
   if (currentEngineRequest) engine.postMessage('stop');
   const s = STRENGTH_MAP[state.strengthLevel];
   const movetime = s ? s.movetime : 500;
@@ -980,6 +1013,7 @@ export function useChessGame(): UseChessGameReturn {
   // Init
   useEffect(() => {
     state.board = initBoard();
+    setEnPassantTarget(null);
     initStockfish();
   }, []);
 
@@ -989,6 +1023,8 @@ export function useChessGame(): UseChessGameReturn {
     const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
     if (!isEngineTurn) return;
     const move = chooseWeakenedEngineMove(lastEngineBestMove);
+    state.engineStatus = 'ready';
+    engineStatusRef.current = 'ready';
     if (move) executeMove(move);
     state.lastEngineBestMove = null;
     lastEngineBestMoveRef.current = null;

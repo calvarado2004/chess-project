@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { B_KING, EMPTY, W_KING, W_ROOK } from '../src/engine/types';
-import { createEmptyBoard, createInitialState, getLegalMoves } from '../src/engine/logic';
+import { B_KING, B_PAWN, EMPTY, W_KING, W_PAWN, W_ROOK } from '../src/engine/types';
+import { applyMoveToBoard, createEmptyBoard, createInitialState, getLegalMoves } from '../src/engine/logic';
 
 test('king cannot castle from a non-starting square even when castling rights are stale', () => {
   const state = createInitialState();
@@ -41,4 +41,30 @@ test('king can castle only from the starting square with the matching rook prese
     to: { row: 7, col: 6 },
     castle: 'K',
   });
+});
+
+test('pawn can capture en passant and removes the passed pawn', () => {
+  const state = createInitialState();
+  state.board = createEmptyBoard();
+  state.board[7][4] = W_KING;
+  state.board[0][4] = B_KING;
+  state.board[3][4] = W_PAWN;
+  state.board[3][3] = B_PAWN;
+  state.turn = 'w';
+  state.enPassantTarget = { row: 2, col: 3 };
+
+  const moves = getLegalMoves(state, 3, 4);
+  const enPassant = moves.find((move) =>
+    move.to.row === 2 &&
+    move.to.col === 3 &&
+    move.enPassant === true
+  );
+
+  expect(enPassant).toBeDefined();
+
+  applyMoveToBoard(state.board, enPassant!);
+
+  expect(state.board[2][3]).toBe(W_PAWN);
+  expect(state.board[3][3]).toBe(EMPTY);
+  expect(state.board[3][4]).toBe(EMPTY);
 });
