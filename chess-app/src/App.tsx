@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GameWebSocketProvider } from './context/GameWebSocketContext';
@@ -199,11 +199,13 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
 }
 
 export default function App() {
+  const Router = isNativeApp() ? HashRouter : BrowserRouter;
+
   return (
-    <BrowserRouter>
+    <Router>
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
-    </BrowserRouter>
+    </Router>
   );
 }

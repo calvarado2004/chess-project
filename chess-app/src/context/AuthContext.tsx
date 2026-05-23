@@ -34,7 +34,7 @@ function forceRedirectToLogin() {
   if (redirectingToLogin) return;
   redirectingToLogin = true;
   clearTokens();
-  window.location.replace('/login');
+  window.location.replace(isNativeApp() ? '/#/login' : '/login');
 }
 
 function canTrustNativeOfflineSession(error: unknown): boolean {

@@ -47,8 +47,9 @@ export function clearTokens(): void {
 export function expireAuthSession(): void {
   clearTokens();
   window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT));
-  if (window.location.pathname !== '/login') {
-    window.location.replace('/login');
+  const loginPath = isNativeApp() ? '/#/login' : '/login';
+  if (window.location.pathname !== '/login' && window.location.hash !== '#/login') {
+    window.location.replace(loginPath);
   }
 }
 
