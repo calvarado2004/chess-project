@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GameWebSocketProvider } from './context/GameWebSocketContext';
 import Login from './components/Login';
@@ -12,10 +12,12 @@ import PGNLoader from './components/PGNLoader';
 import Profile from './components/Profile';
 import GameHistory from './components/GameHistory';
 import Home from './components/Home';
+import { isNativeApp } from './lib/auth';
 import './index.css';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Routes>
@@ -23,7 +25,10 @@ function AppRoutes() {
         path="/login"
         element={
           isAuthenticated ? <Navigate to="/" replace /> : (
-            <Login onSwitchToRegister={() => window.location.href = '/register'} />
+            <Login
+              onSwitchToRegister={() => navigate('/register')}
+              onContinueOffline={() => navigate('/')}
+            />
           )
         }
       />
@@ -31,37 +36,43 @@ function AppRoutes() {
         path="/register"
         element={
           isAuthenticated ? <Navigate to="/" replace /> : (
-            <Register onSwitchToLogin={() => window.location.href = '/login'} />
+            <Register
+              onSwitchToLogin={() => navigate('/login')}
+              onContinueOffline={() => navigate('/')}
+            />
           )
         }
       />
       <Route
-        path="*"
-        element={
-          <ProtectedRoute>
-            <MainApp />
-          </ProtectedRoute>
-        }
+        path="lobby"
+        element={<ProtectedRoute><MainApp initialRoute="lobby" /></ProtectedRoute>}
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="online"
+        element={<ProtectedRoute><MainApp initialRoute="online" /></ProtectedRoute>}
+      />
+      <Route
+        path="profile"
+        element={<ProtectedRoute><MainApp initialRoute="profile" /></ProtectedRoute>}
+      />
+      <Route path="*" element={<MainApp />} />
     </Routes>
   );
 }
 
-function MainApp() {
+function MainApp({ initialRoute }: { initialRoute?: string }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const nativeApp = isNativeApp();
 
   const handleLogout = useCallback(async () => {
     await logout();
-    window.location.href = '/login';
-  }, [logout]);
-
-  if (!user) return null;
+    navigate('/login');
+  }, [logout, navigate]);
 
   return (
     <GameWebSocketProvider>
-      <div className="app-shell">
+      <div className={`app-shell${nativeApp ? ' app-shell-native' : ''}`}>
         {/* Top bar */}
         <div className="app-topbar">
           {/* Knight icon + title — clickable, goes home */}
@@ -89,49 +100,68 @@ function MainApp() {
             </span>
           </button>
           <div className="app-user-actions">
-            {/* Avatar in top bar */}
-            <img
-              src={`/avatars/${user.avatar || 'king.svg'}`}
-              alt="Avatar"
-              className="app-avatar"
-            />
-            <span className="app-user-name">
-              {user.display_name || user.username}
-            </span>
-            <span className="app-elo-pill">
-              {user.elo_rating} ELO
-            </span>
-            <button
-              onClick={() => { navigate('/profile'); }}
-              className="app-nav-button"
-            >
-              Profile
-            </button>
-            <button
-              onClick={() => { navigate('/history'); }}
-              className="app-nav-button"
-            >
-              History
-            </button>
-            <button
-              onClick={handleLogout}
-              className="app-nav-button"
-            >
-              Logout
-            </button>
+            {user ? (
+              <>
+                <img
+                  src={`/avatars/${user.avatar || 'king.svg'}`}
+                  alt="Avatar"
+                  className="app-avatar"
+                />
+                <span className="app-user-name">
+                  {user.display_name || user.username}
+                </span>
+                <span className="app-elo-pill">
+                  {user.elo_rating} ELO
+                </span>
+                <button
+                  onClick={() => { navigate('/profile'); }}
+                  className="app-nav-button"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={() => { navigate('/history'); }}
+                  className="app-nav-button"
+                >
+                  History
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="app-nav-button"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => { navigate('/history'); }}
+                  className="app-nav-button"
+                >
+                  Local History
+                </button>
+                <button
+                  onClick={() => { navigate('/login'); }}
+                  className="app-nav-button"
+                >
+                  Login
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         {/* Content */}
         <div className="app-content">
           <Routes>
-            <Route path="" element={<Home onOnline={() => window.location.href = '/lobby'} />} />
-            <Route path="lobby" element={<Lobby onJoinGame={() => window.location.href = '/online'} />} />
-            <Route path="local" element={<LocalGame />} />
-            <Route path="online" element={<OnlineGame onBackToLobby={() => window.location.href = '/lobby'} />} />
-            <Route path="pgn" element={<PGNLoader />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="history" element={<GameHistory />} />
+            <Route path="/" element={<Home onOnline={() => navigate('/lobby')} />} />
+            <Route path="/lobby" element={<Lobby onJoinGame={() => navigate('/online')} />} />
+            <Route path="/local" element={<LocalGame />} />
+            <Route path="/online" element={<OnlineGame onBackToLobby={() => navigate('/lobby')} />} />
+            <Route path="/pgn" element={<PGNLoader />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/history" element={<GameHistory />} />
+            {initialRoute && <Route path="*" element={<Navigate to={`/${initialRoute}`} replace />} />}
           </Routes>
         </div>
       </div>

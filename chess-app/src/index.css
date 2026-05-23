@@ -4,6 +4,7 @@ html {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  height: 100%;
 }
 
 body {
@@ -20,18 +21,22 @@ body {
   overscroll-behavior-x: none;
 }
 
-#root {
+#app {
   width: 100%;
   max-width: 100%;
+  min-height: 100%;
   overflow-x: hidden;
 }
 
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #181825;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .app-topbar {
@@ -39,7 +44,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 12px 24px;
+  padding: calc(12px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-right)) 12px calc(24px + env(safe-area-inset-left));
   background: #1e1e2e;
   border-bottom: 1px solid #313244;
   width: 100%;
@@ -126,7 +131,7 @@ body {
   overflow-x: hidden;
 }
 
-#app {
+.game-layout {
   display: flex;
   gap: 24px;
   max-width: 1240px;
@@ -422,6 +427,10 @@ body {
   cursor: not-allowed;
 }
 
+.mobile-settings-jump {
+  display: none;
+}
+
 select {
   padding: 7px 10px;
   border-radius: 6px;
@@ -708,7 +717,7 @@ select:focus { border-color: #7a5c3a; }
     padding: 12px;
   }
 
-  #app {
+  .game-layout {
     gap: 16px;
     max-width: 980px;
   }
@@ -732,7 +741,7 @@ select:focus { border-color: #7a5c3a; }
     padding: 8px;
   }
 
-  #app {
+  .game-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-items: center;
@@ -754,10 +763,14 @@ select:focus { border-color: #7a5c3a; }
     flex-direction: row;
     flex-wrap: wrap;
     margin-top: 0;
-    order: 2;
   }
 
   .sidebar-right {
+    order: 2;
+    scroll-margin-top: 12px;
+  }
+
+  .sidebar-left {
     order: 3;
   }
 
@@ -816,7 +829,7 @@ select:focus { border-color: #7a5c3a; }
     padding: 0;
   }
 
-  #app {
+  .game-layout {
     gap: 8px;
     width: 100%;
     max-width: none;
@@ -894,6 +907,10 @@ select:focus { border-color: #7a5c3a; }
     font-size: 12px;
   }
 
+  .mobile-settings-jump {
+    display: inline-flex;
+  }
+
   .captured-row {
     font-size: 16px;
     min-height: 20px;
@@ -907,7 +924,21 @@ select:focus { border-color: #7a5c3a; }
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
-    padding: 8px;
+    padding: calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 8px calc(8px + env(safe-area-inset-left));
+  }
+
+  .app-shell-native .app-topbar {
+    padding-top: max(calc(8px + env(safe-area-inset-top)), 56px);
+  }
+
+  .app-shell-native::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: max(env(safe-area-inset-top), 52px);
+    background: #1e1e2e;
+    z-index: 1000;
+    pointer-events: none;
   }
 
   .app-brand {
@@ -997,7 +1028,7 @@ select:focus { border-color: #7a5c3a; }
   }
 
   .app-topbar {
-    padding: 6px 10px;
+    padding: calc(6px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 6px calc(10px + env(safe-area-inset-left));
     gap: 8px;
   }
 
@@ -1048,7 +1079,7 @@ select:focus { border-color: #7a5c3a; }
     padding: 6px;
   }
 
-  #app {
+  .game-layout {
     --landscape-board-size: min(calc(100vw - 24px), calc(100dvh - 154px), 560px);
     gap: 6px;
     max-width: 100%;
@@ -1176,7 +1207,7 @@ select:focus { border-color: #7a5c3a; }
     max-width: 84px;
   }
 
-  #app {
+  .game-layout {
     --landscape-board-size: min(calc(100vw - 16px), calc(100dvh - 138px), 420px);
     gap: 4px;
   }

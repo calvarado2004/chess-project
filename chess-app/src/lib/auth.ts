@@ -56,11 +56,35 @@ export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }
 
+export function isNativeApp(): boolean {
+  return ['capacitor:', 'file:', 'ionic:'].includes(window.location.protocol);
+}
+
+const REMOTE_APP_ORIGIN =
+  import.meta.env.VITE_REMOTE_APP_ORIGIN || 'https://chess-chess-project.apps.ocp-think.levelg.io';
+
+function shouldUseRemoteServer(): boolean {
+  const { protocol, hostname, port } = window.location;
+  return (
+    isNativeApp() ||
+    (hostname === 'localhost' && port !== '5173' && port !== '3001')
+  );
+}
+
+function getServerOrigin(): string {
+  return shouldUseRemoteServer() ? REMOTE_APP_ORIGIN : '';
+}
+
 export function getWsUrl(): string {
+  const remoteOrigin = getServerOrigin();
+  if (remoteOrigin) {
+    return `${remoteOrigin.replace(/^http/, 'ws')}/ws`;
+  }
+
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${protocol}//${window.location.host}/ws`;
 }
 
 export function getApiUrl(path: string): string {
-  return `/api${path}`;
+  return `${getServerOrigin()}/api${path}`;
 }

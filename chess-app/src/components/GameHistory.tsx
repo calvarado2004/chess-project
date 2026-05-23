@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getELOStats, getGameHistory, type ELOStats, type GameHistoryEntry } from '../lib/api';
+import { getAccessToken } from '../lib/auth';
+import { getLocalStockfishGames, localGameToHistoryEntry, syncLocalStockfishGames } from '../lib/localHistory';
 
 function formatResult(result: GameHistoryEntry['result']): string {
   if (result === 'win') return 'Win';
@@ -22,16 +24,35 @@ export default function GameHistory() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    Promise.all([getELOStats(), getGameHistory(50)])
+
+    const localHistory = getLocalStockfishGames().map(localGameToHistoryEntry);
+    if (!getAccessToken()) {
+      setStats(null);
+      setHistory(localHistory);
+      setError('');
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    syncLocalStockfishGames()
+      .catch(() => 0)
+      .then(() => Promise.all([getELOStats(), getGameHistory(50)]))
       .then(([nextStats, nextHistory]) => {
         if (cancelled) return;
         setStats(nextStats);
-        setHistory(nextHistory);
+        const nextLocalHistory = getLocalStockfishGames()
+          .filter((game) => !game.syncedAt)
+          .map(localGameToHistoryEntry);
+        setHistory([...nextLocalHistory, ...(Array.isArray(nextHistory) ? nextHistory : [])].slice(0, 50));
         setError('');
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Failed to load game history');
+        setStats(null);
+        setHistory(localHistory);
+        setError(localHistory.length > 0 ? '' : (err instanceof Error ? err.message : 'Failed to load game history'));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -42,7 +63,7 @@ export default function GameHistory() {
   }, []);
 
   const stockfishGames = useMemo(
-    () => history.filter((game) => game.opponent.toLowerCase().includes('stockfish')).slice(0, 10),
+    () => history.filter((game) => (game.opponent ?? '').toLowerCase().includes('stockfish')).slice(0, 10),
     [history]
   );
 
@@ -51,7 +72,7 @@ export default function GameHistory() {
       <div className="history-header">
         <div>
           <h2>Game History</h2>
-          <p>Last 50 rated games</p>
+          <p>Last 50 games, including on-device Stockfish games waiting to sync</p>
         </div>
         {stats && (
           <div className="history-rating">
@@ -64,19 +85,21 @@ export default function GameHistory() {
       {loading && <div className="panel">Loading history...</div>}
       {error && <div className="history-error">{error}</div>}
 
-      {stats && !loading && (
+      {!loading && (
         <>
-          <div className="history-stats">
-            <div><span>{stats.games}</span><small>Games</small></div>
-            <div><span>{stats.wins}</span><small>Wins</small></div>
-            <div><span>{stats.losses}</span><small>Losses</small></div>
-            <div><span>{stats.draws}</span><small>Draws</small></div>
-            <div><span>{stats.winRate}%</span><small>Win Rate</small></div>
-            <div>
-              <span>{stats.performanceRating ?? '-'}</span>
-              <small>Last 10 Perf</small>
+          {stats && (
+            <div className="history-stats">
+              <div><span>{stats.games}</span><small>Rated Games</small></div>
+              <div><span>{stats.wins}</span><small>Wins</small></div>
+              <div><span>{stats.losses}</span><small>Losses</small></div>
+              <div><span>{stats.draws}</span><small>Draws</small></div>
+              <div><span>{stats.winRate}%</span><small>Win Rate</small></div>
+              <div>
+                <span>{stats.performanceRating ?? '-'}</span>
+                <small>Last 10 Perf</small>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="history-split">
             <section className="panel history-section">
@@ -98,8 +121,14 @@ export default function GameHistory() {
                     <span>{game.opponent} ({game.opponent_elo})</span>
                     <span>{game.player_color === 'w' ? 'White' : 'Black'}</span>
                     <span>
-                      {game.player_elo_before} → {game.player_elo_after}
-                      <b>{game.elo_change >= 0 ? `+${game.elo_change}` : game.elo_change}</b>
+                      {game.id.startsWith('local-') ? (
+                        game.opponent.includes('synced') ? 'Synced' : 'Pending sync'
+                      ) : (
+                        <>
+                          {game.player_elo_before} → {game.player_elo_after}
+                          <b>{game.elo_change >= 0 ? `+${game.elo_change}` : game.elo_change}</b>
+                        </>
+                      )}
                     </span>
                     <span>{game.move_count}</span>
                     <span>{new Date(game.created_at).toLocaleDateString()}</span>

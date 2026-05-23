@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Qwen Chess</string>
+    <string name="title_activity_main">Qwen Chess</string>
+    <string name="package_name">io.levelg.chess</string>
+    <string name="custom_url_scheme">io.levelg.chess</string>
+</resources>

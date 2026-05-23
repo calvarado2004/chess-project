@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useChessGame } from '../hooks/useChessGame';
 import { STRENGTH_MAP } from '../engine';
-import { recordStockfishGame } from '../lib/api';
+import { saveLocalStockfishGame, syncLocalStockfishGames } from '../lib/localHistory';
 import { useAuth } from '../context/AuthContext';
 import Board from './Board';
 import EvalBar from './EvalBar';
@@ -16,7 +16,7 @@ import type { GameMode } from '../engine';
 
 export default function LocalGame() {
   const location = useLocation();
-  const { refreshUser } = useAuth();
+  const { accessToken, refreshUser } = useAuth();
   const {
     board, turn, gameMode, gameStatus, gameOver, strengthLevel,
     clock, engineStatus, engineEval, whiteName, blackName,
@@ -32,6 +32,7 @@ export default function LocalGame() {
   const gameStartedAt = useRef(Date.now());
   const recordedGameKey = useRef<string | null>(null);
   const appliedRouteMode = useRef(false);
+  const settingsRef = useRef<HTMLDivElement | null>(null);
   const boardOrientation = gameMode === 'hbe' ? 'black' : 'white';
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export default function LocalGame() {
     if (recordedGameKey.current === gameKey) return;
     recordedGameKey.current = gameKey;
 
-    const humanColor = gameMode === 'hwe' ? 'w' : 'b';
+    const humanColor: 'w' | 'b' = gameMode === 'hwe' ? 'w' : 'b';
     let result: 'win' | 'loss' | 'draw' = 'draw';
     if (gameStatus === 'checkmate') {
       const winner = turn === 'w' ? 'b' : 'w';
@@ -93,18 +94,25 @@ export default function LocalGame() {
     const stockfishElo = STRENGTH_MAP[strengthLevel]?.elo ?? 800;
     const gameDuration = Math.max(0, Math.round((Date.now() - gameStartedAt.current) / 1000));
 
-    recordStockfishGame({
+    const gameResult = {
       stockfishElo,
       playerColor: humanColor,
       result,
       moveCount: moveHistory.length,
       gameDuration,
-    })
-      .then(() => refreshUser())
+    };
+
+    saveLocalStockfishGame(gameResult);
+
+    syncLocalStockfishGames()
+      .then(() => {
+        if (accessToken) return refreshUser();
+        return undefined;
+      })
       .catch((err: unknown) => {
-        console.error('Failed to record Stockfish game', err);
+        console.error('Failed to sync Stockfish game; saved on device for later sync', err);
       });
-  }, [gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, retractUsed, strengthLevel, turn]);
+  }, [accessToken, gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, retractUsed, strengthLevel, turn]);
 
   const handleSavePGN = useCallback(() => {
     const pgn = generatePGN();
@@ -119,8 +127,12 @@ export default function LocalGame() {
     URL.revokeObjectURL(url);
   }, [generatePGN]);
 
+  const handleJumpToSettings = useCallback(() => {
+    settingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   return (
-    <div id="app">
+    <div className="game-layout">
       <div className="sidebar-left">
         <EvalBar eval={engineEval} engineStatus={engineStatus} />
         <CapturedPieces capturedByWhite={capturedByWhite} capturedByBlack={capturedByBlack} />
@@ -138,9 +150,12 @@ export default function LocalGame() {
           retractsRemaining={retractsRemaining}
           showRetract={gameMode === 'hwe' || gameMode === 'hbe'}
         />
+        <button className="btn mobile-settings-jump" onClick={handleJumpToSettings}>
+          Settings
+        </button>
       </div>
 
-      <div className="sidebar-right">
+      <div className="sidebar-right" ref={settingsRef}>
         <Settings
           gameMode={gameMode}
           strengthLevel={strengthLevel}

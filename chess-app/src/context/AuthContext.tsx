@@ -4,12 +4,14 @@ import {
   isAuthenticated,
   getAccessToken,
   getUser,
+  isNativeApp,
   setUser as persistUser,
   clearTokens,
   AUTH_SESSION_EXPIRED_EVENT,
   type StoredUser,
 } from '../lib/auth';
 import { login as apiLogin, register as apiRegister, logout as apiLogout, getCurrentUser as apiGetCurrentUser, updateProfile as apiUpdateProfile } from '../lib/api';
+import { syncLocalStockfishGames } from '../lib/localHistory';
 
 interface AuthContextType {
   user: StoredUser | null;
@@ -35,6 +37,17 @@ function forceRedirectToLogin() {
   window.location.replace('/login');
 }
 
+function canTrustNativeOfflineSession(error: unknown): boolean {
+  return isNativeApp() && !!getUser() && axios.isAxiosError(error) && !error.response;
+}
+
+function handleAuthValidationError(error: unknown) {
+  if (canTrustNativeOfflineSession(error)) {
+    return;
+  }
+  forceRedirectToLogin();
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<StoredUser | null>(getUser());
   const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
@@ -48,13 +61,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired);
 
-    // If we have tokens but no user state yet, validate them
-    if (isAuthenticated() && !user) {
+    // Browser sessions must validate on load. Native apps may keep the last
+    // account for offline-only features when the server is unreachable.
+    if (isAuthenticated()) {
       apiGetCurrentUser()
         .then((u) => {
           setUser(u);
+          persistUser(u);
+          syncLocalStockfishGames().catch((error: unknown) => {
+            console.error('Failed to sync local Stockfish history', error);
+          });
         })
-        .catch(forceRedirectToLogin)
+        .catch(handleAuthValidationError)
         .finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
@@ -66,8 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       apiGetCurrentUser()
         .then((u) => {
           setUser(u);
+          persistUser(u);
+          syncLocalStockfishGames().catch((error: unknown) => {
+            console.error('Failed to sync local Stockfish history', error);
+          });
         })
-        .catch(forceRedirectToLogin);
+        .catch(handleAuthValidationError);
     }, 2 * 60 * 1000);
 
     return () => {
@@ -81,6 +103,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     redirectingToLogin = false;
     setUser(result.user);
     setAccessToken(result.accessToken);
+    syncLocalStockfishGames().catch((error: unknown) => {
+      console.error('Failed to sync local Stockfish history', error);
+    });
   }, []);
 
   const register = useCallback(async (username: string, email: string, password: string, displayName?: string) => {
@@ -88,6 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     redirectingToLogin = false;
     setUser(result.user);
     setAccessToken(result.accessToken);
+    syncLocalStockfishGames().catch((error: unknown) => {
+      console.error('Failed to sync local Stockfish history', error);
+    });
   }, []);
 
   const logout = useCallback(async () => {
@@ -102,9 +130,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       persistUser(u);
       setUser(u);
       setAccessToken(getAccessToken());
+      syncLocalStockfishGames().catch((error: unknown) => {
+        console.error('Failed to sync local Stockfish history', error);
+      });
     } catch (error) {
       if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
         forceRedirectToLogin();
+      } else if (canTrustNativeOfflineSession(error)) {
+        setUser(getUser());
+        setAccessToken(getAccessToken());
       } else {
         console.error('Failed to refresh user profile', error);
       }

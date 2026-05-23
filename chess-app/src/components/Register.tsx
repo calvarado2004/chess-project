@@ -3,9 +3,10 @@ import { useAuth } from '../context/AuthContext';
 
 interface RegisterProps {
   onSwitchToLogin?: () => void;
+  onContinueOffline?: () => void;
 }
 
-export default function Register({ onSwitchToLogin }: RegisterProps) {
+export default function Register({ onSwitchToLogin, onContinueOffline }: RegisterProps) {
   const { register, isLoading: apiLoading } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -162,6 +163,19 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
           {isSubmitting || apiLoading ? 'Creating account...' : 'Create Account'}
         </button>
       </form>
+
+      {onContinueOffline && (
+        <button
+          onClick={onContinueOffline}
+          style={{
+            width: '100%', marginTop: '12px', padding: '12px', fontSize: '15px', fontWeight: 600,
+            background: '#313244', color: '#cdd6f4', border: '1px solid #45475a',
+            borderRadius: '8px', cursor: 'pointer',
+          }}
+        >
+          Continue offline
+        </button>
+      )}
 
       {onSwitchToLogin && (
         <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#a6adc8' }}>

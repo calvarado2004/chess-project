@@ -12,11 +12,32 @@ import { WsGameServer } from './ws/server.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean);
+
+function isAllowedOrigin(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+  if (!origin) {
+    callback(null, true);
+    return;
+  }
+
+  if (
+    allowedOrigins.includes(origin) ||
+    origin.startsWith('capacitor://') ||
+    origin.startsWith('ionic://') ||
+    origin === 'http://localhost' ||
+    origin === 'https://localhost'
+  ) {
+    callback(null, true);
+    return;
+  }
+
+  callback(new Error(`Origin ${origin} is not allowed by CORS`));
+}
 
 // Middleware
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin: isAllowedOrigin,
     credentials: true,
   })
 );

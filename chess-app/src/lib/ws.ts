@@ -7,7 +7,7 @@ import type {
   GameOverPayload,
   ErrorPayload,
 } from './ws-types.js';
-import { expireAuthSession } from './auth.js';
+import { expireAuthSession, getWsUrl } from './auth.js';
 
 type MessageHandler = (message: WsMessage) => void;
 
@@ -53,8 +53,7 @@ export class ChessWebSocket {
   }
 
   private buildUrl(): string {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/ws`;
+    return getWsUrl();
   }
 
   connect(): Promise<boolean> {

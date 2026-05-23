@@ -84,6 +84,59 @@ npm run dev
 
 The Vite dev server runs the frontend locally. In the full app, Docker Compose serves the production frontend on `http://localhost:3001` and proxies API/WebSocket traffic to the backend container.
 
+## Mobile Shells
+
+Capacitor is configured for Android and iOS in `capacitor.config.ts`.
+
+- App id: `io.levelg.chess`
+- App name: `Qwen Chess`
+- Bundled app assets: `dist`
+- Remote API/WebSocket endpoint: `https://chess-chess-project.apps.ocp-think.levelg.io`
+- Android: uses Android System WebView / Chrome-backed WebView.
+- iOS: uses WKWebView, as required by iPhone/iPad platform rules.
+
+The native shells bundle the web app so Local Human-vs-Human, Human-vs-Stockfish, and PGN study can run offline. Login, profile/history sync, lobby, online games, and WebSockets use the private OpenShift route when phones and tablets are on a network that can resolve and reach it.
+
+In native builds only, the last logged-in account remains usable for offline local play if the server cannot be reached. Login and register screens also expose Continue offline so the player can return to the local app shell without server access. Completed Stockfish games are saved on-device first and synced to server history later when the account is logged in and the route is reachable. Browser builds keep live server validation for auth.
+
+Screenshots:
+
+<p>
+  <img src="../docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260">
+  <img src="../docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260">
+  <img src="../docs/screenshots/ios-ipad-home.png" alt="iPad home screen" width="360">
+</p>
+
+```bash
+npm run cap:sync
+npm run cap:open:android
+npm run cap:open:ios
+```
+
+Run `cap:sync` after frontend or Capacitor config changes before opening Android Studio or Xcode.
+
+Android debug build:
+
+```bash
+cd android
+JAVA_HOME="$HOME/Applications/Android Studio.app/Contents/jbr/Contents/Home" ./gradlew :app:assembleDebug
+```
+
+The debug APK is emitted at `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+Install it on a connected Android device with USB debugging:
+
+```bash
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+For real iPhone/iPad installation, open `ios/App/App.xcodeproj` in Xcode, select a signing team for bundle id `io.levelg.chess`, connect the device, and run the `App` scheme. Simulator builds can run from CLI, but physical device installs need Apple signing.
+
+Emulator prerequisites:
+
+- Android: create an AVD in Android Studio Device Manager. The command `~/Library/Android/sdk/emulator/emulator -list-avds` should list it before CLI emulator tests can run.
+- iOS: install an iOS simulator runtime in Xcode Settings > Platforms. The generated Xcode scheme is `App`, but simulator builds need an installed runtime/destination.
+
 ## Docker
 
 ```bash

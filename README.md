@@ -120,6 +120,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 | **Chess Engine** | Stockfish.js 18.0.7 (client-side Web Worker, embedded WASM single file) |
 | **Containerization** | Docker, Docker Compose, Nginx (frontend proxy) |
 | **Auth** | JWT (access + refresh tokens), bcrypt |
+| **Mobile Shells** | Capacitor 8 Android WebView / iOS WKWebView with bundled offline app assets |
 
 ## Game Modes
 
@@ -128,6 +129,55 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **Local Human vs Human** — available from the game-mode dropdown on the local board
 - **Online Multiplayer** — Real-time Human vs Human with lobby, matchmaking, and move sync
 - **PGN Study** — Load and replay games from PGN files
+
+## Mobile Apps
+
+The project includes Capacitor native shells under `chess-app/android/` and `chess-app/ios/`.
+
+- Android phones/tablets run the app in Android System WebView, which is Chrome-backed on normal Android devices.
+- iPhone/iPad runs the same app in WKWebView, because iOS does not allow third-party browser engines inside native apps.
+- Both shells bundle the web app for offline play. Local Human-vs-Human, Human-vs-Stockfish, and PGN study work without reaching the home server.
+- Server-backed features still use `https://chess-chess-project.apps.ocp-think.levelg.io` for login, profile/history sync, lobby, online games, and WebSockets.
+- Devices must be on a network that can resolve and reach that route for online features. The route can stay private to your home network; the app does not make it public.
+- In the native apps only, the last logged-in account remains available for offline local play when the server is unreachable. Browser sessions continue to validate against the server.
+- The login and register screens include a Continue offline path back to the local app shell.
+- Completed local Stockfish games are saved on-device first and synced to rated server history when the account is logged in and the server is reachable.
+
+Mobile screenshots:
+
+<p>
+  <img src="docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260">
+  <img src="docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260">
+  <img src="docs/screenshots/ios-ipad-home.png" alt="iPad home screen" width="360">
+</p>
+
+Mobile workflow:
+
+```bash
+cd chess-app
+npm run cap:sync
+npm run cap:open:android
+npm run cap:open:ios
+```
+
+Testing/build notes:
+
+- Android Studio is required for emulator/device testing. The debug APK builds with Android Studio's bundled JBR:
+
+  ```bash
+  cd chess-app/android
+  JAVA_HOME="$HOME/Applications/Android Studio.app/Contents/jbr/Contents/Home" ./gradlew :app:assembleDebug
+  ```
+
+- The debug APK is written to `chess-app/android/app/build/outputs/apk/debug/app-debug.apk`.
+- A connected Android device with USB debugging can install the same debug APK:
+
+  ```bash
+  adb install -r chess-app/android/app/build/outputs/apk/debug/app-debug.apk
+  ```
+
+- Create at least one phone/tablet AVD in Android Studio Device Manager before running emulator tests. `emulator -list-avds` should print the AVD name.
+- Xcode is required for iPhone/iPad builds. Install an iOS simulator runtime in Xcode Settings > Platforms before simulator builds; without a runtime, `xcodebuild` reports no destinations. Real iPhone/iPad installation requires opening `chess-app/ios/App/App.xcodeproj`, selecting a signing team for bundle id `io.levelg.chess`, then running the `App` scheme on the connected device.
 
 ## User Features
 
