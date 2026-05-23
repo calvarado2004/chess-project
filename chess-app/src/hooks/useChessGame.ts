@@ -932,10 +932,20 @@ function resolveUCIMove(str: string): ChessMove | null {
   return legalMove ?? null;
 }
 
+function chooseRandomLegalEngineMove(): ChessMove | null {
+  const legalMoves = getAllLegalMoves(state.turn);
+  if (legalMoves.length === 0) return null;
+  return legalMoves[Math.floor(Math.random() * legalMoves.length)];
+}
+
 function chooseWeakenedEngineMove(bestmoveStr: string): ChessMove | null {
   const config = STRENGTH_MAP[state.strengthLevel];
   if (!config || config.candidateMoveCount <= 1) {
     return resolveUCIMove(bestmoveStr);
+  }
+
+  if (config.randomMoveChance > 0 && Math.random() < config.randomMoveChance) {
+    return chooseRandomLegalEngineMove() ?? resolveUCIMove(bestmoveStr);
   }
 
   const candidates = Array.from(engineMoveCandidates.entries())

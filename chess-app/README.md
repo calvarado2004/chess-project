@@ -32,7 +32,7 @@ React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stock
 - `src/hooks/useChessGame.ts` is the source of truth for local board behavior.
 - It owns board state, selected square, legal move list, captures, clocks, Stockfish worker lifecycle, sounds, SAN move history, PGN export, and game-end detection.
 - Stockfish is driven with the UCI flow used by the browser worker: `uci`, `isready`, `setoption`, `ucinewgame`, `position fen ...`, and `go ...`.
-- Stockfish 18 reports native `UCI_Elo` support only from 1320 upward. For selected UI levels below 1320, the hook disables native ELO limiting, requests shallow searches, enables MultiPV, and only chooses from candidate moves that remain close to the best evaluated line. This compensates for Stockfish 18's stronger low-end behavior while avoiding arbitrary random legal moves.
+- Stockfish 18 reports native `UCI_Elo` support only from 1320 upward. For selected UI levels below 1320, the hook disables native ELO limiting, requests shallow searches, enables MultiPV, and mixes nearby evaluated candidates with tapered random legal moves. The random legal move chance starts at 45% for 500 Elo and drops to 8% by 1300 Elo; 1400+ uses native strength without random moves.
 - Stockfish games post completed results to `/api/users/me/history/stockfish` with the selected Stockfish Elo, player color, result, move count, and duration.
 - Human players can retract their latest move against Stockfish up to 3 times per game. Using any retract makes that Stockfish game unrated, so it is not posted to ELO history.
 - Human-as-black games flip the board so black pieces are at the bottom.
@@ -126,7 +126,7 @@ Focused test files:
 - `tests/chess-rules.spec.ts` validates legal move generation, en passant, stale castling rights guards, matching rook requirements, and white/black kingside castling from real opening sequences.
 - `tests/pgn-replay.spec.ts` validates PGN header parsing, comment/NAG/variation stripping, SAN castling replay, castling rights updates, and en passant replay context.
 - `tests/offline-routes.spec.ts` validates offline-capable local routes, protected online routes, authenticated lobby rendering, and deep-link/refresh behavior.
-- `tests/stockfish.spec.ts` validates the bundled Stockfish 18 worker UCI flow and bestmove behavior.
+- `tests/stockfish.spec.ts` validates the bundled Stockfish 18 worker UCI flow, bestmove behavior, and low-Elo random legal move configuration.
 
 Run only the rule and PGN replay coverage:
 

@@ -101,6 +101,7 @@ export interface EngineConfig {
   searchDepth?: number;
   candidateMoveCount: number;
   maxCandidateLossCp: number;
+  randomMoveChance: number;
 }
 
 export const STOCKFISH_ELO_LEVELS = Array.from(
@@ -122,6 +123,7 @@ export const STRENGTH_MAP: Record<string, EngineConfig> = Object.fromEntries(
         searchDepth: belowNativeLimit ? Math.max(1, Math.round((elo - 500) / 220) + 1) : undefined,
         candidateMoveCount: belowNativeLimit ? Math.max(2, Math.min(5, 5 - Math.floor((elo - 500) / 250))) : 1,
         maxCandidateLossCp: belowNativeLimit ? Math.max(35, Math.round(160 - ((elo - 500) / 820) * 125)) : 0,
+        randomMoveChance: belowNativeLimit ? Math.max(0.08, Math.round((0.45 - ((elo - 500) / 800) * 0.37) * 100) / 100) : 0,
       },
     ];
   }),

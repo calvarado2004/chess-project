@@ -1,4 +1,24 @@
 import { expect, test } from '@playwright/test';
+import { STOCKFISH_ELO_LEVELS, STRENGTH_MAP } from '../src/engine/types';
+
+test('low Stockfish levels include tapered random legal move chances', () => {
+  const lowLevels = STOCKFISH_ELO_LEVELS.filter((elo) => elo <= 1300);
+  const nativeLevels = STOCKFISH_ELO_LEVELS.filter((elo) => elo >= 1400);
+
+  expect(lowLevels).toEqual([500, 600, 700, 800, 900, 1000, 1100, 1200, 1300]);
+  expect(STRENGTH_MAP['elo-500'].randomMoveChance).toBe(0.45);
+  expect(STRENGTH_MAP['elo-900'].randomMoveChance).toBeGreaterThan(STRENGTH_MAP['elo-1300'].randomMoveChance);
+  expect(STRENGTH_MAP['elo-1300'].randomMoveChance).toBe(0.08);
+
+  for (const elo of lowLevels) {
+    expect(STRENGTH_MAP[`elo-${elo}`].uciElo).toBeUndefined();
+    expect(STRENGTH_MAP[`elo-${elo}`].randomMoveChance).toBeGreaterThan(0);
+  }
+
+  for (const elo of nativeLevels) {
+    expect(STRENGTH_MAP[`elo-${elo}`].randomMoveChance).toBe(0);
+  }
+});
 
 test('Stockfish 18 worker returns moves while replaying the mate del pastor line', async ({ page }) => {
   await page.goto('/');
