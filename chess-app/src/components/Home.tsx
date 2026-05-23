@@ -81,6 +81,7 @@ export default function Home({ onOnline }: HomeProps) {
       }}>
         {cards.map((card) => (
           <button
+            type="button"
             key={card.title}
             onClick={card.action}
             style={{
@@ -90,14 +91,6 @@ export default function Home({ onOnline }: HomeProps) {
               borderRadius: '12px', cursor: 'pointer',
               textAlign: 'left', transition: 'border-color 0.2s, transform 0.1s',
               color: '#cdd6f4',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = card.color;
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${card.color}33`;
-              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             <span style={{ fontSize: '36px' }}>{card.icon}</span>

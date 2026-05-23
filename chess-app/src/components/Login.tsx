@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { isNativeApp } from '../lib/auth';
 
 interface LoginProps {
   onSwitchToRegister?: () => void;
@@ -8,6 +9,7 @@ interface LoginProps {
 
 export default function Login({ onSwitchToRegister, onContinueOffline }: LoginProps) {
   const { login, isLoading: apiLoading } = useAuth();
+  const nativeApp = isNativeApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -82,7 +84,7 @@ export default function Login({ onSwitchToRegister, onContinueOffline }: LoginPr
             onChange={(e) => setUsername(e.target.value)}
             required
             autoComplete="username"
-            autoFocus
+            autoFocus={!nativeApp}
             style={{
               width: '100%', padding: '10px 12px', fontSize: '14px',
               background: '#313244', border: '1px solid #45475a', borderRadius: '6px',

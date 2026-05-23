@@ -829,6 +829,12 @@ select:focus { border-color: #7a5c3a; }
     padding: 0;
   }
 
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
   .game-layout {
     gap: 8px;
     width: 100%;
