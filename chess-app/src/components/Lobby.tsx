@@ -17,12 +17,13 @@ const EMOJI_CATEGORIES: { label: string; emojis: string[] }[] = [
 ];
 
 export default function Lobby({ onJoinGame }: LobbyProps) {
-  const { user } = useAuth();
+  const { user, accessToken } = useAuth();
   const navigate = useNavigate();
   const {
     lobbyPlayers,
     lobbyChatMessages,
     isConnected,
+    connect,
     joinLobby,
     leaveLobby,
     createGame,
@@ -37,8 +38,31 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
   const [isInLobby, setIsInLobby] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState('');
+  const autoConnectAttemptedRef = useRef(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
+
+  const handleConnect = useCallback(async () => {
+    if (!accessToken) {
+      navigate('/login');
+      return;
+    }
+
+    setConnectionError('');
+    setIsConnecting(true);
+    try {
+      const connected = await connect();
+      if (!connected) {
+        setConnectionError('Could not connect to the online game server.');
+      }
+    } catch {
+      setConnectionError('Could not connect to the online game server.');
+    } finally {
+      setIsConnecting(false);
+    }
+  }, [accessToken, connect, navigate]);
 
   const handleJoinLobby = useCallback(() => {
     joinLobby({ timeControl, increment, color: colorPref });
@@ -95,6 +119,13 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [lobbyChatMessages]);
 
+  useEffect(() => {
+    if (!isConnected && !isConnecting && !autoConnectAttemptedRef.current) {
+      autoConnectAttemptedRef.current = true;
+      handleConnect().catch(() => {});
+    }
+  }, [handleConnect, isConnected, isConnecting]);
+
   // Navigate to game when onlineGame is created
   useEffect(() => {
     if (onlineGame) {
@@ -110,8 +141,45 @@ export default function Lobby({ onJoinGame }: LobbyProps) {
         textAlign: 'center',
       }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔌</div>
-        <h2 style={{ color: '#f38ba8' }}>Disconnected</h2>
-        <p style={{ color: '#a6adc8' }}>You are not connected to the game server.</p>
+        <h2 style={{ color: isConnecting ? '#f9e2af' : '#f38ba8' }}>
+          {isConnecting ? 'Connecting...' : 'Disconnected'}
+        </h2>
+        <p style={{ color: '#a6adc8', marginBottom: '16px' }}>
+          {connectionError || 'Connecting to the online game server.'}
+        </p>
+        <div style={{
+          display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap',
+        }}>
+          <button
+            onClick={handleConnect}
+            disabled={isConnecting}
+            style={{
+              padding: '10px 16px', background: '#89b4fa', color: '#1e1e2e',
+              border: 'none', borderRadius: '6px', cursor: isConnecting ? 'not-allowed' : 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            {isConnecting ? 'Connecting...' : 'Connect'}
+          </button>
+          <button
+            onClick={() => navigate('/login')}
+            style={{
+              padding: '10px 16px', background: '#45475a', color: '#cdd6f4',
+              border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
+            }}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              padding: '10px 16px', background: '#313244', color: '#cdd6f4',
+              border: '1px solid #45475a', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
+            }}
+          >
+            Back
+          </button>
+        </div>
       </div>
     );
   }

@@ -16,7 +16,7 @@ import { isNativeApp } from './lib/auth';
 import './index.css';
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { accessToken } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -24,7 +24,7 @@ function AppRoutes() {
       <Route
         path="/login"
         element={
-          isAuthenticated ? <Navigate to="/" replace /> : (
+          accessToken ? <Navigate to="/" replace /> : (
             <Login
               onSwitchToRegister={() => navigate('/register')}
               onContinueOffline={() => navigate('/')}
@@ -35,7 +35,7 @@ function AppRoutes() {
       <Route
         path="/register"
         element={
-          isAuthenticated ? <Navigate to="/" replace /> : (
+          accessToken ? <Navigate to="/" replace /> : (
             <Register
               onSwitchToLogin={() => navigate('/login')}
               onContinueOffline={() => navigate('/')}
@@ -61,7 +61,7 @@ function AppRoutes() {
 }
 
 function MainApp({ initialRoute }: { initialRoute?: string }) {
-  const { user, logout } = useAuth();
+  const { user, accessToken, logout } = useAuth();
   const navigate = useNavigate();
   const nativeApp = isNativeApp();
 
@@ -100,7 +100,7 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
             </span>
           </button>
           <div className="app-user-actions">
-            {user ? (
+            {user && accessToken ? (
               <>
                 <img
                   src={`/avatars/${user.avatar || 'king.svg'}`}
@@ -132,6 +132,32 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
                   Logout
                 </button>
               </>
+            ) : user ? (
+              <>
+                <img
+                  src={`/avatars/${user.avatar || 'king.svg'}`}
+                  alt="Avatar"
+                  className="app-avatar"
+                />
+                <span className="app-user-name">
+                  {user.display_name || user.username}
+                </span>
+                <span className="app-elo-pill">
+                  Offline
+                </span>
+                <button
+                  onClick={() => { navigate('/history'); }}
+                  className="app-nav-button"
+                >
+                  Local History
+                </button>
+                <button
+                  onClick={() => { navigate('/login'); }}
+                  className="app-nav-button"
+                >
+                  Login
+                </button>
+              </>
             ) : (
               <>
                 <button
@@ -154,7 +180,10 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
         {/* Content */}
         <div className="app-content">
           <Routes>
-            <Route path="/" element={<Home onOnline={() => navigate('/lobby')} />} />
+            <Route
+              path="/"
+              element={<Home onOnline={() => { navigate(accessToken ? '/lobby' : '/login'); }} />}
+            />
             <Route path="/lobby" element={<Lobby onJoinGame={() => navigate('/online')} />} />
             <Route path="/local" element={<LocalGame />} />
             <Route path="/online" element={<OnlineGame onBackToLobby={() => navigate('/lobby')} />} />

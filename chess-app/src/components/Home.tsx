@@ -42,7 +42,9 @@ export default function Home({ onOnline }: HomeProps) {
 
   return (
     <div style={{
-      maxWidth: '800px', margin: '40px auto', padding: '24px',
+      maxWidth: '800px',
+      margin: 'clamp(16px, 8vw, 40px) auto',
+      padding: 'clamp(8px, 5vw, 24px)',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '8px' }}>
         <svg width="80" height="80" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', margin: '0 auto 8px' }}>
@@ -74,7 +76,7 @@ export default function Home({ onOnline }: HomeProps) {
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
         gap: '16px',
       }}>
         {cards.map((card) => (
@@ -136,7 +138,7 @@ function StockfishColorPicker({ show, onShowChange }: { show: boolean; onShowCha
     >
       <div style={{
         background: '#1e1e2e', padding: '32px', borderRadius: '12px',
-        textAlign: 'center', color: '#cdd6f4', minWidth: '320px',
+        textAlign: 'center', color: '#cdd6f4', width: 'min(320px, calc(100vw - 32px))',
       }}
         onClick={(e) => e.stopPropagation()}
       >
