@@ -706,7 +706,7 @@ function generatePGN(): string {
 let engine: Worker | null = null;
 let engineReady = false;
 let currentEngineRequest: null | 'analysis' | 'move' = null;
-let engineReadyForMove = false;
+let pendingNewGame = false;
 
 function initStockfish() {
   try {
@@ -721,12 +721,10 @@ function handleEngineMessage(msg: string) {
   if (msg === 'uciok') { engine?.postMessage('isready'); return; }
   if (msg === 'readyok') {
     engineReady = true; state.engineStatus = 'ready';
-    configureStrength(); engine?.postMessage('ucinewgame');
-    // After ucinewgame, if it's the engine's turn, request its move
-    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
-    if (isEngineTurn && !state.gameOver) {
-      engineReadyForMove = true;
-    }
+    configureStrength();
+    // Track that we just sent ucinewgame so bestmove handler knows to request first move
+    if (!pendingNewGame) pendingNewGame = true;
+    engine?.postMessage('ucinewgame');
     engineStatusRef.current = 'ready'; renderTrigger.current();
     return;
   }
@@ -761,11 +759,12 @@ function handleBestMove(msg: string) {
   const parts = msg.split(' ');
   const bestmoveStr = parts[1];
 
-  // If we were waiting for the engine to be ready for a move (new game), trigger it now
-  if (engineReadyForMove) {
-    engineReadyForMove = false;
-    // The engine just finished ucinewgame, now request the first move
-    if (!state.gameOver) {
+  // Handle the bestmove none that follows ucinewgame
+  if (pendingNewGame && bestmoveStr === 'none') {
+    pendingNewGame = false;
+    // The engine finished ucinewgame, now request the first move if it's engine's turn
+    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
+    if (isEngineTurn && !state.gameOver && engine && engineReady) {
       requestEngineMove();
     }
     return;

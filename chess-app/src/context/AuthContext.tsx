@@ -24,40 +24,43 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Global flag to prevent multiple simultaneous redirect attempts
+let redirectingToLogin = false;
+
+function forceRedirectToLogin() {
+  if (redirectingToLogin) return;
+  redirectingToLogin = true;
+  clearTokens();
+  window.location.replace('/login');
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<StoredUser | null>(getUser());
   const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Verify token on mount
+    // If we have tokens but no user state yet, validate them
     if (isAuthenticated() && !user) {
       apiGetCurrentUser()
         .then((u) => {
           setUser(u);
         })
-        .catch(() => {
-          clearTokens();
-          window.location.href = '/login';
-        })
+        .catch(forceRedirectToLogin)
         .finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
     }
 
-    // Periodically verify session is still valid (every 5 minutes)
+    // Periodically verify session is still valid (every 2 minutes)
     const interval = setInterval(() => {
       if (!getAccessToken()) return;
       apiGetCurrentUser()
         .then((u) => {
           setUser(u);
         })
-        .catch(() => {
-          clearTokens();
-          // Force a full page reload to /login to break any React state loops
-          window.location.href = '/login';
-        });
-    }, 5 * 60 * 1000);
+        .catch(forceRedirectToLogin);
+    }, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -88,9 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(getAccessToken());
     } catch (error) {
       if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
-        clearTokens();
-        // Force a full page reload to /login to break any React state loops
-        window.location.href = '/login';
+        forceRedirectToLogin();
       } else {
         console.error('Failed to refresh user profile', error);
       }
