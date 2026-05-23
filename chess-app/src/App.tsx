@@ -43,24 +43,12 @@ function AppRoutes() {
           )
         }
       />
-      <Route
-        path="lobby"
-        element={<ProtectedRoute><MainApp initialRoute="lobby" /></ProtectedRoute>}
-      />
-      <Route
-        path="online"
-        element={<ProtectedRoute><MainApp initialRoute="online" /></ProtectedRoute>}
-      />
-      <Route
-        path="profile"
-        element={<ProtectedRoute><MainApp initialRoute="profile" /></ProtectedRoute>}
-      />
       <Route path="*" element={<MainApp />} />
     </Routes>
   );
 }
 
-function MainApp({ initialRoute }: { initialRoute?: string }) {
+function MainApp() {
   const { user, accessToken, logout } = useAuth();
   const navigate = useNavigate();
   const nativeApp = isNativeApp();
@@ -181,13 +169,18 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
         <div className="app-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/lobby" element={<Lobby onJoinGame={() => navigate('/online')} />} />
+            <Route
+              path="/lobby"
+              element={<ProtectedRoute><Lobby onJoinGame={() => navigate('/online')} /></ProtectedRoute>}
+            />
             <Route path="/local" element={<LocalGame />} />
-            <Route path="/online" element={<OnlineGame onBackToLobby={() => navigate('/lobby')} />} />
+            <Route
+              path="/online"
+              element={<ProtectedRoute><OnlineGame onBackToLobby={() => navigate('/lobby')} /></ProtectedRoute>}
+            />
             <Route path="/pgn" element={<PGNLoader />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/history" element={<GameHistory />} />
-            {initialRoute && <Route path="*" element={<Navigate to={`/${initialRoute}`} replace />} />}
           </Routes>
         </div>
       </div>
