@@ -874,9 +874,20 @@ export function useChessGame(): UseChessGameReturn {
   useEffect(() => { setLastEngineBestMove(lastEngineBestMoveRef.current); }, [renderTick]);
 
   // Init
+  const engineMoveInitDone = useRef(false);
   useEffect(() => {
     state.board = initBoard();
     initStockfish();
+  }, []);
+
+  // Trigger engine first move when human plays Black vs Stockfish
+  useEffect(() => {
+    if (engineMoveInitDone.current) return;
+    engineMoveInitDone.current = true;
+    const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
+    if (isEngineTurn && !state.gameOver) {
+      requestEngineMove();
+    }
   }, []);
 
   // Execute engine move when bestmove arrives

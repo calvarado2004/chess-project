@@ -54,8 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         .catch(() => {
           clearTokens();
-          setUser(null);
-          setAccessToken(null);
+          // Force a full page reload to /login to break any React state loops
           window.location.href = '/login';
         });
     }, 5 * 60 * 1000);
@@ -90,8 +89,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
         clearTokens();
-        setUser(null);
-        setAccessToken(null);
+        // Force a full page reload to /login to break any React state loops
+        window.location.href = '/login';
       } else {
         console.error('Failed to refresh user profile', error);
       }
