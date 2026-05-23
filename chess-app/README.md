@@ -115,10 +115,23 @@ npm run cap:open:ios
 
 Run `cap:sync` after frontend or Capacitor config changes before opening Android Studio or Xcode.
 
-Route and browser regression tests:
+Route, browser, and engine regression tests:
 
 ```bash
 npm run test:browser
+```
+
+Focused test files:
+
+- `tests/chess-rules.spec.ts` validates legal move generation, en passant, stale castling rights guards, matching rook requirements, and white/black kingside castling from real opening sequences.
+- `tests/pgn-replay.spec.ts` validates PGN header parsing, comment/NAG/variation stripping, SAN castling replay, castling rights updates, and en passant replay context.
+- `tests/offline-routes.spec.ts` validates offline-capable local routes, protected online routes, authenticated lobby rendering, and deep-link/refresh behavior.
+- `tests/stockfish.spec.ts` validates the bundled Stockfish 18 worker UCI flow and bestmove behavior.
+
+Run only the rule and PGN replay coverage:
+
+```bash
+npm run test:browser -- tests/chess-rules.spec.ts tests/pgn-replay.spec.ts
 ```
 
 Run the route suite against the production frontend served by Docker Compose:

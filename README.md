@@ -340,7 +340,29 @@ docker compose up --build
 open http://localhost:3001
 ```
 
-## Lobby Integration Test
+## Backend Engine And Lobby Tests
+
+The backend engine tests cover the assumptions used by online multiplayer move validation:
+
+- legal white and black kingside castling from real opening sequences;
+- rejecting castling when the king would cross an attacked square;
+- clearing castling rights when a rook is captured on its starting square.
+
+Run the backend engine tests locally:
+
+```bash
+cd backend
+npx tsx --test tests/engine-castling.test.ts
+```
+
+Run all backend TypeScript compile checks:
+
+```bash
+cd backend
+npm run build
+```
+
+### Lobby Integration Test
 
 The backend has a formal WebSocket integration test for the scaled lobby path:
 
@@ -363,9 +385,16 @@ By default the test connects both clients through the frontend proxy at `ws://lo
 WS_URL_A=ws://localhost:3001/ws WS_URL_B=ws://localhost:3001/ws npm run test:integration
 ```
 
-## Frontend Route Tests
+## Frontend Browser And Engine Tests
 
-Browser tests cover offline route access, protected online route redirects, authenticated lobby rendering, the Online Multiplayer home card, deep-link/refresh behavior, chess rules, en passant, castling guards, and the Stockfish 18 worker flow.
+Browser tests cover offline route access, protected online route redirects, authenticated lobby rendering, the Online Multiplayer home card, deep-link/refresh behavior, chess rules, en passant, castling guards, legal castling from real game sequences, PGN parsing/replay assumptions, and the Stockfish 18 worker flow.
+
+The focused engine/browser tests include:
+
+- `tests/chess-rules.spec.ts`: legal move generation, en passant, castling guards, and white/black castling from real game sequences with FEN assertions.
+- `tests/pgn-replay.spec.ts`: PGN headers, comments, NAGs, variations, legal SAN castling replay, and en passant replay.
+- `tests/stockfish.spec.ts`: Stockfish 18 worker UCI readiness and bestmove behavior across a known line.
+- `tests/offline-routes.spec.ts`: offline-capable routes, protected online routes, authenticated lobby rendering, and deep-link refresh behavior.
 
 ```bash
 cd chess-app

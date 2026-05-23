@@ -106,3 +106,36 @@ test('backend engine allows black kingside castling in a legal game sequence', (
   assert.equal(state.castlingRights.bQ, false);
   assert.equal(generateFEN(state.board, state.turn, state.castlingRights, state.enPassantTarget, state.halfmoveClock, state.fullmoveNumber), 'rnbq1rk1/pppp1ppp/5n2/2b1p3/4P3/2NP1N2/PPP2PPP/R1BQKB1R w KQ - 1 5');
 });
+
+test('backend engine rejects castling while the king crosses an attacked square', () => {
+  const state = createInitialState();
+  state.board = Array.from({ length: 8 }, () => Array(8).fill(EMPTY));
+  state.board[7][4] = W_KING;
+  state.board[7][7] = W_ROOK;
+  state.board[0][4] = B_KING;
+  state.board[0][5] = B_ROOK;
+  state.castlingRights = { wK: true, wQ: false, bK: false, bQ: false };
+
+  assert.equal(
+    getLegalMoves(state, 7, 4).some((move) => move.castle === 'K'),
+    false,
+  );
+});
+
+test('backend engine clears castling rights when a rook is captured on its starting square', () => {
+  const state = createInitialState();
+  state.board = Array.from({ length: 8 }, () => Array(8).fill(EMPTY));
+  state.board[7][4] = W_KING;
+  state.board[7][7] = W_ROOK;
+  state.board[0][4] = B_KING;
+  state.board[0][7] = B_ROOK;
+  state.turn = 'b';
+  state.castlingRights = { wK: true, wQ: false, bK: true, bQ: false };
+
+  playLegalUci(state, 'h8h1');
+
+  assert.equal(state.board[0][7], EMPTY);
+  assert.equal(state.board[7][7], B_ROOK);
+  assert.equal(state.castlingRights.wK, false);
+  assert.equal(state.castlingRights.bK, false);
+});

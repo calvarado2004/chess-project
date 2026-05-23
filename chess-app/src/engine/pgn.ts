@@ -36,6 +36,9 @@ export function parsePGN(pgn: string): ParsedPGN {
 
     // Header line
     if (inHeaders) {
+      if (!trimmed) {
+        continue;
+      }
       const headerMatch = trimmed.match(/^\[(\w+)\s+"(.*)"\]$/);
       if (headerMatch) {
         headers[headerMatch[1]] = headerMatch[2];
