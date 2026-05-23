@@ -1,21 +1,28 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-interface HomeProps {
-  onOnline: () => void;
-}
+type HomeCard = {
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+} & (
+  | { to: string; state?: unknown; action?: never }
+  | { action: () => void; to?: never; state?: never }
+);
 
-export default function Home({ onOnline }: HomeProps) {
+export default function Home() {
   const navigate = useNavigate();
   const [showStockfishPicker, setShowStockfishPicker] = useState(false);
 
-  const cards = [
+  const cards: HomeCard[] = [
     {
       icon: '♟',
       title: 'Single Player',
       description: 'Play White vs Stockfish',
       color: '#89b4fa',
-      action: () => navigate('/local', { state: { gameMode: 'hwe' } }),
+      to: '/local',
+      state: { gameMode: 'hwe' },
     },
     {
       icon: '🤖',
@@ -29,14 +36,14 @@ export default function Home({ onOnline }: HomeProps) {
       title: 'Online Multiplayer',
       description: 'Find an opponent and play over the network',
       color: '#f9e2af',
-      action: () => onOnline(),
+      to: '/lobby',
     },
     {
       icon: '📄',
       title: 'Study PGN',
       description: 'Load a game from PGN to study positions',
       color: '#cba6f7',
-      action: () => navigate('/pgn'),
+      to: '/pgn',
     },
   ];
 
@@ -79,31 +86,48 @@ export default function Home({ onOnline }: HomeProps) {
         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
         gap: '16px',
       }}>
-        {cards.map((card) => (
-          <button
-            type="button"
-            key={card.title}
-            onClick={card.action}
-            style={{
+        {cards.map((card) => {
+          const cardStyle = {
               display: 'flex', alignItems: 'center', gap: '16px',
               padding: '20px 24px', background: '#1e1e2e',
               border: `2px solid ${card.color}33`,
               borderRadius: '12px', cursor: 'pointer',
               textAlign: 'left', transition: 'border-color 0.2s, transform 0.1s',
-              color: '#cdd6f4',
-            }}
-          >
-            <span style={{ fontSize: '36px' }}>{card.icon}</span>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>
-                {card.title}
+              color: '#cdd6f4', textDecoration: 'none',
+          } as const;
+          const cardContent = (
+            <>
+              <span style={{ fontSize: '36px' }}>{card.icon}</span>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>
+                  {card.title}
+                </div>
+                <div style={{ fontSize: '13px', color: '#a6adc8' }}>
+                  {card.description}
+                </div>
               </div>
-              <div style={{ fontSize: '13px', color: '#a6adc8' }}>
-                {card.description}
-              </div>
-            </div>
-          </button>
-        ))}
+            </>
+          );
+
+          if (card.to) {
+            return (
+              <Link key={card.title} to={card.to} state={card.state} style={cardStyle}>
+                {cardContent}
+              </Link>
+            );
+          }
+
+          return (
+            <button
+              type="button"
+              key={card.title}
+              onClick={card.action}
+              style={cardStyle}
+            >
+              {cardContent}
+            </button>
+          );
+        })}
       </div>
 
       {/* Stockfish color picker modal trigger */}

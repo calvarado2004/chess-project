@@ -43,7 +43,7 @@ test('online multiplayer requires a live token even with a cached offline user',
   });
 
   await page.reload();
-  await page.getByRole('button', { name: /Online Multiplayer/i }).click();
+  await page.getByRole('link', { name: /Online Multiplayer/i }).click();
 
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();

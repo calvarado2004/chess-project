@@ -180,10 +180,7 @@ function MainApp({ initialRoute }: { initialRoute?: string }) {
         {/* Content */}
         <div className="app-content">
           <Routes>
-            <Route
-              path="/"
-              element={<Home onOnline={() => { navigate(accessToken ? '/lobby' : '/login'); }} />}
-            />
+            <Route path="/" element={<Home />} />
             <Route path="/lobby" element={<Lobby onJoinGame={() => navigate('/online')} />} />
             <Route path="/local" element={<LocalGame />} />
             <Route path="/online" element={<OnlineGame onBackToLobby={() => navigate('/lobby')} />} />
