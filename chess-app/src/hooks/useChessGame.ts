@@ -724,6 +724,7 @@ let engine: Worker | null = null;
 let engineReady = false;
 let currentEngineRequest: null | 'analysis' | 'move' = null;
 let pendingNewGame = false;
+let engineMoveCandidates = new Map<number, { move: string; scoreCp: number | null }>();
 
 function initStockfish() {
   try {
@@ -746,9 +747,35 @@ function handleEngineMessage(msg: string) {
     startEngineTurnIfNeeded();
     return;
   }
-  if (msg.startsWith('info') && msg.includes('score')) { parseEvalInfo(msg); return; }
+  if (msg.startsWith('info')) {
+    if (currentEngineRequest === 'move') parseEngineMoveCandidate(msg);
+    if (msg.includes('score')) parseEvalInfo(msg);
+    return;
+  }
   if (msg.startsWith('bestmove')) { handleBestMove(msg); return; }
   if (msg && msg.startsWith('No such option:')) return;
+}
+
+function parseEngineMoveCandidate(msg: string) {
+  const pvMatch = msg.match(/\bpv\s+([a-h][1-8][a-h][1-8][qrbn]?)/);
+  if (!pvMatch) return;
+
+  const multipvMatch = msg.match(/\bmultipv\s+(\d+)/);
+  const index = multipvMatch ? parseInt(multipvMatch[1], 10) : 1;
+  if (!Number.isFinite(index) || index < 1) return;
+  engineMoveCandidates.set(index, { move: pvMatch[1], scoreCp: parseEngineScore(msg) });
+}
+
+function parseEngineScore(msg: string): number | null {
+  const cpMatch = msg.match(/\bscore cp (-?\d+)/);
+  if (cpMatch) return parseInt(cpMatch[1], 10);
+
+  const mateMatch = msg.match(/\bscore mate (-?\d+)/);
+  if (!mateMatch) return null;
+
+  const mate = parseInt(mateMatch[1], 10);
+  if (!Number.isFinite(mate)) return null;
+  return Math.sign(mate) * (100_000 - Math.min(Math.abs(mate), 99) * 1_000);
 }
 
 function parseEvalInfo(msg: string) {
@@ -806,6 +833,7 @@ function configureStrength() {
   engine.postMessage(`setoption name UCI_LimitStrength value ${s.uciElo ? 'true' : 'false'}`);
   if (s.uciElo) engine.postMessage(`setoption name UCI_Elo value ${s.uciElo}`);
   engine.postMessage(`setoption name Skill Level value ${s.skill}`);
+  engine.postMessage(`setoption name MultiPV value ${s.candidateMoveCount}`);
 }
 
 function requestAnalysis() {
@@ -814,6 +842,7 @@ function requestAnalysis() {
   currentEngineRequest = 'analysis';
   state.engineStatus = 'analyzing';
   engineStatusRef.current = 'analyzing';
+  engine.postMessage('setoption name MultiPV value 1');
   engine.postMessage('position fen ' + generateFEN());
   engine.postMessage('go depth 12');
 }
@@ -823,9 +852,11 @@ function requestEngineMove() {
   if (currentEngineRequest) engine.postMessage('stop');
   const s = STRENGTH_MAP[state.strengthLevel];
   const movetime = s ? s.movetime : 500;
+  engineMoveCandidates = new Map();
   currentEngineRequest = 'move';
   state.engineStatus = 'thinking';
   engineStatusRef.current = 'thinking';
+  engine.postMessage(`setoption name MultiPV value ${s?.candidateMoveCount ?? 1}`);
   engine.postMessage('position fen ' + generateFEN());
   if (s?.searchDepth) engine.postMessage(`go depth ${s.searchDepth}`);
   else engine.postMessage(`go movetime ${movetime}`);
@@ -869,18 +900,29 @@ function resolveUCIMove(str: string): ChessMove | null {
 }
 
 function chooseWeakenedEngineMove(bestmoveStr: string): ChessMove | null {
-  const bestMove = resolveUCIMove(bestmoveStr);
-  if (!bestMove) return null;
-
   const config = STRENGTH_MAP[state.strengthLevel];
-  const randomMoveChance = config?.randomMoveChance ?? 0;
-  if (randomMoveChance <= 0 || Math.random() >= randomMoveChance) {
-    return bestMove;
+  if (!config || config.candidateMoveCount <= 1) {
+    return resolveUCIMove(bestmoveStr);
   }
 
-  const legalMoves = getAllLegalMoves(state.turn);
-  if (legalMoves.length === 0) return null;
-  return legalMoves[Math.floor(Math.random() * legalMoves.length)] ?? bestMove;
+  const candidates = Array.from(engineMoveCandidates.entries())
+    .sort(([a], [b]) => a - b)
+    .slice(0, config.candidateMoveCount)
+    .map(([, candidate]) => candidate)
+    .filter((candidate, index, moves) => moves.findIndex((move) => move.move === candidate.move) === index);
+
+  if (candidates.length <= 1) return resolveUCIMove(bestmoveStr);
+
+  const topScore = candidates[0].scoreCp;
+  const acceptable = topScore === null
+    ? candidates.slice(0, 1)
+    : candidates.filter((candidate) =>
+        candidate.scoreCp !== null &&
+        topScore - candidate.scoreCp <= config.maxCandidateLossCp
+      );
+
+  const selected = acceptable[Math.floor(Math.random() * acceptable.length)]?.move ?? bestmoveStr;
+  return resolveUCIMove(selected) ?? resolveUCIMove(bestmoveStr);
 }
 
 // ===================== Main Hook =====================

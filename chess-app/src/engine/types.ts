@@ -99,7 +99,8 @@ export interface EngineConfig {
   uciElo?: number;
   movetime: number;
   searchDepth?: number;
-  randomMoveChance: number;
+  candidateMoveCount: number;
+  maxCandidateLossCp: number;
 }
 
 export const STOCKFISH_ELO_LEVELS = Array.from(
@@ -119,7 +120,8 @@ export const STRENGTH_MAP: Record<string, EngineConfig> = Object.fromEntries(
         uciElo: belowNativeLimit ? undefined : elo,
         movetime: Math.round(120 + normalized * 880),
         searchDepth: belowNativeLimit ? Math.max(1, Math.round((elo - 500) / 220) + 1) : undefined,
-        randomMoveChance: belowNativeLimit ? Math.max(0, Math.min(0.55, (1320 - elo) / 1490)) : 0,
+        candidateMoveCount: belowNativeLimit ? Math.max(2, Math.min(5, 5 - Math.floor((elo - 500) / 250))) : 1,
+        maxCandidateLossCp: belowNativeLimit ? Math.max(35, Math.round(160 - ((elo - 500) / 820) * 125)) : 0,
       },
     ];
   }),

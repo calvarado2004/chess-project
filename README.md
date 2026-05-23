@@ -103,7 +103,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 
 - **Stockfish game result**: local hook detects a completed Stockfish game, determines human result and Stockfish Elo, posts `/api/users/me/history/stockfish`, then refreshes the user profile so the top bar and profile Elo update.
 - **Stockfish retract**: human players can retract their latest move against Stockfish up to 3 times per game. Any Stockfish game where a retract is used is treated as unrated and is not posted to ELO history.
-- **Stockfish strength control**: the UI exposes 500-2400 strength levels in 100-point increments. Stockfish 18 only advertises native `UCI_Elo` support from 1320 upward, so levels below 1320 are intentionally weakened in the app with shallow searches and occasional random legal move selection. This keeps the lower levels playable while still recording the selected UI level as the Stockfish opponent Elo for history/performance.
+- **Stockfish strength control**: the UI exposes 500-2400 strength levels in 100-point increments. Stockfish 18 only advertises native `UCI_Elo` support from 1320 upward, so levels below 1320 are intentionally weakened in the app with shallow searches and selection from Stockfish MultiPV moves that remain close to the best evaluated candidate. This keeps the lower levels playable without arbitrary legal blunders while still recording the selected UI level as the Stockfish opponent Elo for history/performance.
 - **Multiplayer move**: client sends UCI over WebSocket, backend validates the source piece and legal move, applies the move on cloned server state, persists SAN, broadcasts state, and rejects illegal moves.
 - **Multiplayer game finish**: room end states update `games`, record a rated `game_history` row for each player, broadcast `game_over`, and leave the final state available to clients.
 - **PGN replay**: the PGN loader strips headers/comments/NAGs, resolves each SAN move against legal moves from replay state, applies the move, and keeps FEN-related context such as castling and en passant current.
@@ -381,7 +381,7 @@ docker compose up redis
 - Draw offers notify the opponent with accept/reject actions.
 - Boards flip for the player perspective when playing Black.
 - Stockfish solo levels run from 500 ELO to 2400 ELO in 100-point increments.
-- Stockfish 18 native `UCI_Elo` limiting is used from 1320 upward; lower UI levels use shallow searches and occasional random legal moves to compensate for Stockfish 18's 1320 minimum.
+- Stockfish 18 native `UCI_Elo` limiting is used from 1320 upward; lower UI levels use shallow searches and only choose from Stockfish MultiPV candidates that remain near the best evaluated move, avoiding arbitrary random legal moves.
 - PGN replay now resolves legal source squares correctly, including pawn moves such as `d4`.
 - Local and multiplayer PGN move history uses legal SAN generation with captures, castling, promotion, checks, checkmate, and disambiguation.
 - Mobile piece rendering uses text chess symbols so white and black pawns render correctly on mobile browsers.
