@@ -62,6 +62,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 - **API client**: `chess-app/src/lib/api.ts` wraps REST calls, attaches access tokens, refreshes expired tokens, records Stockfish games, and fetches Elo/history data.
 - **WebSocket client**: `chess-app/src/context/GameWebSocketContext.tsx` maintains the online game session, lobby state, lobby chat messages, draw offers, move sync, and game-over events.
 - **Local engine hook**: `chess-app/src/hooks/useChessGame.ts` is the source of truth for local board behavior, Stockfish turns, legal move guards, SAN generation, clocks, sounds, and local Stockfish result recording.
+- **Stockfish worker**: `chess-app/public/stockfish.js` contains Stockfish 18.0.7 as a single browser worker file with the WASM payload embedded, so production deployments only need to serve `/stockfish.js`.
 - **Board UI**: `Board.tsx` and `Square.tsx` render selected squares, legal targets, last move, check/checkmate clues, flipped orientation, coordinates, and text-rendered chess symbols for mobile compatibility.
 - **Study mode**: `PGNLoader.tsx` and `engine/pgn.ts` parse PGN, replay moves through legal source-square resolution, and expose move-by-move navigation.
 - **History/profile**: `GameHistory.tsx` shows the last 50 rated games and last-10 Stockfish performance; `Profile.tsx` shows the current Elo summary.
@@ -102,6 +103,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 
 - **Stockfish game result**: local hook detects a completed Stockfish game, determines human result and Stockfish Elo, posts `/api/users/me/history/stockfish`, then refreshes the user profile so the top bar and profile Elo update.
 - **Stockfish retract**: human players can retract their latest move against Stockfish up to 3 times per game. Any Stockfish game where a retract is used is treated as unrated and is not posted to ELO history.
+- **Stockfish strength control**: the UI exposes 500-2400 strength levels in 100-point increments. Stockfish 18 only advertises native `UCI_Elo` support from 1320 upward, so levels below 1320 are intentionally weakened in the app with shallow searches and occasional random legal move selection. This keeps the lower levels playable while still recording the selected UI level as the Stockfish opponent Elo for history/performance.
 - **Multiplayer move**: client sends UCI over WebSocket, backend validates the source piece and legal move, applies the move on cloned server state, persists SAN, broadcasts state, and rejects illegal moves.
 - **Multiplayer game finish**: room end states update `games`, record a rated `game_history` row for each player, broadcast `game_over`, and leave the final state available to clients.
 - **PGN replay**: the PGN loader strips headers/comments/NAGs, resolves each SAN move against legal moves from replay state, applies the move, and keeps FEN-related context such as castling and en passant current.
@@ -115,7 +117,7 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 | **Backend** | Node.js 20, Express, TypeScript, `ws` (WebSocket) |
 | **Database** | PostgreSQL 18 |
 | **Realtime Coordination** | Redis 7 |
-| **Chess Engine** | Stockfish.js (client-side Web Worker) |
+| **Chess Engine** | Stockfish.js 18.0.7 (client-side Web Worker, embedded WASM single file) |
 | **Containerization** | Docker, Docker Compose, Nginx (frontend proxy) |
 | **Auth** | JWT (access + refresh tokens), bcrypt |
 
@@ -379,6 +381,7 @@ docker compose up redis
 - Draw offers notify the opponent with accept/reject actions.
 - Boards flip for the player perspective when playing Black.
 - Stockfish solo levels run from 500 ELO to 2400 ELO in 100-point increments.
+- Stockfish 18 native `UCI_Elo` limiting is used from 1320 upward; lower UI levels use shallow searches and occasional random legal moves to compensate for Stockfish 18's 1320 minimum.
 - PGN replay now resolves legal source squares correctly, including pawn moves such as `d4`.
 - Local and multiplayer PGN move history uses legal SAN generation with captures, castling, promotion, checks, checkmate, and disambiguation.
 - Mobile piece rendering uses text chess symbols so white and black pawns render correctly on mobile browsers.

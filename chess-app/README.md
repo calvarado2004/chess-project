@@ -21,6 +21,7 @@ React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stock
 ### Chess Engine Layer
 
 - `src/engine/types.ts` defines piece ids, coordinates, move types, game status, Stockfish strength levels from 500 to 2400 Elo, and text chess symbols.
+- `public/stockfish.js` is Stockfish 18.0.7 packaged as one browser worker file with the WASM payload embedded. The app intentionally keeps the single `/stockfish.js` deployment contract instead of serving a separate `.wasm` sidecar.
 - `src/engine/logic.ts` contains reusable board logic: move generation, legal move filtering, attack detection, check/checkmate/stalemate, castling, en passant, and promotion.
 - `src/engine/notation.ts` handles FEN, PGN, and UCI helpers.
 - `src/engine/pgn.ts` parses PGN and replays SAN through legal move resolution so ambiguous moves and pawn moves such as `d4` select the correct source square.
@@ -29,6 +30,8 @@ React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stock
 
 - `src/hooks/useChessGame.ts` is the source of truth for local board behavior.
 - It owns board state, selected square, legal move list, captures, clocks, Stockfish worker lifecycle, sounds, SAN move history, PGN export, and game-end detection.
+- Stockfish is driven with the UCI flow used by the browser worker: `uci`, `isready`, `setoption`, `ucinewgame`, `position fen ...`, and `go ...`.
+- Stockfish 18 reports native `UCI_Elo` support only from 1320 upward. For selected UI levels below 1320, the hook disables native ELO limiting, requests shallow searches, and may substitute a random legal move. This compensates for Stockfish 18's stronger low-end behavior while preserving the 500-2400 level selector.
 - Stockfish games post completed results to `/api/users/me/history/stockfish` with the selected Stockfish Elo, player color, result, move count, and duration.
 - Human players can retract their latest move against Stockfish up to 3 times per game. Using any retract makes that Stockfish game unrated, so it is not posted to ELO history.
 - Human-as-black games flip the board so black pieces are at the bottom.
