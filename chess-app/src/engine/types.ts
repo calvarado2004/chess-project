@@ -11,6 +11,16 @@ export const PIECE_UNICODE: Record<number, string> = {
   [B_BISHOP]: '\u265D', [B_KNIGHT]: '\u265E', [B_PAWN]:   '\u265F',
 };
 
+// ===================== Piece SVG filenames =====================
+export const PIECE_SVG: Record<number, string> = {
+  [W_PAWN]:   'staunty/whitePawn.svg',  [W_KNIGHT]: 'staunty/whiteNight.svg',
+  [W_BISHOP]: 'staunty/whiteBishop.svg', [W_ROOK]:   'staunty/whiteRook.svg',
+  [W_QUEEN]:  'staunty/whiteQueen.svg',  [W_KING]:   'staunty/whiteKing.svg',
+  [B_PAWN]:   'staunty/blackPawn.svg',  [B_KNIGHT]: 'staunty/blackKnight.svg',
+  [B_BISHOP]: 'staunty/blackBishop.svg', [B_ROOK]:   'staunty/blackRook.svg',
+  [B_QUEEN]:  'staunty/blackQueen.svg',  [B_KING]:   'staunty/blackKing.svg',
+};
+
 export const PIECE_TYPE: Record<number, string> = {
   [W_PAWN]: 'p', [W_KNIGHT]: 'n', [W_BISHOP]: 'b', [W_ROOK]: 'r', [W_QUEEN]: 'q', [W_KING]: 'k',
   [B_PAWN]: 'p', [B_KNIGHT]: 'n', [B_BISHOP]: 'b', [B_ROOK]: 'r', [B_QUEEN]: 'q', [B_KING]: 'k',

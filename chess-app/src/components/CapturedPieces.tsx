@@ -1,5 +1,5 @@
 import React from 'react';
-import { PIECE_UNICODE, isWhite, PIECE_TYPE } from '../engine';
+import { PIECE_SVG, PIECE_TYPE, isWhite } from '../engine';
 
 interface CapturedPiecesProps {
   capturedByWhite: number[];
@@ -14,13 +14,15 @@ const sortPieces = (arr: number[]): number[] => {
 const renderPieces = (pieces: number[]) =>
   pieces.map((p, i) => {
     const isW = isWhite(p);
-    const style: React.CSSProperties = isW
-      ? { color: '#ffffff', WebkitTextStroke: '0.5px #8B7355', WebkitTextFillColor: '#ffffff' }
-      : { color: '#3e2723', WebkitTextFillColor: '#3e2723', textShadow: '0 0 2px rgba(255,255,255,0.1)' };
     return (
-      <span key={i} className={`cap-piece ${isW ? 'white-piece' : 'black-piece'}`} style={style}>
-        {PIECE_UNICODE[p]}
-      </span>
+      <img
+        key={i}
+        src={`/${PIECE_SVG[p]}`}
+        alt=""
+        aria-hidden="true"
+        className={`cap-piece ${isW ? 'white-piece' : 'black-piece'}`}
+        draggable={false}
+      />
     );
   });
 

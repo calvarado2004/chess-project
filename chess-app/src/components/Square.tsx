@@ -1,5 +1,5 @@
 import React from 'react';
-import { PIECE_UNICODE, isWhite, isBlack, FILES, RANKS } from '../engine';
+import { PIECE_SVG, PIECE_UNICODE, isWhite, isBlack, FILES, RANKS } from '../engine';
 import type { Coord, ChessMove } from '../engine';
 
 interface SquareProps {
@@ -53,25 +53,22 @@ export const Square: React.FC<SquareProps> = React.memo(({
   const isLegalDot = legalMoves.some((m) => isLegalTarget(m, row, col) && !isLegalCapture(m, row, col, piece));
   const isLegalRing = legalMoves.some((m) => isLegalCapture(m, row, col, piece));
 
-  const pieceChar = piece !== null ? PIECE_UNICODE[piece] : null;
+  const pieceSvg = piece !== null ? PIECE_SVG[piece] : null;
   const isWhitePiece = piece !== null && isWhite(piece);
-
-  const pieceStyle: React.CSSProperties = piece !== null
-    ? {
-        color: isWhitePiece ? '#ffffff' : '#3e2723',
-        WebkitTextStroke: isWhitePiece ? '1px #8B7355' : undefined,
-        WebkitTextFillColor: isWhitePiece ? '#ffffff' : undefined,
-        textShadow: isWhitePiece ? undefined : '0 1px 2px rgba(0,0,0,0.25), 0 0 1px rgba(255,255,255,0.15)',
-      }
-    : {};
 
   return (
     <div
       className={squareClass}
       onClick={onClick}
     >
-      {pieceChar && (
-        <span className={`piece ${isWhitePiece ? 'white-piece' : 'black-piece'}`} style={pieceStyle}>{pieceChar}</span>
+      {pieceSvg && (
+        <img
+          src={`/${pieceSvg}`}
+          alt=""
+          aria-hidden="true"
+          className={`piece ${isWhitePiece ? 'white-piece' : 'black-piece'}`}
+          draggable={false}
+        />
       )}
 
       {isLegalDot && (
