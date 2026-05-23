@@ -12,10 +12,10 @@ export default function Home({ onOnline }: HomeProps) {
   const cards = [
     {
       icon: '♟',
-      title: 'Local Game',
-      description: 'Play Human vs Human on the same device',
+      title: 'Single Player',
+      description: 'Play White vs Stockfish',
       color: '#89b4fa',
-      action: () => navigate('/local', { state: { gameMode: 'hvh' } }),
+      action: () => navigate('/local', { state: { gameMode: 'hwe' } }),
     },
     {
       icon: '🤖',

@@ -123,8 +123,9 @@ A full-featured chess application with online multiplayer, Stockfish engine inte
 
 ## Game Modes
 
-- **Local Game** — Human vs Human on the same device
-- **vs Stockfish** — Human (White/Black) vs Stockfish engine
+- **Single Player** — defaults to Human playing White vs Stockfish
+- **vs Stockfish** — choose Human as White or Black vs Stockfish engine
+- **Local Human vs Human** — available from the game-mode dropdown on the local board
 - **Online Multiplayer** — Real-time Human vs Human with lobby, matchmaking, and move sync
 - **PGN Study** — Load and replay games from PGN files
 

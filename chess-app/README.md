@@ -7,6 +7,7 @@ React + TypeScript frontend for Qwen's 3.6 Chess. It provides local chess, Stock
 ### App Shell
 
 - `src/App.tsx` owns BrowserRouter routes, authenticated layout, top navigation, and links to Home, Lobby, Local Game, Online Game, PGN Study, Profile, and History.
+- `src/components/Home.tsx` defaults the Single Player card to Human playing White vs Stockfish. Human-as-black Stockfish play is available from the Stockfish color picker, and local Human-vs-Human remains available from the game-mode dropdown on the local board.
 - `src/main.tsx` mounts the React application.
 - `src/index.css` contains the shared board, panel, responsive, and history styles. Desktop uses sidebars, tablet stacks panels below the board, and phone layouts use a full-width board.
 
