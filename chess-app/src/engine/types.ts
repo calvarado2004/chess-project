@@ -96,7 +96,10 @@ export type EngineRequestType = null | 'analysis' | 'move';
 export interface EngineConfig {
   skill: number;
   elo: number;
+  uciElo?: number;
   movetime: number;
+  searchDepth?: number;
+  randomMoveChance: number;
 }
 
 export const STOCKFISH_ELO_LEVELS = Array.from(
@@ -107,12 +110,16 @@ export const STOCKFISH_ELO_LEVELS = Array.from(
 export const STRENGTH_MAP: Record<string, EngineConfig> = Object.fromEntries(
   STOCKFISH_ELO_LEVELS.map((elo) => {
     const normalized = (elo - 500) / (2400 - 500);
+    const belowNativeLimit = elo < 1320;
     return [
       `elo-${elo}`,
       {
         skill: Math.round(normalized * 20),
         elo,
-        movetime: Math.round(150 + normalized * 1050),
+        uciElo: belowNativeLimit ? undefined : elo,
+        movetime: Math.round(120 + normalized * 880),
+        searchDepth: belowNativeLimit ? Math.max(1, Math.round((elo - 500) / 220) + 1) : undefined,
+        randomMoveChance: belowNativeLimit ? Math.max(0, Math.min(0.55, (1320 - elo) / 1490)) : 0,
       },
     ];
   }),

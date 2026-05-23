@@ -356,13 +356,17 @@ function getLegalMoves(row: number, col: number): ChessMove[] {
   if (PIECE_TYPE[piece] === 'k') {
     const enemy: 'w' | 'b' = color === 'w' ? 'b' : 'w';
     if (!isSquareAttackedBy(row, col, enemy)) {
-      if (color === 'w' && state.castlingRights.wK && state.board[7][5] === EMPTY && state.board[7][6] === EMPTY && !isSquareAttackedBy(7, 5, enemy) && !isSquareAttackedBy(7, 6, enemy))
+      const onStartingSquare = color === 'w'
+        ? row === 7 && col === 4 && piece === W_KING
+        : row === 0 && col === 4 && piece === B_KING;
+
+      if (color === 'w' && onStartingSquare && state.castlingRights.wK && state.board[7][7] === W_ROOK && state.board[7][5] === EMPTY && state.board[7][6] === EMPTY && !isSquareAttackedBy(7, 5, enemy) && !isSquareAttackedBy(7, 6, enemy))
         pseudo.push({ from: { row, col }, to: { row: 7, col: 6 }, castle: 'K' });
-      if (color === 'w' && state.castlingRights.wQ && state.board[7][1] === EMPTY && state.board[7][2] === EMPTY && state.board[7][3] === EMPTY && !isSquareAttackedBy(7, 3, enemy) && !isSquareAttackedBy(7, 2, enemy))
+      if (color === 'w' && onStartingSquare && state.castlingRights.wQ && state.board[7][0] === W_ROOK && state.board[7][1] === EMPTY && state.board[7][2] === EMPTY && state.board[7][3] === EMPTY && !isSquareAttackedBy(7, 3, enemy) && !isSquareAttackedBy(7, 2, enemy))
         pseudo.push({ from: { row, col }, to: { row: 7, col: 2 }, castle: 'Q' });
-      if (color === 'b' && state.castlingRights.bK && state.board[0][5] === EMPTY && state.board[0][6] === EMPTY && !isSquareAttackedBy(0, 5, enemy) && !isSquareAttackedBy(0, 6, enemy))
+      if (color === 'b' && onStartingSquare && state.castlingRights.bK && state.board[0][7] === B_ROOK && state.board[0][5] === EMPTY && state.board[0][6] === EMPTY && !isSquareAttackedBy(0, 5, enemy) && !isSquareAttackedBy(0, 6, enemy))
         pseudo.push({ from: { row, col }, to: { row: 0, col: 6 }, castle: 'K' });
-      if (color === 'b' && state.castlingRights.bQ && state.board[0][1] === EMPTY && state.board[0][2] === EMPTY && state.board[0][3] === EMPTY && !isSquareAttackedBy(0, 3, enemy) && !isSquareAttackedBy(0, 2, enemy))
+      if (color === 'b' && onStartingSquare && state.castlingRights.bQ && state.board[0][0] === B_ROOK && state.board[0][1] === EMPTY && state.board[0][2] === EMPTY && state.board[0][3] === EMPTY && !isSquareAttackedBy(0, 3, enemy) && !isSquareAttackedBy(0, 2, enemy))
         pseudo.push({ from: { row, col }, to: { row: 0, col: 2 }, castle: 'Q' });
     }
   }
@@ -489,10 +493,10 @@ function executeMove(move: ChessMove) {
   // Trigger re-render
   renderTrigger.current();
 
-  // Stockfish
-  requestAnalysis();
-  if (!state.gameOver) {
+  if (!state.gameOver && isEngineTurn()) {
     startEngineTurnIfNeeded();
+  } else {
+    requestAnalysis();
   }
 }
 
@@ -799,8 +803,8 @@ function configureStrength() {
   if (!engine || !engineReady) return;
   const s = STRENGTH_MAP[state.strengthLevel];
   if (!s) return;
-  engine.postMessage('setoption name UCI_LimitStrength value true');
-  engine.postMessage(`setoption name UCI_Elo value ${s.elo}`);
+  engine.postMessage(`setoption name UCI_LimitStrength value ${s.uciElo ? 'true' : 'false'}`);
+  if (s.uciElo) engine.postMessage(`setoption name UCI_Elo value ${s.uciElo}`);
   engine.postMessage(`setoption name Skill Level value ${s.skill}`);
 }
 
@@ -823,7 +827,8 @@ function requestEngineMove() {
   state.engineStatus = 'thinking';
   engineStatusRef.current = 'thinking';
   engine.postMessage('position fen ' + generateFEN());
-  engine.postMessage(`go movetime ${movetime}`);
+  if (s?.searchDepth) engine.postMessage(`go depth ${s.searchDepth}`);
+  else engine.postMessage(`go movetime ${movetime}`);
 }
 
 function isEngineTurn(): boolean {
@@ -861,6 +866,21 @@ function resolveUCIMove(str: string): ChessMove | null {
   );
 
   return legalMove ?? null;
+}
+
+function chooseWeakenedEngineMove(bestmoveStr: string): ChessMove | null {
+  const bestMove = resolveUCIMove(bestmoveStr);
+  if (!bestMove) return null;
+
+  const config = STRENGTH_MAP[state.strengthLevel];
+  const randomMoveChance = config?.randomMoveChance ?? 0;
+  if (randomMoveChance <= 0 || Math.random() >= randomMoveChance) {
+    return bestMove;
+  }
+
+  const legalMoves = getAllLegalMoves(state.turn);
+  if (legalMoves.length === 0) return null;
+  return legalMoves[Math.floor(Math.random() * legalMoves.length)] ?? bestMove;
 }
 
 // ===================== Main Hook =====================
@@ -926,7 +946,7 @@ export function useChessGame(): UseChessGameReturn {
     if (!lastEngineBestMove) return;
     const isEngineTurn = (state.gameMode === 'hwe' && state.turn === 'b') || (state.gameMode === 'hbe' && state.turn === 'w');
     if (!isEngineTurn) return;
-    const move = resolveUCIMove(lastEngineBestMove);
+    const move = chooseWeakenedEngineMove(lastEngineBestMove);
     if (move) executeMove(move);
     state.lastEngineBestMove = null;
     lastEngineBestMoveRef.current = null;

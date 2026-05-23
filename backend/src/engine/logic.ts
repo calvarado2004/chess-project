@@ -334,25 +334,29 @@ export function getLegalMoves(
   if (PIECE_TYPE[piece] === 'k') {
     const enemy: 'w' | 'b' = color === 'w' ? 'b' : 'w';
     if (!isSquareAttackedBy(state.board, row, col, enemy)) {
-      if (color === 'w' && state.castlingRights.wK) {
+      const onStartingSquare = color === 'w'
+        ? row === 7 && col === 4 && piece === W_KING
+        : row === 0 && col === 4 && piece === B_KING;
+
+      if (color === 'w' && onStartingSquare && state.castlingRights.wK && state.board[7][7] === W_ROOK) {
         if (state.board[7][5] === EMPTY && state.board[7][6] === EMPTY &&
             !isSquareAttackedBy(state.board, 7, 5, enemy) && !isSquareAttackedBy(state.board, 7, 6, enemy)) {
           pseudo.push({ from: { row, col }, to: { row: 7, col: 6 }, castle: 'K' });
         }
       }
-      if (color === 'w' && state.castlingRights.wQ) {
+      if (color === 'w' && onStartingSquare && state.castlingRights.wQ && state.board[7][0] === W_ROOK) {
         if (state.board[7][1] === EMPTY && state.board[7][2] === EMPTY && state.board[7][3] === EMPTY &&
             !isSquareAttackedBy(state.board, 7, 3, enemy) && !isSquareAttackedBy(state.board, 7, 2, enemy)) {
           pseudo.push({ from: { row, col }, to: { row: 7, col: 2 }, castle: 'Q' });
         }
       }
-      if (color === 'b' && state.castlingRights.bK) {
+      if (color === 'b' && onStartingSquare && state.castlingRights.bK && state.board[0][7] === B_ROOK) {
         if (state.board[0][5] === EMPTY && state.board[0][6] === EMPTY &&
             !isSquareAttackedBy(state.board, 0, 5, enemy) && !isSquareAttackedBy(state.board, 0, 6, enemy)) {
           pseudo.push({ from: { row, col }, to: { row: 0, col: 6 }, castle: 'K' });
         }
       }
-      if (color === 'b' && state.castlingRights.bQ) {
+      if (color === 'b' && onStartingSquare && state.castlingRights.bQ && state.board[0][0] === B_ROOK) {
         if (state.board[0][1] === EMPTY && state.board[0][2] === EMPTY && state.board[0][3] === EMPTY &&
             !isSquareAttackedBy(state.board, 0, 3, enemy) && !isSquareAttackedBy(state.board, 0, 2, enemy)) {
           pseudo.push({ from: { row, col }, to: { row: 0, col: 2 }, castle: 'Q' });
