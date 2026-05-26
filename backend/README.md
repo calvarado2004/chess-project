@@ -34,6 +34,27 @@ Tests use the Node.js built-in test runner (`node:test`) with `tsx` for TypeScri
 | `tests/engine-castling.test.ts` | Castling move legality and FEN output | 4 |
 | **Total** | | **162** |
 
+### Coverage
+
+```
+ file          | line % | branch % | funcs %
+----------------------------------------------------------
+  elo.ts      |  99.37 |    95.00 |  100.00
+  index.ts    | 100.00 |   100.00 |  100.00
+  logic.ts    | 100.00 |    98.56 |   94.44
+  notation.ts | 100.00 |   100.00 |  100.00
+  types.ts    | 100.00 |   100.00 |  100.00
+  validate.ts | 100.00 |   100.00 |  100.00
+  lobby.ts    | 100.00 |   100.00 |  100.00
+----------------------------------------------------------
+all files     |  99.88 |    98.49 |   98.25
+```
+
+Run coverage report with:
+```bash
+node --experimental-test-coverage --import tsx --test tests/*.test.ts
+```
+
 ### Test Infrastructure
 
 - **Runner**: Node.js built-in test runner (`node:test`)
