@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
 *.local
+
+# Native build and local signing artifacts
+android/app/debug.keystore
+ios/DerivedData*
 
 # Editor directories and files
 .vscode/*
