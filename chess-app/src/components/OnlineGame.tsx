@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
 import { useAuth } from '../context/AuthContext';
+import { exportPgn } from '../lib/pgnExport';
 import Board from './Board';
 import Clock from './Clock';
 import MoveHistory from './MoveHistory';
@@ -65,6 +66,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
   const [gameOverMessage, setGameOverMessage] = useState('Game Over');
+  const [pgnExportMessage, setPgnExportMessage] = useState('');
 
   const myColor = useRef<'white' | 'black' | null>(null);
   const engineRef = useRef<Worker | null>(null);
@@ -350,9 +352,9 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const blackName = onlineGame?.black?.displayName || 'Black';
   const boardOrientation = myColor.current === 'black' ? 'black' : 'white';
 
-  const handleSavePGN = useCallback(() => {
+  const handleSavePGN = useCallback(async () => {
     const moves = onlineGame?.moveHistory ?? [];
-    const result = gameOver ? (gameStatus === 'checkmate' ? (myColor.current === 'white' ? '0-1' : '1-0') : '1/2-1/2') : '*';
+    const result = onlineGame?.result ?? (gameOver ? (gameStatus === 'checkmate' ? (onlineGame?.turn === 'w' ? '0-1' : '1-0') : '1/2-1/2') : '*');
     let pgn = `[Event "Online Chess Game"]\n[Site "Chess App"]\n[Date "${new Date().toISOString().slice(0, 10)}"]\n[Round "1"]\n[White "${whiteName}"]\n[Black "${blackName}"]\n[Result "${result}"]\n\n`;
     for (let i = 0; i < moves.length; i += 2) {
       const moveNum = Math.floor(i / 2) + 1;
@@ -361,14 +363,18 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       pgn += i % 2 === 1 ? '\n\n' : ' ';
     }
     pgn += result + '\n';
-    const blob = new Blob([pgn], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `chess-game-${new Date().toISOString().slice(0, 10)}.pgn`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [onlineGame?.moveHistory, gameOver, gameStatus, whiteName, blackName]);
+    try {
+      const result = await exportPgn({
+        pgn,
+        filename: `online-chess-${new Date().toISOString().slice(0, 10)}.pgn`,
+        title: 'Online chess game PGN',
+      });
+      setPgnExportMessage(result === 'copied' ? 'PGN copied to clipboard.' : 'PGN ready to save.');
+    } catch {
+      setPgnExportMessage('Could not export PGN.');
+    }
+    window.setTimeout(() => setPgnExportMessage(''), 4000);
+  }, [onlineGame?.moveHistory, onlineGame?.result, onlineGame?.turn, gameOver, gameStatus, whiteName, blackName]);
 
   return (
     <div className="game-layout online-game-layout">
@@ -500,6 +506,11 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         <div className="panel">
           <h3>Move History</h3>
           <MoveHistory moves={onlineGame?.moveHistory ?? []} />
+          {pgnExportMessage && (
+            <p style={{ margin: '8px 0 0', color: '#a6e3a1', fontSize: '12px', lineHeight: 1.4 }}>
+              {pgnExportMessage}
+            </p>
+          )}
           <button onClick={handleSavePGN} style={{
             width: '100%', marginTop: '12px', padding: '8px', fontSize: '13px',
             fontWeight: 600, background: '#89b4fa', color: '#1e1e2e',

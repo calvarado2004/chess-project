@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useChessGame } from '../hooks/useChessGame';
 import { STRENGTH_MAP } from '../engine';
 import { saveLocalStockfishGame, syncLocalStockfishGames } from '../lib/localHistory';
+import { exportPgn } from '../lib/pgnExport';
 import { useAuth } from '../context/AuthContext';
 import Board from './Board';
 import EvalBar from './EvalBar';
@@ -29,6 +30,7 @@ export default function LocalGame() {
   } = useChessGame();
 
   const [timeControl, setTimeControl] = useState(10);
+  const [pgnExportMessage, setPgnExportMessage] = useState('');
   const gameStartedAt = useRef(Date.now());
   const recordedGameKey = useRef<string | null>(null);
   const appliedRouteMode = useRef(false);
@@ -114,17 +116,19 @@ export default function LocalGame() {
       });
   }, [accessToken, gameMode, gameOver, gameStatus, moveHistory.length, refreshUser, retractUsed, strengthLevel, turn]);
 
-  const handleSavePGN = useCallback(() => {
+  const handleSavePGN = useCallback(async () => {
     const pgn = generatePGN();
-    const blob = new Blob([pgn], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `chess-game-${new Date().toISOString().slice(0, 10)}.pgn`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      const result = await exportPgn({
+        pgn,
+        filename: `local-chess-${new Date().toISOString().slice(0, 10)}.pgn`,
+        title: 'Local chess game PGN',
+      });
+      setPgnExportMessage(result === 'copied' ? 'PGN copied to clipboard.' : 'PGN ready to save.');
+    } catch {
+      setPgnExportMessage('Could not export PGN.');
+    }
+    window.setTimeout(() => setPgnExportMessage(''), 4000);
   }, [generatePGN]);
 
   const handleJumpToSettings = useCallback(() => {
@@ -172,6 +176,11 @@ export default function LocalGame() {
             </p>
           )}
           <MoveHistory moves={moveHistory} />
+          {pgnExportMessage && (
+            <p style={{ margin: '8px 0 0', color: '#a6e3a1', fontSize: '12px', lineHeight: 1.4 }}>
+              {pgnExportMessage}
+            </p>
+          )}
           <button
             onClick={handleSavePGN}
             style={{
