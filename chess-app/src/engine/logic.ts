@@ -303,7 +303,7 @@ export function cloneState(state: GameContext): GameContext {
     ...state,
     board: state.board.map(r => [...r]),
     legalMovesForSelected: state.legalMovesForSelected.map(m => ({ ...m })),
-    lastMove: state.lastMove ? { ...state.lastMove } : null,
+    lastMove: state.lastMove ? { from: { ...state.lastMove.from }, to: { ...state.lastMove.to }, promotion: state.lastMove.promotion, castle: state.lastMove.castle, enPassant: state.lastMove.enPassant } : null,
     enPassantTarget: state.enPassantTarget ? { ...state.enPassantTarget } : null,
     castlingRights: { ...state.castlingRights },
     capturedByWhite: [...state.capturedByWhite],

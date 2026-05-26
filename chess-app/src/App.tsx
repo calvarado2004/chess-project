@@ -72,8 +72,7 @@ function MainApp({ children }: { children: ReactNode }) {
   }, [logout, navigate]);
 
   return (
-    <GameWebSocketProvider>
-      <div className={`app-shell${nativeApp ? ' app-shell-native' : ''}`}>
+    <div className={`app-shell${nativeApp ? ' app-shell-native' : ''}`}>
         {/* Top bar */}
         <div className="app-topbar">
           {/* Knight icon + title — clickable, goes home */}
@@ -182,8 +181,7 @@ function MainApp({ children }: { children: ReactNode }) {
         <div className="app-content">
           {children}
         </div>
-      </div>
-    </GameWebSocketProvider>
+    </div>
   );
 }
 
@@ -193,7 +191,9 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppRoutes />
+        <GameWebSocketProvider>
+          <AppRoutes />
+        </GameWebSocketProvider>
       </AuthProvider>
     </Router>
   );

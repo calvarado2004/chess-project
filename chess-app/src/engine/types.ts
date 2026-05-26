@@ -13,7 +13,7 @@ export const PIECE_UNICODE: Record<number, string> = {
 
 // ===================== Piece SVG filenames =====================
 export const PIECE_SVG: Record<number, string> = {
-  [W_PAWN]:   'staunty/whitePawn.svg',  [W_KNIGHT]: 'staunty/whiteNight.svg',
+  [W_PAWN]:   'staunty/whitePawn.svg',  [W_KNIGHT]: 'staunty/whiteKnight.svg',
   [W_BISHOP]: 'staunty/whiteBishop.svg', [W_ROOK]:   'staunty/whiteRook.svg',
   [W_QUEEN]:  'staunty/whiteQueen.svg',  [W_KING]:   'staunty/whiteKing.svg',
   [B_PAWN]:   'staunty/blackPawn.svg',  [B_KNIGHT]: 'staunty/blackKnight.svg',

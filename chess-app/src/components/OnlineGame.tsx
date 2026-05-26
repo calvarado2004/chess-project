@@ -39,6 +39,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
     offerDraw,
     acceptDraw,
     declineDraw,
+    clearOnlineGame,
     formatTime,
   } = useGameWebSocket();
 
@@ -341,8 +342,9 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       setShowExitConfirm(true);
       return;
     }
+    clearOnlineGame();
     onBackToLobby();
-  }, [gameOver, onlineGame?.status, onBackToLobby]);
+  }, [clearOnlineGame, gameOver, onlineGame?.status, onBackToLobby]);
 
   const whiteName = onlineGame?.white?.displayName || 'White';
   const blackName = onlineGame?.black?.displayName || 'Black';
@@ -369,7 +371,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   }, [onlineGame?.moveHistory, gameOver, gameStatus, whiteName, blackName]);
 
   return (
-    <div id="app">
+    <div className="game-layout online-game-layout">
       {/* Notification */}
       {notification && (
         <div style={{
@@ -428,7 +430,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
                 padding: '10px 18px', background: '#89b4fa', color: '#1e1e2e',
                 border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
               }}>Offer Draw</button>
-              <button onClick={() => { handleResign(); setShowExitConfirm(false); onBackToLobby(); }} style={{
+              <button onClick={() => { handleResign(); setShowExitConfirm(false); clearOnlineGame(); onBackToLobby(); }} style={{
                 padding: '10px 18px', background: '#f38ba8', color: '#1e1e2e',
                 border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600,
               }}>Resign</button>
@@ -451,24 +453,15 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
         {/* Status bar */}
         {gameOver ? (
-          <div style={{
-            padding: '8px 16px', background: '#45475a', borderRadius: '6px',
-            marginBottom: '8px', color: '#cdd6f4', fontWeight: 600,
-          }}>
+          <div className="online-status-pill online-status-over">
             {gameOverMessage}
           </div>
         ) : isMyTurn ? (
-          <div style={{
-            padding: '8px 16px', background: '#a6e3a133', border: '1px solid #a6e3a1',
-            borderRadius: '6px', marginBottom: '8px', color: '#a6e3a1', fontWeight: 600,
-          }}>
+          <div className="online-status-pill online-status-turn">
             Your turn
           </div>
         ) : (
-          <div style={{
-            padding: '8px 16px', background: '#45475a', borderRadius: '6px',
-            marginBottom: '8px', color: '#a6adc8',
-          }}>
+          <div className="online-status-pill online-status-waiting">
             Opponent thinking...
           </div>
         )}
@@ -478,7 +471,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clockDisplay.white)} isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'} icon="♔" />
 
         {/* Controls */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="controls-row online-controls">
           {!gameOver && onlineGame?.status === 'playing' && (
             <>
               <button className="btn" onClick={handleResign} style={{ background: '#f38ba8' }}>

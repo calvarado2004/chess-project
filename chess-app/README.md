@@ -121,6 +121,39 @@ Route, browser, and engine regression tests:
 npm run test:browser
 ```
 
+### Unit and Integration Tests
+
+The project uses **Vitest** with jsdom for fast unit and integration tests of the chess engine and library code.
+
+```bash
+npm run test:unit           # Run all unit + integration tests
+npm run test:unit:coverage  # Run with coverage report
+```
+
+**Test suite** (122 tests across 7 files):
+
+| Test File | Tests | Coverage Area |
+|---|---|---|
+| `tests/unit/types.test.ts` | 27 | Piece IDs, color helpers, `PIECE_TYPE`, `STRENGTH_MAP`, `RANKS`/`FILES` |
+| `tests/unit/logic.test.ts` | 38 | Board initialization, move generation, attacks, check/mate/stalemate, castling, en passant, promotion, state cloning |
+| `tests/unit/notation.test.ts` | 12 | FEN parsing/generation, PGN move extraction, UCI conversion |
+| `tests/unit/pgn.test.ts` | 16 | PGN header parsing, comment/NAG stripping, SAN replay, castling replay, en passant |
+| `tests/unit/auth.test.ts` | 10 | JWT token storage, user serialization, auth status, native app detection, WebSocket/API URLs |
+| `tests/unit/localHistory.test.ts` | 9 | Local history persistence, CRUD operations, capacity limits |
+| `tests/integration/gameflow.test.ts` | 10 | Full game flows (Italian Game, Scholar's Mate, Fool's Mate), FEN round-trips, en passant, promotion, castling |
+
+**Coverage summary**:
+
+| Module | Statements | Branches | Functions | Lines |
+|---|---|---|---|---|
+| `engine/types.ts` | 100% | 100% | 100% | 100% |
+| `engine/logic.ts` | 95.6% | 92.4% | 94.1% | 98.3% |
+| `engine/notation.ts` | 100% | 93.3% | 100% | 100% |
+| `engine/pgn.ts` | 85.0% | 75.0% | 100% | 92.0% |
+| `lib/auth.ts` | 80.6% | 50.0% | 92.3% | 80.6% |
+| `lib/localHistory.ts` | 55.6% | 60.0% | 85.7% | 56.5% |
+| **Total** | **90.7%** | **85.4%** | **95.0%** | **93.4%** |
+
 Focused test files:
 
 - `tests/chess-rules.spec.ts` validates legal move generation, en passant, stale castling rights guards, matching rook requirements, and white/black kingside castling from real opening sequences.

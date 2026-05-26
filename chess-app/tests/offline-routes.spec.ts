@@ -130,3 +130,119 @@ test('protected app routes remain protected when deep-linked or refreshed', asyn
   await expect(page).toHaveURL(/\/lobby$/);
   await expect(page.getByRole('heading', { name: /Lobby|Connecting|Disconnected/i })).toBeVisible();
 });
+
+test('online game board uses the responsive game layout', async ({ page }) => {
+  await seedAuthenticatedUser(page);
+  const onlineGame = {
+    gameId: 'layout-game',
+    white: { id: 'online-user', username: 'online', displayName: 'Online Player' },
+    black: { id: 'black-user', username: 'black', displayName: 'Black Player' },
+    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+    turn: 'w',
+    whiteTime: 600,
+    blackTime: 600,
+    status: 'playing',
+    playerColor: 'white',
+    moveHistory: [],
+    capturedByWhite: [],
+    capturedByBlack: [],
+  };
+  await page.addInitScript((game) => {
+    sessionStorage.setItem('chess_online_game', JSON.stringify(game));
+  }, onlineGame);
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/online');
+  await expect(page.locator('.online-game-layout #boardContainer')).toBeVisible();
+  await expect(page.locator('#app #app')).toHaveCount(0);
+  await expect(page.locator('#boardContainer img.piece')).toHaveCount(32);
+
+  const desktop = await page.locator('.online-game-layout').evaluate((layout) => {
+    const board = document.querySelector('#boardContainer') as HTMLElement;
+    const evalPanel = document.querySelector('.online-game-layout .sidebar-left .panel') as HTMLElement;
+    const topClock = document.querySelector('.online-game-layout .black-player') as HTMLElement;
+    const rect = board.getBoundingClientRect();
+    const evalRect = evalPanel.getBoundingClientRect();
+    const clockRect = topClock.getBoundingClientRect();
+    const pieceImages = Array.from(document.querySelectorAll<HTMLImageElement>('#boardContainer img.piece'));
+    const evalBar = document.querySelector('.online-game-layout .eval-bar-container') as HTMLElement;
+    const evalBarRect = evalBar.getBoundingClientRect();
+    const styles = getComputedStyle(layout as HTMLElement);
+    return {
+      display: styles.display,
+      boardWidth: rect.width,
+      boardHeight: rect.height,
+      evalGap: rect.left - evalRect.right,
+      clockGap: rect.top - clockRect.bottom,
+      clockWidth: clockRect.width,
+      evalBarHeight: evalBarRect.height,
+      loadedPieces: pieceImages.filter((img) => img.complete && img.naturalWidth > 0).length,
+      overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+
+  expect(desktop.display).toBe('flex');
+  expect(Math.abs(desktop.boardWidth - desktop.boardHeight)).toBeLessThan(1);
+  expect(desktop.evalGap).toBeLessThanOrEqual(28);
+  expect(desktop.clockGap).toBeLessThanOrEqual(54);
+  expect(Math.abs(desktop.clockWidth - desktop.boardWidth)).toBeLessThan(1);
+  expect(desktop.evalBarHeight).toBeGreaterThan(400);
+  expect(desktop.evalBarHeight).toBeLessThan(430);
+  expect(desktop.loadedPieces).toBe(32);
+  expect(desktop.overflowX).toBeLessThanOrEqual(1);
+
+  await page.setViewportSize({ width: 820, height: 1180 });
+
+  const tablet = await page.locator('.online-game-layout').evaluate((layout) => {
+    const board = document.querySelector('#boardContainer') as HTMLElement;
+    const topClock = document.querySelector('.online-game-layout .black-player') as HTMLElement;
+    const rect = board.getBoundingClientRect();
+    const clockRect = topClock.getBoundingClientRect();
+    const styles = getComputedStyle(layout as HTMLElement);
+    return {
+      display: styles.display,
+      boardWidth: rect.width,
+      boardHeight: rect.height,
+      clockWidth: clockRect.width,
+      viewportWidth: document.documentElement.clientWidth,
+      overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+
+  expect(tablet.display).toBe('grid');
+  expect(Math.abs(tablet.boardWidth - tablet.boardHeight)).toBeLessThan(1);
+  expect(Math.abs(tablet.clockWidth - tablet.boardWidth)).toBeLessThan(1);
+  expect(tablet.boardWidth).toBeLessThanOrEqual(tablet.viewportWidth);
+  expect(tablet.overflowX).toBeLessThanOrEqual(1);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  const mobile = await page.locator('.online-game-layout').evaluate((layout) => {
+    const board = document.querySelector('#boardContainer') as HTMLElement;
+    const rect = board.getBoundingClientRect();
+    const styles = getComputedStyle(layout as HTMLElement);
+    return {
+      display: styles.display,
+      boardWidth: rect.width,
+      boardHeight: rect.height,
+      viewportWidth: document.documentElement.clientWidth,
+      overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+
+  expect(mobile.display).toBe('grid');
+  expect(Math.abs(mobile.boardWidth - mobile.boardHeight)).toBeLessThan(1);
+  expect(mobile.boardWidth).toBeLessThanOrEqual(mobile.viewportWidth);
+  expect(mobile.overflowX).toBeLessThanOrEqual(1);
+
+  await page.getByRole('button', { name: 'Back to Lobby' }).click();
+  await expect(page.getByRole('heading', { name: 'Leave active game?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page).toHaveURL(/\/online$/);
+
+  await page.getByRole('button', { name: 'Back to Lobby' }).click();
+  await page.getByRole('button', { name: 'Resign' }).click();
+  await expect(page).toHaveURL(/\/lobby$/);
+  await page.waitForTimeout(100);
+  await expect(page).toHaveURL(/\/lobby$/);
+});

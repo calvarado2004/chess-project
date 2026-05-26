@@ -13,6 +13,7 @@ interface GameWebSocketContextType {
   isConnected: boolean;
   connect: () => Promise<boolean>;
   disconnect: () => void;
+  clearOnlineGame: () => void;
   joinLobby: (options?: { timeControl?: number; increment?: number; color?: 'white' | 'black' | 'any' }) => void;
   leaveLobby: () => void;
   createGame: (options?: { timeControl?: number; increment?: number; color?: 'white' | 'black' | 'any' }) => void;
@@ -28,16 +29,35 @@ interface GameWebSocketContextType {
 }
 
 const GameWebSocketContext = createContext<GameWebSocketContextType | null>(null);
+const ONLINE_GAME_STORAGE_KEY = 'chess_online_game';
+
+function loadStoredOnlineGame(): OnlineGame | null {
+  try {
+    const stored = sessionStorage.getItem(ONLINE_GAME_STORAGE_KEY);
+    if (!stored) return null;
+    return JSON.parse(stored) as OnlineGame;
+  } catch {
+    return null;
+  }
+}
 
 export function GameWebSocketProvider({ children }: { children: ReactNode }) {
   const [ws, setWs] = useState<ChessWebSocket | null>(null);
   const [lobbyPlayers, setLobbyPlayers] = useState<LobbyPlayer[]>([]);
   const [lobbyChatMessages, setLobbyChatMessages] = useState<LobbyChatMessage[]>([]);
-  const [onlineGame, setOnlineGame] = useState<OnlineGame | null>(null);
+  const [onlineGame, setOnlineGame] = useState<OnlineGame | null>(() => loadStoredOnlineGame());
   const [drawOfferFrom, setDrawOfferFrom] = useState<'white' | 'black' | null>(null);
   const [drawDeclinedCount, setDrawDeclinedCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<ChessWebSocket | null>(null);
+
+  useEffect(() => {
+    if (onlineGame) {
+      sessionStorage.setItem(ONLINE_GAME_STORAGE_KEY, JSON.stringify(onlineGame));
+    } else {
+      sessionStorage.removeItem(ONLINE_GAME_STORAGE_KEY);
+    }
+  }, [onlineGame]);
 
   // Shared message handlers
   const setupHandlers = useCallback((chessWs: ChessWebSocket) => {
@@ -249,6 +269,12 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
     setLobbyChatMessages([]);
   }, []);
 
+  const clearOnlineGame = useCallback(() => {
+    setOnlineGame(null);
+    setDrawOfferFrom(null);
+    setDrawDeclinedCount(0);
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -321,6 +347,7 @@ export function GameWebSocketProvider({ children }: { children: ReactNode }) {
         isConnected,
         connect,
         disconnect,
+        clearOnlineGame,
         joinLobby,
         leaveLobby,
         createGame,
