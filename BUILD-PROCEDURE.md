@@ -187,7 +187,6 @@ For ad hoc device distribution, use `method` value `ad-hoc` and make sure the ta
 - Native API/WebSocket traffic is already routed to `VITE_REMOTE_APP_ORIGIN` or the default `https://chess-chess-project.apps.ocp-think.levelg.io` in `src/lib/auth.ts`.
 - Stockfish is loaded from `/stockfish.js`; because it lives in `public/`, `npm run build` and `npx cap sync` must run before native builds.
 - Chess piece SVGs are also loaded from `public/staunty` and `public/avatars`; missing public assets can break native rendering even when native compilation succeeds.
-- `public/staunty/whiteNight.svg` is currently deleted in the worktree, but the app references `whiteKnight.svg`, not `whiteNight.svg`. The current build passes with `whiteKnight.svg`.
 
 ## Verified On This Worktree
 
