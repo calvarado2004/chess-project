@@ -160,6 +160,153 @@ npm run cap:open:android
 npm run cap:open:ios
 ```
 
+Native release deployment:
+
+The iOS and Android apps are Capacitor shells around the same Vite build. Every native release starts by rebuilding and syncing the frontend:
+
+```bash
+cd chess-app
+npm install
+npm run build
+npx cap sync
+```
+
+This writes the production web bundle to `chess-app/dist`, then copies it into:
+
+- `chess-app/android/app/src/main/assets/public`
+- `chess-app/ios/App/App/public`
+
+Run this after any frontend, public asset, route, CSS, Stockfish, or Capacitor config change. If the native app shows old UI, this is the first thing to re-run.
+
+Android release build:
+
+```bash
+cd chess-app/android
+./gradlew :app:assembleRelease
+./gradlew :app:bundleRelease
+```
+
+Outputs:
+
+- APK: `chess-app/android/app/build/outputs/apk/release/app-release-unsigned.apk`
+- Play Store bundle: `chess-app/android/app/build/outputs/bundle/release/app-release.aab`
+
+For local Android sideload testing, sign the release APK with a local test key:
+
+```bash
+cd chess-app
+~/Library/Android/sdk/build-tools/37.0.0/zipalign -v -p 4 \
+  android/app/build/outputs/apk/release/app-release-unsigned.apk \
+  android/app/build/outputs/apk/release/app-release-debug-signed.apk
+
+~/Library/Android/sdk/build-tools/37.0.0/apksigner sign \
+  --ks android/app/debug.keystore \
+  --ks-pass pass:android \
+  --ks-key-alias chess_debug \
+  --key-pass pass:android \
+  android/app/build/outputs/apk/release/app-release-debug-signed.apk
+
+~/Library/Android/sdk/build-tools/37.0.0/apksigner verify --verbose \
+  android/app/build/outputs/apk/release/app-release-debug-signed.apk
+```
+
+The debug-key signed APK is for local sideload testing only. For Play Store or long-term distribution, use a real release keystore and keep the keystore/passwords outside git.
+
+To serve the Android APK from this laptop on the local network:
+
+```bash
+cd chess-app
+scripts/serve-android-apk.sh
+```
+
+The script binds to `0.0.0.0:8099` and serves `chess-app/android/app/build/outputs/apk/release`. Open this from an Android device on the same network:
+
+```text
+http://<laptop-lan-ip>:8099/
+```
+
+The useful sideload URL is:
+
+```text
+http://<laptop-lan-ip>:8099/app-release-debug-signed.apk
+```
+
+If port `8099` is already occupied, find and stop the old listener before starting the script:
+
+```bash
+lsof -nP -iTCP:8099 -sTCP:LISTEN
+kill <pid>
+```
+
+iOS release build and install:
+
+The iOS project is `chess-app/ios/App/App.xcodeproj`. There is no CocoaPods workspace in the current project, so use `-project`, not `-workspace`.
+
+First confirm the devices are visible to Xcode:
+
+```bash
+xcrun devicectl list devices
+```
+
+The output shows names, hostnames, generated device identifiers, state, and model. Do not commit or publish real device identifiers; use placeholders such as `<iphone-device-id>` and `<ipad-device-id>` in docs and scripts.
+
+Build a signed Release app for physical devices:
+
+```bash
+cd chess-app
+xcodebuild \
+  -project ios/App/App.xcodeproj \
+  -scheme App \
+  -configuration Release \
+  -destination generic/platform=iOS \
+  -derivedDataPath ios/DerivedData-install-release \
+  DEVELOPMENT_TEAM=<apple-team-id> \
+  CODE_SIGN_STYLE=Automatic \
+  build
+```
+
+The signed app is written to:
+
+```text
+chess-app/ios/DerivedData-install-release/Build/Products/Release-iphoneos/App.app
+```
+
+Install that Release build on each paired iPhone or iPad:
+
+```bash
+xcrun devicectl device install app \
+  --device <iphone-device-id> \
+  ios/DerivedData-install-release/Build/Products/Release-iphoneos/App.app
+
+xcrun devicectl device install app \
+  --device <ipad-device-id> \
+  ios/DerivedData-install-release/Build/Products/Release-iphoneos/App.app
+```
+
+The install succeeds only if the Apple Development signing profile includes the target device. If the build succeeds but install fails, check the Apple team, provisioning profile, trusted developer state on the device, and whether the device is registered for development.
+
+For TestFlight or App Store distribution, archive and export instead of installing `App.app` directly:
+
+```bash
+cd chess-app
+xcodebuild \
+  -project ios/App/App.xcodeproj \
+  -scheme App \
+  -configuration Release \
+  -destination generic/platform=iOS \
+  -archivePath "$PWD/ios/output/QwenChess.xcarchive" \
+  DEVELOPMENT_TEAM=<apple-team-id> \
+  CODE_SIGN_STYLE=Automatic \
+  archive
+
+xcodebuild -exportArchive \
+  -archivePath "$PWD/ios/output/QwenChess.xcarchive" \
+  -exportPath "$PWD/ios/output/export" \
+  -exportOptionsPlist "$PWD/ios/export-options.plist"
+```
+
+See `BUILD-PROCEDURE.md` for the longer release checklist and troubleshooting matrix.
+
 Testing/build notes:
 
 - Android Studio is required for emulator/device testing. The debug APK builds with Android Studio's bundled JBR:
@@ -178,6 +325,11 @@ Testing/build notes:
 
 - Create at least one phone/tablet AVD in Android Studio Device Manager before running emulator tests. `emulator -list-avds` should print the AVD name.
 - Xcode is required for iPhone/iPad builds. Install an iOS simulator runtime in Xcode Settings > Platforms before simulator builds; without a runtime, `xcodebuild` reports no destinations. Real iPhone/iPad installation requires opening `chess-app/ios/App/App.xcodeproj`, selecting a signing team for bundle id `io.levelg.chess`, then running the `App` scheme on the connected device.
+- To confirm that real iPhone/iPad devices are visible to Xcode before building or installing, run:
+
+  ```bash
+  xcrun devicectl list devices
+  ```
 
 ## User Features
 
