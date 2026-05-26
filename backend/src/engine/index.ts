@@ -19,3 +19,12 @@ export {
 export type { GameContext } from './logic.js';
 
 export { generateFEN, parseUCIMove } from './notation.js';
+export {
+  calculateRatingChange,
+  calculateELOStats,
+  calculateAveragePerformance,
+  calculatePerformanceRating,
+  expectedScore,
+  getKFactor,
+} from './elo.js';
+export type { ELOResult } from './elo.js';
