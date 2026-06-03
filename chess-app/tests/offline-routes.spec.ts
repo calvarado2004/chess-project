@@ -69,6 +69,34 @@ test('offline-capable routes render without login', async ({ page }) => {
   await expect(page).not.toHaveURL(/\/login$/);
 });
 
+test('offline history shows pending on-device Stockfish games without contacting the API', async ({ page }) => {
+  await page.route('**/api/**', async (route) => {
+    throw new Error(`Offline history should not call API without a token: ${route.request().url()}`);
+  });
+  await page.addInitScript(() => {
+    localStorage.setItem('chess_local_stockfish_history', JSON.stringify([
+      {
+        id: 'offline-win',
+        stockfishElo: 900,
+        playerColor: 'w',
+        result: 'win',
+        moveCount: 18,
+        gameDuration: 185,
+        createdAt: '2026-06-01T12:00:00.000Z',
+        syncedAt: null,
+      },
+    ]));
+  });
+
+  await page.goto('/history');
+
+  await expect(page.getByRole('heading', { name: 'Game History' })).toBeVisible();
+  await expect(page.locator('.history-row.result-win').getByText('Win')).toBeVisible();
+  await expect(page.getByText('Stockfish (on device) (900)')).toBeVisible();
+  await expect(page.getByText('Pending sync')).toBeVisible();
+  await expect(page.getByText('3:05 · 18 moves')).toBeVisible();
+});
+
 test('online multiplayer requires a live token even with a cached offline user', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
@@ -241,7 +269,7 @@ test('online game board uses the responsive game layout', async ({ page }) => {
   await expect(page).toHaveURL(/\/online$/);
 
   await page.getByRole('button', { name: 'Back to Lobby' }).click();
-  await page.getByRole('button', { name: 'Resign' }).click();
+  await page.getByRole('button', { name: 'Resign' }).first().click();
   await expect(page).toHaveURL(/\/lobby$/);
   await page.waitForTimeout(100);
   await expect(page).toHaveURL(/\/lobby$/);

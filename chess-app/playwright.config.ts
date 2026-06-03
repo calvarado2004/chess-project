@@ -5,6 +5,7 @@ const baseURL = externalBaseURL || 'http://127.0.0.1:5173/';
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
   timeout: 15_000,
   webServer: externalBaseURL
     ? undefined

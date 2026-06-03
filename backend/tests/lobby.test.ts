@@ -59,10 +59,12 @@ test('LobbyManager.join can add multiple players', () => {
 
 test('LobbyManager.join overwrites existing entry for same playerId', () => {
   const lobby = new LobbyManager();
-  lobby.join(createEntry({ playerId: 'p1', color: 'white' }));
-  lobby.join(createEntry({ playerId: 'p1', color: 'black' }));
+  const firstGameId = lobby.join(createEntry({ playerId: 'p1', color: 'white' }));
+  const replacementGameId = lobby.join(createEntry({ playerId: 'p1', color: 'black', gameId: 'replacement-game' }));
   assert.equal(lobby.entries.size, 1);
   assert.equal(lobby.getEntry('p1')?.color, 'black');
+  assert.equal(lobby.getEntry('p1')?.gameId, replacementGameId);
+  assert.equal(lobby.findByGameId(firstGameId), null);
 });
 
 // ---------- LobbyManager.leave ----------
@@ -128,6 +130,21 @@ test('findMatchingPlayer finds player with "any" color preference', () => {
   const match = lobby.findMatchingPlayer('p2', 'black', 300);
   assert.ok(match);
   assert.equal(match?.playerId, 'p1');
+});
+
+test('findMatchingPlayer does not match opposite fixed color preference', () => {
+  const lobby = new LobbyManager();
+  lobby.join(createEntry({ playerId: 'p1', color: 'white', timeControl: 300 }));
+  const match = lobby.findMatchingPlayer('p2', 'black', 300);
+  assert.equal(match, null, 'a fixed white request should not satisfy a black request');
+});
+
+test('findMatchingPlayer ignores increment when matching current lobby semantics', () => {
+  const lobby = new LobbyManager();
+  lobby.join(createEntry({ playerId: 'p1', color: 'any', timeControl: 300, increment: 0 }));
+  const match = lobby.findMatchingPlayer('p2', 'white', 300);
+  assert.ok(match);
+  assert.equal(match?.increment, 0);
 });
 
 test('findMatchingPlayer skips requester themselves', () => {

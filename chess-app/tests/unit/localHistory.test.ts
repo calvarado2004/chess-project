@@ -2,11 +2,22 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getLocalStockfishGames,
   saveLocalStockfishGame,
+  syncLocalStockfishGames,
   localGameToHistoryEntry,
   type LocalStockfishGame,
 } from '../../src/lib/localHistory';
+import { getAccessToken } from '../../src/lib/auth';
+import { recordStockfishGame } from '../../src/lib/api';
 
 const STORAGE_KEY = 'chess_local_stockfish_history';
+
+vi.mock('../../src/lib/auth', () => ({
+  getAccessToken: vi.fn(),
+}));
+
+vi.mock('../../src/lib/api', () => ({
+  recordStockfishGame: vi.fn(),
+}));
 
 // Mock localStorage
 function createMockStorage() {
@@ -22,6 +33,8 @@ function createMockStorage() {
 beforeEach(() => {
   const mock = createMockStorage();
   Object.defineProperty(globalThis, 'localStorage', { value: mock, writable: true });
+  vi.mocked(getAccessToken).mockReset();
+  vi.mocked(recordStockfishGame).mockReset();
 });
 
 describe('getLocalStockfishGames', () => {
@@ -124,5 +137,49 @@ describe('localGameToHistoryEntry', () => {
 
     const entry = localGameToHistoryEntry(game);
     expect(entry.opponent).toBe('Stockfish (synced)');
+  });
+});
+
+describe('syncLocalStockfishGames', () => {
+  it('should skip syncing when there is no access token', async () => {
+    vi.mocked(getAccessToken).mockReturnValue(null);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      { id: '1', stockfishElo: 800, playerColor: 'w', result: 'win', moveCount: 10, gameDuration: 60, createdAt: '2024-01-01T00:00:00Z', syncedAt: null },
+    ] satisfies LocalStockfishGame[]));
+
+    await expect(syncLocalStockfishGames()).resolves.toBe(0);
+    expect(recordStockfishGame).not.toHaveBeenCalled();
+  });
+
+  it('should sync only unsynced local games and persist syncedAt timestamps', async () => {
+    vi.mocked(getAccessToken).mockReturnValue('access-token');
+    vi.mocked(recordStockfishGame).mockResolvedValue({
+      rating: 1210,
+      games: 1,
+      wins: 1,
+      losses: 0,
+      draws: 0,
+      winRate: 100,
+      performanceRating: 800,
+      recentGames: [],
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([
+      { id: 'pending', stockfishElo: 800, playerColor: 'w', result: 'win', moveCount: 10, gameDuration: 60, createdAt: '2024-01-01T00:00:00Z', syncedAt: null },
+      { id: 'synced', stockfishElo: 1000, playerColor: 'b', result: 'loss', moveCount: 20, gameDuration: 120, createdAt: '2024-01-02T00:00:00Z', syncedAt: '2024-01-03T00:00:00Z' },
+    ] satisfies LocalStockfishGame[]));
+
+    await expect(syncLocalStockfishGames()).resolves.toBe(1);
+    expect(recordStockfishGame).toHaveBeenCalledTimes(1);
+    expect(recordStockfishGame).toHaveBeenCalledWith({
+      stockfishElo: 800,
+      playerColor: 'w',
+      result: 'win',
+      moveCount: 10,
+      gameDuration: 60,
+    });
+
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as LocalStockfishGame[];
+    expect(stored.find((game) => game.id === 'pending')?.syncedAt).toEqual(expect.any(String));
+    expect(stored.find((game) => game.id === 'synced')?.syncedAt).toBe('2024-01-03T00:00:00Z');
   });
 });
