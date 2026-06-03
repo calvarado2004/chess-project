@@ -145,11 +145,9 @@ The project includes Capacitor native shells under `chess-app/android/` and `che
 
 Mobile screenshots:
 
-<p>
-  <img src="docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260">
-  <img src="docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260">
-  <img src="docs/screenshots/ios-ipad-home.png" alt="iPad local game settings" width="360">
-</p>
+| iPhone local settings | iPad local settings | Android local settings |
+| --- | --- | --- |
+| <img src="docs/screenshots/ios-iphone-local-settings.png" alt="iPhone local game settings" width="260"> | <img src="docs/screenshots/ios-ipad-home.png" alt="iPad local game settings" width="360"> | <img src="docs/screenshots/android-local-settings.png" alt="Android local game settings" width="260"> |
 
 Mobile workflow:
 
