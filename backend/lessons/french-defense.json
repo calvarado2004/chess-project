@@ -1,0 +1,63 @@
+{
+  "id": "french-defense",
+  "title": "The French Defense",
+  "category": "openings",
+  "difficulty": "intermediate",
+  "description": "A solid, strategic reply to 1.e4. Black accepts a slightly cramped position in exchange for a rock-solid pawn chain and clear counterplay against White's center.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Pawn chains",
+    "The bad bishop",
+    "Queenside counterplay",
+    "Central tension",
+    "Breaks with c5 and f6"
+  ],
+  "sections": [
+    {
+      "title": "The Pawn Chain",
+      "content": "After 1.e4 e6 2.d4 d5, Black challenges the center. White can advance, exchange, or maintain tension. The resulting pawn chains dictate the plans for both sides.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq d6 0 3",
+          "commentary": "The French Defense. Black's solid e6/d5 structure challenges White's center. White must decide how to handle the central tension.",
+          "expectedMove": "e5",
+          "hints": [
+            "Gain space with the Advance Variation",
+            "Lock the center and play on the wings"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Bad Bishop Problem",
+      "content": "Black's light-squared bishop on c8 is often hemmed in by its own pawns on e6 and d5. A key strategic theme is finding a good role for this piece, often via b6 and Ba6 or by breaking with c5/f6.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq c6 0 4",
+          "commentary": "The Advance French. Black strikes at the base of the chain with c5. White must defend d4 while Black builds queenside pressure.",
+          "expectedMove": "c3",
+          "hints": [
+            "Defend the d4 pawn",
+            "Support the head of the chain"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4",
+      "title": "Pressure the Base",
+      "description": "Black to play. Increase the pressure on White's pawn chain by developing toward d4.",
+      "targetColor": "b",
+      "expectedMoves": [
+        "Nc6"
+      ],
+      "hints": [
+        "Attack the d4 pawn again",
+        "Develop with a threat"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

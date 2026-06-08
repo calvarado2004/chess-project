@@ -1,0 +1,63 @@
+{
+  "id": "scotch-game",
+  "title": "The Scotch Game",
+  "category": "openings",
+  "difficulty": "intermediate",
+  "description": "White strikes in the center early with d4 on move three, opening lines quickly and steering the game away from the heavily analyzed Ruy Lopez.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Early central break",
+    "Open lines",
+    "Rapid development",
+    "Knight on d4",
+    "Initiative"
+  ],
+  "sections": [
+    {
+      "title": "The Early d4 Break",
+      "content": "After 1.e4 e5 2.Nf3 Nc6 3.d4, White immediately challenges the center. Following 3...exd4 4.Nxd4, the position opens and both sides develop quickly.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3",
+          "commentary": "The Scotch Game. White breaks in the center with d4 on move three, opening the position for fast piece play.",
+          "expectedMove": "exd4",
+          "hints": [
+            "Accept the central challenge",
+            "Open the e-file"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Active Piece Play",
+      "content": "With the center opened, White's knight sits actively on d4. The bishops gain scope and White develops with tempo, aiming for an early initiative against Black's position.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
+          "commentary": "After 4.Nxd4, White's pieces are active and the center is open. Black must develop carefully to neutralize White's lead in space.",
+          "expectedMove": "Bc5",
+          "hints": [
+            "Develop with a threat",
+            "Pressure the d4 knight"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3",
+      "title": "Accept the Break",
+      "description": "Black to play. Capture the d4 pawn to open the center.",
+      "targetColor": "b",
+      "expectedMoves": [
+        "exd4"
+      ],
+      "hints": [
+        "Take the central pawn",
+        "Open lines for your pieces"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

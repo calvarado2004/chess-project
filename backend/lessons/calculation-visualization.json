@@ -1,0 +1,63 @@
+{
+  "id": "calculation-visualization",
+  "title": "Calculation and Visualization",
+  "category": "fundamentals",
+  "difficulty": "intermediate",
+  "description": "Learn a reliable thinking process: identify candidate moves, calculate forcing lines first, and visualize the resulting positions before committing.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Candidate moves",
+    "Forcing moves first",
+    "Calculating to a quiet position",
+    "Visualization",
+    "Blunder check"
+  ],
+  "sections": [
+    {
+      "title": "Candidate Moves",
+      "content": "Strong calculation starts by listing candidate moves — the two or three most promising options. Then calculate the most forcing ones first: checks, captures, and threats, since they limit the opponent's replies.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 5",
+          "commentary": "Identify your candidate moves, then calculate the most forcing options first. Forcing moves are easier to calculate because replies are limited.",
+          "expectedMove": "Nc3",
+          "hints": [
+            "List a few candidate moves",
+            "Calculate checks and captures first"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Calculate to a Quiet Position",
+      "content": "Don't stop a calculation in the middle of a tactical sequence. Follow each line until the position quiets down, then evaluate. And always do a final blunder-check before you play the move.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 6 7",
+          "commentary": "Calculate forcing lines to their end, then evaluate the resulting position. A move that wins material but loses the king is no good — always blunder-check.",
+          "expectedMove": "h3",
+          "hints": [
+            "Follow lines to a quiet point",
+            "Evaluate the end position, not the middle"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bqkbnr/pppp1Bpp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 3",
+      "title": "Forced Recapture",
+      "description": "Black to play. The bishop just captured on f7 with check — find the only legal, forcing reply.",
+      "targetColor": "b",
+      "expectedMoves": [
+        "Kxf7"
+      ],
+      "hints": [
+        "You are in check",
+        "Calculate the forced recapture"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

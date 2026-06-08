@@ -7,6 +7,7 @@ import cors from 'cors';
 import healthRoutes from './routes/health.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import theoryRoutes from './routes/theory.js';
 import { WsGameServer } from './ws/server.js';
 
 const app = express();
@@ -47,6 +48,7 @@ app.use(express.json());
 app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/theory', theoryRoutes);
 
 // Unknown route handler
 app.use((_req, res) => {

@@ -1,0 +1,125 @@
+{
+  "id": "pawn-structures",
+  "title": "Pawn Structures",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Pawn structures form the skeleton of every chess position. Learn to recognize common pawn structures and understand their strategic implications for both sides.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Isolated pawns",
+    "Doubled pawns",
+    "Passed pawns",
+    "Pawn majorities",
+    "Pawn chains",
+    "Strategic planning"
+  ],
+  "sections": [
+    {
+      "title": "Isolated Pawn",
+      "content": "An isolated pawn is a pawn that has no friendly pawns on adjacent files. The most common example is the isolated queen's pawn (IQP) on d4 or d5.\n\n**Strengths of an isolated pawn:**\n\n- **Space**: The pawn controls important central squares.\n- **Open files**: The files next to the isolated pawn are open for rooks.\n- **Piece activity**: Pieces behind the isolated pawn can be very active.\n- **Attacking chances**: In the middlegame, the side with the IQP often has attacking opportunities.\n\n**Weaknesses of an isolated pawn:**\n\n- **No pawn protection**: It cannot be defended by other pawns.\n- **Weak squares**: The squares in front of and behind the isolated pawn are weak (outposts for the opponent's pieces).\n- **Endgame liability**: In the endgame, the isolated pawn is often a target that is hard to defend.\n- **Blockading**: The opponent can place a piece (usually a knight) on the square in front of the isolated pawn.\n\n**Strategic plans:**\n\n- **With the IQP**: Attack! Use the open files and active pieces to create threats before the position simplifies.\n- **Against the IQP**: Blockade the pawn, occupy the weak squares, and simplify into an endgame where the isolated pawn is a weakness.\n\nThe IQP is one of the most important pawn structures in chess. Understanding it is essential for intermediate and advanced play.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/1b1P4/2NB1N2/PPP2PPP/R2QK2R w KQ - 2 7",
+          "commentary": "White has an isolated queen's pawn on d4. The c- and e-files are open for White's rooks, and the d4 pawn controls c5 and e5. However, the d4 pawn has no pawn defenders and can become a target in the endgame.",
+          "hints": ["The IQP gives White open files and piece activity but creates weak squares (c5, e5) that Black can exploit."]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/3P4/2NB1N2/PPP2PPP/R2Q1RK1 b - - 3 7",
+          "commentary": "Black's plan against the IQP: place a knight on e5 or c5 (the weak squares in front of the isolated pawn), and simplify the position. The knight on e5 is particularly strong — it cannot be easily driven away.",
+          "hints": ["The square e5 is a key outpost. A knight on e5 would be very strong and hard to dislodge."]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/3P4/2NB1N2/PPP1QPPP/R3K2R w KQ - 3 8",
+          "commentary": "White's plan with the IQP: use the open files for rook play, develop actively, and launch an attack before the position simplifies. The queen on e2 supports the center and prepares to join an attack.",
+          "hints": ["With the IQP, time is on your side in the middlegame. Use the open files and active pieces to create threats."]
+        }
+      ]
+    },
+    {
+      "title": "Doubled Pawns",
+      "content": "Doubled pawns occur when two pawns of the same color occupy the same file. They are often considered a weakness, but the reality is more nuanced.\n\n**When doubled pawns are a problem:**\n\n- **On open files**: Doubled pawns on open files are easier to attack.\n- **In the endgame**: They cannot create a passed pawn on that file.\n- **When they create weaknesses**: The squares in front of doubled pawns can become outposts.\n\n**When doubled pawns are acceptable:**\n\n- **With compensation**: If you gain open files, piece activity, or a better pawn structure elsewhere.\n- **On closed files**: Doubled pawns on closed files are less of a target.\n- **In the middlegame**: The weakness may not matter if you have attacking chances.\n- **When they control important squares**: Sometimes doubled pawns actually strengthen your position.\n\n**Common sources of doubled pawns:**\n\n- **Capturing**: Taking a piece or pawn that creates doubled pawns.\n- **Pawn breaks**: Opponent's pawn breaks that force you to recapture.\n- **Opening choices**: Some openings naturally lead to doubled pawns (e.g., the French Defense).\n\nThe key lesson: doubled pawns are not automatically bad. Evaluate the entire position — the open file you gain, the piece activity you create, and the strategic trade-offs involved.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/ppp2ppp/2np1n2/8/1b1P4/2NBPN2/PPP3PP/R2QKB1R w KQkq - 4 8",
+          "commentary": "After a typical exchange, White has doubled pawns on the c-file. However, White has gained the open d-file for the rook and the bishop pair. The doubled pawns are a long-term weakness, but the open file and piece activity provide compensation.",
+          "hints": ["Doubled pawns are a structural weakness, but the open d-file and active pieces can compensate in the middlegame."]
+        },
+        {
+          "fen": "r1bqk2r/ppp2ppp/2np1n2/8/3P4/2NBPN2/PPP3PP/R2QKB1R b KQkq - 5 8",
+          "commentary": "Black can target the doubled pawns by placing pieces on the c-file. However, White's piece activity and control of the center may make this difficult to achieve in practice.",
+          "hints": ["The c-file is semi-open for Black. Placing a rook on c8 puts pressure on the doubled pawns."]
+        }
+      ]
+    },
+    {
+      "title": "Passed Pawns",
+      "content": "A passed pawn is a pawn that has no opposing pawns on its file or adjacent files that can stop it from promoting. Passed pawns are one of the most powerful strategic assets in chess.\n\n**Why passed pawns are strong:**\n\n- **Promotion threat**: They can promote to a queen or other piece.\n- **Tying down pieces**: The opponent must dedicate pieces to stop the passed pawn.\n- **Creating diversions**: A passed pawn on one wing can distract the opponent from action on the other wing.\n- **Endgame value**: In the endgame, a passed pawn is often worth more than a piece.\n\n**How to create passed pawns:**\n\n- **Pawn breaks**: Sacrificing a pawn to create a passed pawn elsewhere.\n- **Pawn majorities**: Using a pawn majority on one wing to create a passed pawn.\n- **Exchanges**: Trading pawns to leave the opponent without blocking pawns.\n\n**How to stop passed pawns:**\n\n- **Blockade**: Place a piece (preferably a knight) directly in front of the passed pawn.\n- **Attack from behind**: Place a rook behind the passed pawn to cut off the enemy king.\n- **Counter-play**: Create your own passed pawn to distract the opponent.\n\n**Maroczy's rule**: 'A passed pawn must be pushed.' This means you should advance passed pawns whenever possible, creating threats and forcing the opponent to respond.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/3P4/8/8/4K1k1 w - - 0 1",
+          "commentary": "A simple passed pawn example. White's d-pawn is passed — there are no black pawns on the c, d, or e files to stop it. White's plan is to advance the pawn and support it with the king.",
+          "hints": ["A passed pawn should be advanced. The king should march to support it."]
+        },
+        {
+          "fen": "8/8/8/3p4/3P4/8/8/4K1k1 w - - 0 1",
+          "commentary": "Both sides have passed pawns on the d-file. This is a race — whoever's king supports their pawn first will win. The position is drawn if both kings are equidistant from their pawns.",
+          "hints": ["In a pawn race, count the squares. The king that reaches its pawn first (or supports it first) wins."]
+        },
+        {
+          "fen": "r7/8/8/8/3P4/8/8/4R1K1 w - - 0 1",
+          "commentary": "White has a passed d-pawn supported by the rook from behind. This is a classic winning setup — the rook behind the passed pawn is a powerful attacking and supporting piece.",
+          "hints": ["A rook behind a passed pawn is one of the most powerful configurations in chess. It supports the pawn's advance and cuts off the enemy king."]
+        }
+      ]
+    },
+    {
+      "title": "Pawn Majorities",
+      "content": "A pawn majority occurs when one side has more pawns on one wing than the opponent. Pawn majorities are a key concept in endgame strategy because they can be converted into passed pawns.\n\n**How pawn majorities work:**\n\n- If White has pawns on a2, b2, c2 and Black has pawns on a7, b7, White has a 3-vs-2 majority on the queenside.\n- By advancing and exchanging pawns, White can create a passed pawn.\n- The process: advance the majority, force exchanges, and the remaining pawn becomes passed.\n\n**Example: 3-vs-2 majority**\n\n1. White advances b2-b4, forcing Black to respond.\n2. After exchanges, White's c-pawn becomes passed.\n3. The passed pawn can then be advanced and supported by the king.\n\n**Strategic implications:**\n\n- **Create a passed pawn on your majority wing**.\n- **Stop the opponent from creating a passed pawn on their majority wing**.\n- **The king should march toward the wing where a passed pawn is being created**.\n- **In the middlegame, pawn majorities can influence piece placement and plans**.\n\n**Common majority scenarios:**\n\n- **Queenside majority (3 vs 2)**: Common in the French Defense and Caro-Kann.\n- **Kingside majority (3 vs 2)**: Common in the Sicilian Defense.\n- **4-vs-3 majority**: Even more powerful, creating a passed pawn is almost guaranteed.\n\nUnderstanding pawn majorities is essential for converting small advantages into wins in the endgame.",
+      "positions": [
+        {
+          "fen": "8/5pk1/5p2/8/8/5P2/5PK1/8 w - - 0 1",
+          "commentary": "A simple pawn majority example. White has a 2-vs-1 majority on the kingside (f2, g2 vs f6). By advancing f3-f4, White can create a passed pawn. The key is to advance the majority and force exchanges.",
+          "hints": ["White's plan: advance f3-f4, then g2-g4, creating a passed pawn on the kingside."]
+        },
+        {
+          "fen": "8/5pk1/5p2/8/8/5P2/5PK1/8 b - - 0 1",
+          "commentary": "Black must prevent White from creating a passed pawn. The best defense is to keep the pawns connected and use the king to block the advance. If Black can exchange one of White's majority pawns, the threat is reduced.",
+          "hints": ["Black's plan: keep the king active and try to exchange pawns to neutralize White's majority."]
+        },
+        {
+          "fen": "8/5pk1/5p2/8/8/5P2/6K1/8 w - - 0 1",
+          "commentary": "With the king on g2, White is ready to advance the kingside majority. The plan: f3-f4, then g2-g4, creating a passed g-pawn. The king supports the advance from behind.",
+          "hints": ["The king should support the pawn majority from behind. Advance the pawns step by step, forcing Black to respond."]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/8/3P4/8/8/4K1k1 w - - 0 1",
+      "title": "Passed Pawn: King Support",
+      "description": "White to play. You have a passed d-pawn. Advance it with king support to promote. Find the winning sequence.",
+      "targetColor": "w",
+      "expectedMoves": ["d5", "d6", "d7", "d8=Q"],
+      "hints": [
+        "Advance the passed pawn step by step.",
+        "The king should march to support the pawn's advance.",
+        "A passed pawn must be pushed — keep advancing it."
+      ],
+      "maxMoves": 4
+    },
+    {
+      "fen": "8/5pk1/5p2/8/8/5P2/5PK1/8 w - - 0 1",
+      "title": "Pawn Majority: Create a Passed Pawn",
+      "description": "White to play. You have a pawn majority on the kingside. Advance your pawns to create a passed pawn.",
+      "targetColor": "w",
+      "expectedMoves": ["f4", "g4", "fxg5"],
+      "hints": [
+        "Start by advancing f3-f4, challenging Black's f6 pawn.",
+        "Then advance g2-g4, creating tension.",
+        "After exchanges, your g-pawn will become passed."
+      ],
+      "maxMoves": 3
+    }
+  ]
+}

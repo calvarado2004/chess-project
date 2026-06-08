@@ -1,0 +1,63 @@
+{
+  "id": "queens-gambit",
+  "title": "The Queen's Gambit",
+  "category": "openings",
+  "difficulty": "intermediate",
+  "description": "White offers the c-pawn to deflect Black's d5 pawn and dominate the center. One of the most classical and instructive openings in chess.",
+  "estimatedMinutes": 22,
+  "keyConcepts": [
+    "Central majority",
+    "The c4 lever",
+    "Minority attack",
+    "Isolated queen pawn",
+    "Classical development"
+  ],
+  "sections": [
+    {
+      "title": "The Gambit Offer",
+      "content": "After 1.d4 d5 2.c4, White offers a pawn. It is not a true sacrifice — if Black takes with 2...dxc4, White regains the pawn easily while gaining central control.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2",
+          "commentary": "The Queen's Gambit. White challenges d5 from the side. Black usually declines with e6 or c6, keeping a solid center.",
+          "expectedMove": "e6",
+          "hints": [
+            "Decline and stay solid",
+            "Support the d5 pawn"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Queen's Gambit Declined",
+      "content": "With 2...e6, Black builds a solid wall. The downside is the c8 bishop is temporarily blocked. White develops naturally and aims for pressure with the minority attack or central play.",
+      "positions": [
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 1 4",
+          "commentary": "A standard Queen's Gambit Declined position. White piles up on d5 and prepares to develop the bishop to g5.",
+          "expectedMove": "Bg5",
+          "hints": [
+            "Pin the f6 knight",
+            "Increase pressure on d5"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+      "title": "Decline Solidly",
+      "description": "Black to play. Support d5 and prepare to develop the kingside.",
+      "targetColor": "b",
+      "expectedMoves": [
+        "e6"
+      ],
+      "hints": [
+        "Reinforce the d5 pawn",
+        "Open a path for the f8 bishop"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

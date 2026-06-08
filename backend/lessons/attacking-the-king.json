@@ -1,0 +1,166 @@
+{
+  "id": "attacking-the-king",
+  "title": "Attacking the King",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Learn the key principles of launching and defending against king attacks. Recognize when the king is exposed, execute pawn storms, and master classic mating patterns.",
+  "estimatedMinutes": 25,
+  "keyConcepts": [
+    "King safety",
+    "Pawn storms",
+    "Sacrificial attacks",
+    "Mating patterns",
+    "Attacking on open files",
+    "Weak squares around the king"
+  ],
+  "sections": [
+    {
+      "title": "When the King is Exposed",
+      "content": "An exposed king is the most dangerous target in chess. When the king's pawn shield is weakened or the king is forced into the center, the attacking side has a clear target.\n\n**Signs of an exposed king:**\n\n- **Missing pawns**: Pawns that have been exchanged or pushed forward, leaving gaps in the pawn shield.\n- **King in the center**: A king that hasn't castled or has been forced out of castling.\n- **Weak squares**: Dark squares around the king that cannot be controlled by pawns.\n- **Open files**: Files next to the king that are open for rooks and queens.\n- **Weak diagonals**: Diagonals leading to the king that are open for bishops and queens.\n\n**How to exploit an exposed king:**\n\n1. **Bring pieces to the attack**: Queen, rooks, and bishops are the most effective attacking pieces.\n2. **Open lines**: Use pawn breaks to open files and diagonals toward the king.\n3. **Create weaknesses**: Force the opponent to create more weaknesses around their king.\n4. **Calculate sacrifices**: Sometimes a piece sacrifice is needed to break through the defense.\n\n**How to defend an exposed king:**\n\n1. **Create an escape square**: Move the king to a safer square.\n2. **Block the attack**: Place pieces on the lines of attack.\n3. **Counter-attack**: The best defense is often a counter-attack on the opponent's king.\n4. **Simplify**: Exchange attacking pieces to reduce the pressure.\n\nThe key principle: **an attack on an exposed king is often decisive**. If the king is truly exposed, the attacker usually wins unless the defender finds a precise defensive resource.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "Black's king is on g8 behind a pawn shield. But if the f7 or g7 pawns are weakened, the king becomes exposed. White's bishop on c4 already eyes the f7 square — a classic weakness.",
+          "hints": [
+            "The f7 square is a key weakness — only defended by the king.",
+            "White's bishop on c4 already pressures f7.",
+            "Attacks on f7 are one of the most common attacking themes."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White can launch an attack with Ng5, threatening Nxf7. If Black defends with ...h6, White can continue with Qd2, Bh6, and a full-scale kingside attack. The exposed king is the target.",
+          "hints": [
+            "Ng5 threatens Nxf7, attacking the weak f7 square.",
+            "The queen can join the attack via d2 or h5.",
+            "Coordinated piece attacks on the king are devastating."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "Another attacking idea: Qd2 followed by Bh6, threatening to exchange the dark-squared bishop and weaken the king's pawn shield. This is a standard attacking pattern against a castled king.",
+          "hints": [
+            "Bh6 exchanges the dark-squared bishop, removing a key defender.",
+            "After ...Bxh6, Qxh6 creates threats against the king.",
+            "Removing defenders is a key attacking principle."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Pawn Storms",
+      "content": "A pawn storm is a series of pawn advances on one wing, typically aimed at breaking through the opponent's king position. Pawn storms are one of the most powerful attacking weapons in chess.\n\n**When to launch a pawn storm:**\n\n- **Opposite-side castling**: When you castle kingside and the opponent castles queenside (or vice versa), pawn storms are the main attacking method.\n- **King on the wing**: When the opponent's king is on the kingside or queenside.\n- **Open center**: When the center is open or fixed, wing attacks with pawn storms are effective.\n\n**How to execute a pawn storm:**\n\n1. **Advance the pawns**: Push the pawns on the wing where the enemy king is located.\n2. **Support with pieces**: Rooks on open files, queens on diagonals, and bishops on long diagonals support the pawn storm.\n3. **Create weaknesses**: Force the opponent to create weaknesses by defending.\n4. **Break through**: Find the right moment to sacrifice a pawn or piece to break through.\n\n**Common pawn storm patterns:**\n\n- **Kingside storm**: h4-h5-h6, g4-g5, f4-f5. The h-pawn and g-pawn are the primary attackers.\n- **Queenside storm**: b4-b5-b6, a4-a5. Less common but equally effective.\n- **Center storm**: e4-e5, d4-d5. More common in closed positions.\n\n**Defending against a pawn storm:**\n\n1. **Counter-attack**: Launch your own pawn storm on the opposite wing.\n2. **Block the storm**: Place pieces on the squares where the pawns are advancing.\n3. **Create counterplay**: Attack the opponent's king or create threats elsewhere.\n4. **Simplify**: Exchange pieces to reduce the attacking potential.\n\nThe key principle: **in a pawn storm race, the side who breaks through first wins**.",
+      "positions": [
+        {
+          "fen": "r2q1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White can launch a kingside pawn storm with h4-h5, g4-g5, and f4-f5. The pawns advance to break through Black's king position. This is a standard attacking plan against a castled king.",
+          "hints": [
+            "Pawn storms advance pawns on the wing where the enemy king is located.",
+            "h4-h5, g4-g5, and f4-f5 are typical pawn storm advances.",
+            "Support the pawn storm with pieces — rooks on open files, queen on diagonals."
+          ]
+        },
+        {
+          "fen": "r2q1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "After h4-h5, White's pawn storm is underway. The h-pawn threatens to open the h-file for the rook. Black must defend carefully — ...h6 blocks but weakens the g6 square.",
+          "hints": [
+            "The h-pawn advance threatens to open the h-file.",
+            "Black's ...h6 defense weakens the g6 square.",
+            "Pawn storms create weaknesses that can be exploited by pieces."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Sacrifices on f7/f2",
+      "content": "The f7 (f2 for Black) square is the weakest square in the opening and early middlegame. It is only defended by the king, and it sits on the same diagonal as the opponent's queen and bishop.\n\n**Why f7/f2 is weak:**\n\n- **Only defended by the king**: No other piece defends f7 in the opening.\n- **On the a2-g8 diagonal**: White's queen and light-squared bishop both target f7.\n- **On the h1-a8 diagonal**: After development, the dark-squared bishop also targets f7.\n- **Near the king**: A piece on f7 is adjacent to the king, creating immediate threats.\n\n**Common f7/f2 sacrifices:**\n\n1. **Bxf7+**: The bishop sacrifices itself on f7, checking the king and disrupting the castling rights.\n2. **Nxf7**: The knight sacrifices itself on f7, forking the king and rook.\n3. **Qxf7+**: The queen sacrifices itself on f7, leading to a forced mate or material gain.\n\n**When to sacrifice on f7/f2:**\n\n- **When you have enough attacking pieces**: A sacrifice is only good if you can follow up with more attacks.\n- **When the king is exposed**: If the king cannot escape, the sacrifice is more likely to succeed.\n- **When you have calculated the follow-up**: Always calculate the forced sequence after the sacrifice.\n\n**The Fried Liver Attack** is a classic example: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6 4.Ng5 d5 5.exd5 Nxd5 6.Nxf7! Kxf7 7.Qf3+ Ke6 8.Nc3, and White has a devastating attack.\n\nThe key principle: **a sacrifice on f7/f2 is only good if you can follow up with a winning attack**.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 3 3",
+          "commentary": "White's bishop on c4 eyes f7. The classic sacrifice Bxf7+ is possible but usually premature. White needs more pieces developed before sacrificing on f7.",
+          "hints": [
+            "Bxf7+ is a classic sacrifice, but it's usually too early.",
+            "White needs more pieces developed before sacrificing.",
+            "The f7 square is weak, but a sacrifice requires calculation and follow-up."
+          ]
+        },
+        {
+          "fen": "r1bqk2r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 5 4",
+          "commentary": "After castling, White can consider Ng5, threatening Nxf7. If ...Rf8, then Nxe5 wins a pawn. If ...h6, then Nxf7 Rxf7 8.Bxf7+ Kxf7 9.Qd5+ wins material.",
+          "hints": [
+            "Ng5 threatens Nxf7, a classic sacrifice.",
+            "The follow-up after Nxf7 is critical — calculate the forced sequence.",
+            "Sacrifices on f7 are most effective when the king is still in the center."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Mating Patterns",
+      "content": "Mating patterns are recurring configurations that lead to checkmate. Recognizing these patterns is essential for converting attacking chances into wins.\n\n**Back rank mate**: The most common mating pattern. The king is trapped on the back rank by its own pawns, and a rook or queen delivers checkmate on the back rank.\n\n**Greek Gift sacrifice**: Bxh7+! sacrificing the bishop on h7 to open the h-file and launch a devastating attack. Named after the famous game where this sacrifice was played.\n\n**Ladder mate**: The king is driven up the board by alternating rook and queen checks, eventually reaching the edge where it is mated.\n\n**Anastasia's mate**: A corner mate where the rook delivers check on the back rank and the knight covers the escape square.\n\n**Arabian mate**: A rook and king mate where the rook delivers check and the king covers the escape square.\n\n**Smothered mate**: The king is surrounded by its own pieces and cannot move, and a knight delivers checkmate. One of the most beautiful mating patterns.\n\n**How to create mating patterns:**\n\n1. **Remove defenders**: Exchange or deflect the pieces defending the king.\n2. **Open lines**: Create open files and diagonals for your attacking pieces.\n3. **Create weaknesses**: Force the opponent to create weaknesses around their king.\n4. **Calculate the finish**: Always calculate the mating sequence before launching the attack.\n\nThe key principle: **mating patterns are the goal of every attack**. Recognize them, practice them, and execute them.",
+      "positions": [
+        {
+          "fen": "6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+          "commentary": "A back rank mate threat. If White plays Re8+, the king has no escape squares because the pawns on f7, g7, and h7 block all flight squares. This is a classic back rank mate pattern.",
+          "expectedMove": "Re8#",
+          "hints": [
+            "The king is trapped on the back rank by its own pawns.",
+            "Re8# is a back rank mate — the king has no escape.",
+            "Back rank mates are the most common mating pattern in chess."
+          ]
+        },
+        {
+          "fen": "6k1/5Bpp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+          "commentary": "The Greek Gift sacrifice: Bxh7+! Kxh7, and now the rook on h1 or the queen joins the attack. The h-file is open, and the king is exposed. This is a classic attacking pattern.",
+          "expectedMove": "Bxh7+",
+          "hints": [
+            "Bxh7+! is the Greek Gift sacrifice.",
+            "After Kxh7, the h-file is open for the rook.",
+            "The Greek Gift is a classic sacrifice that opens lines for a mating attack."
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+      "title": "Back Rank Mate",
+      "description": "White to play. Deliver checkmate using the back rank pattern.",
+      "targetColor": "w",
+      "expectedMoves": ["Re8#"],
+      "hints": [
+        "The king is trapped on the back rank by its own pawns.",
+        "The rook can check on the back rank.",
+        "Re8# is a back rank mate."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "6k1/5Bpp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+      "title": "Greek Gift Sacrifice",
+      "description": "White to play. Execute the Greek Gift sacrifice to open lines for a mating attack.",
+      "targetColor": "w",
+      "expectedMoves": ["Bxh7+"],
+      "hints": [
+        "The bishop on f7 can sacrifice itself on h7.",
+        "Bxh7+! is the Greek Gift sacrifice.",
+        "After Kxh7, the h-file is open for the rook."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+      "title": "Find the Attack",
+      "description": "White to play. Find the best attacking move against Black's king.",
+      "targetColor": "w",
+      "expectedMoves": ["Ng5"],
+      "hints": [
+        "The knight can jump to g5, threatening f7.",
+        "Ng5 attacks the weak f7 square.",
+        "This is a standard attacking move against a castled king."
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -73,3 +73,32 @@ CREATE TABLE IF NOT EXISTS game_history (
 
 CREATE INDEX IF NOT EXISTS idx_game_history_user_id ON game_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_game_history_game_id ON game_history(game_id);
+
+-- Theory lessons and progress tracking
+
+CREATE TABLE IF NOT EXISTS theory_lessons (
+  id              VARCHAR(50) PRIMARY KEY,
+  title           VARCHAR(200) NOT NULL,
+  category        VARCHAR(20)  NOT NULL CHECK (category IN ('openings', 'middlegame', 'endings', 'fundamentals')),
+  difficulty      VARCHAR(20)  NOT NULL CHECK (difficulty IN ('beginner', 'intermediate', 'advanced')),
+  description     TEXT         NOT NULL,
+  estimated_minutes INT        NOT NULL DEFAULT 15,
+  key_concepts    TEXT         NOT NULL DEFAULT '[]',  -- JSON array as text
+  content         TEXT         NOT NULL,                -- Full lesson JSON as text
+  created_at      TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS theory_progress (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  lesson_id       VARCHAR(50)  NOT NULL,
+  completed       BOOLEAN      NOT NULL DEFAULT false,
+  last_position_index INT      NOT NULL DEFAULT 0,
+  exercise_score  INT          NOT NULL DEFAULT 0,
+  completed_at    TIMESTAMPTZ  NULL,
+  updated_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  UNIQUE (user_id, lesson_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_theory_progress_user_id ON theory_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_theory_lessons_category ON theory_lessons(category);

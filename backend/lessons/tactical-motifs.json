@@ -1,0 +1,190 @@
+{
+  "id": "tactical-motifs",
+  "title": "Tactical Motifs",
+  "category": "middlegame",
+  "difficulty": "beginner",
+  "description": "Master the fundamental tactical patterns that appear in every chess game. Learn to recognize forks, pins, skewers, and discovered attacks.",
+  "estimatedMinutes": 25,
+  "keyConcepts": [
+    "Forks",
+    "Pins",
+    "Skewers",
+    "Discovered attacks",
+    "Tactical awareness",
+    "Pattern recognition"
+  ],
+  "sections": [
+    {
+      "title": "Forks",
+      "content": "A fork occurs when a single piece attacks two or more enemy pieces simultaneously. The forked pieces cannot both be saved, so material is usually won.\n\n**Knight forks**: The knight is the most common forking piece because of its unique L-shaped movement. A knight can attack pieces that are not on the same line or diagonal.\n\nCommon knight fork patterns:\n\n- **King and queen fork**: The knight attacks both the king (check) and the queen. The king must move, and the queen is captured.\n- **King and rook fork**: Similar to above, but with a rook instead of a queen.\n- **Queen and rook fork**: The knight attacks both the queen and a rook.\n\n**Queen forks**: The queen can fork any two pieces because of its powerful movement. Queen forks are often the culmination of a tactical combination.\n\n**Pawn forks**: Pawns can fork pieces too! A pawn advancing to attack two pieces simultaneously is a powerful tactical weapon.\n\n**How to spot forks:**\n\n- Look for pieces that are undefended or poorly defended.\n- Look for squares where a piece can attack two targets simultaneously.\n- Knights are especially dangerous near the enemy king.\n- Calculate: 'If I move here, what two pieces do I attack?'",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2n5/3np3/8/8/PPPPNPPP/R1BQ1RK1 w - - 1 8",
+          "commentary": "White can play Nf4, forking the queen on d5 and the bishop on e5. After Nf4, Black loses at least a piece because the queen and bishop cannot both be saved.",
+          "expectedMove": "Nf4",
+          "hints": [
+            "Look for a knight move that attacks two pieces at once.",
+            "The knight on e2 can jump to a square that attacks both the queen and a bishop.",
+            "Nf4! forks the queen on d5 and the bishop on e5."
+          ]
+        },
+        {
+          "fen": "r1bqk2r/ppppbppp/2n2n2/8/2B5/2N2N2/PPPP1PPP/R2QKB1R w KQkq - 4 6",
+          "commentary": "White can play Nd5!, forking the queen on d8 and the knight on c6. After Nd5, if Qxd5, then Nxe7+ wins the knight and attacks the rook. This is a classic knight fork pattern.",
+          "expectedMove": "Nd5",
+          "hints": [
+            "The knight on c3 can jump to d5, a powerful central square.",
+            "From d5, the knight attacks the queen and the knight on c6.",
+            "Nd5! is a fork that wins material."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2n5/3np3/8/5N2/PPPP1PPP/RNBQKB1R w KQ - 1 6",
+          "commentary": "White plays Nxe5, forking the queen on d5 and the knight on c6. After Nxe5, if Qxe5, then Nc3+ forks king and queen. This shows how forks can be combined with other tactics.",
+          "expectedMove": "Nxe5",
+          "hints": [
+            "The knight on f3 can capture on e5, attacking the queen.",
+            "After Nxe5, the queen is attacked and must move.",
+            "This fork wins a pawn and creates further threats."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Pins",
+      "content": "A pin occurs when a piece cannot move because it would expose a more valuable piece behind it to capture. Pins are one of the most powerful tactical weapons in chess.\n\n**Absolute pin**: The pinned piece cannot move at all because it would expose the king to check. This is the strongest type of pin.\n\n**Relative pin**: The pinned piece can technically move, but doing so would lose a more valuable piece. In practice, the piece is still pinned because the loss is unacceptable.\n\n**How pins work:**\n\n- **Long-range pieces** (queen, rook, bishop) create pins.\n- **Short-range pieces** (knight, pawn) cannot create pins but can be pinned.\n- **The pinned piece** is usually a knight, bishop, or queen.\n- **The target behind** is usually the king (absolute pin) or queen/rook (relative pin).\n\n**Exploiting pins:**\n\n- **Capture the pinned piece**: If it's undefended, simply take it.\n- **Add attackers**: Bring another piece to attack the pinned piece.\n- **Deflect the defender**: Force the pinned piece to move, exposing the target.\n- **Double attacks**: Use the pin to create a double attack.\n\n**Breaking pins:**\n\n- **Block the pin**: Place a piece between the pinning piece and the target.\n- **Move the target**: Move the king or queen out of the pin.\n- **Counter-attack**: Attack the pinning piece to force it to move.\n- **Create a bigger threat**: A bigger threat can override the pin.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/2NPBN2/PPP2PPP/R2QK2R b KQkq - 5 6",
+          "commentary": "White's bishop on b5 pins Black's knight on c6 to the king on e8. The knight cannot move because it would expose the king to check. This absolute pin restricts Black's development significantly.",
+          "hints": [
+            "The knight on c6 is pinned to the king by the bishop on b5.",
+            "An absolute pin means the piece literally cannot move.",
+            "Pins restrict the opponent's options and can be exploited by adding attackers."
+          ]
+        },
+        {
+          "fen": "r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/2NPBN2/PPP2PPP/R2Q1RK1 b kq - 6 7",
+          "commentary": "After White castles, the pin on the c6 knight remains. Black must deal with this pin — either by moving the king (impossible), blocking (d6), or accepting the restriction. The pin is a lasting strategic advantage for White.",
+          "hints": [
+            "The pin on c6 is a strategic asset. Black's knight is restricted and cannot participate in the defense.",
+            "Black might play d6 to block the pin, but this weakens the e6 square."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/8/1P1P1N2/P1PB1PPP/R2Q1RK1 b - - 0 10",
+          "commentary": "White's queen on d1 pins Black's knight on f6 to the queen on d8 (relative pin). The knight on f6 cannot move without losing the queen. This relative pin is almost as strong as an absolute pin.",
+          "hints": [
+            "The knight on f6 is relatively pinned — it can move, but doing so loses the queen.",
+            "Relative pins are almost as strong as absolute pins in practice."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Skewers",
+      "content": "A skewer is the opposite of a pin. In a skewer, a valuable piece is attacked and must move, exposing a less valuable piece behind it to capture.\n\n**How skewers work:**\n\n- A long-range piece (queen, rook, or bishop) attacks a valuable piece.\n- The valuable piece must move (it's in check or would be lost).\n- Behind the valuable piece is a less valuable piece that is now exposed.\n- The attacking piece captures the exposed piece.\n\n**Queen skewers**: The queen is the most common skewering piece because of its powerful movement.\n\n**Rook skewers**: Rooks skewer along files and ranks. Rook skewers on the back rank are particularly deadly.\n\n**Bishop skewers**: Bishops skewer along diagonals. Bishop skewers are less common but can be very effective.\n\n**Skewer vs. Pin:**\n\n- **Pin**: Less valuable piece in front, more valuable behind. The front piece is pinned.\n- **Skewer**: More valuable piece in front, less valuable behind. The front piece must move, exposing the rear piece.\n\n**How to spot skewers:**\n\n- Look for valuable pieces (king, queen) lined up with less valuable pieces.\n- Ask: 'If I attack this valuable piece, what is behind it?'",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/8/8/PPPPQPPP/RNB2RK1 w - - 0 12",
+          "commentary": "White's queen on e2 can skewer Black's king and queen if they are aligned. After Qe8+, the king must move, and the queen on d8 is exposed. This is a classic queen skewer pattern.",
+          "expectedMove": "Qe8+",
+          "hints": [
+            "Look for a queen move that checks the king and exposes a piece behind it.",
+            "The queen on e2 can check on e8, forcing the king to move.",
+            "Qe8+! skewers the king and queen."
+          ]
+        },
+        {
+          "fen": "6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1",
+          "commentary": "White's rook on e1 can skewer Black's king and any piece on the e-file. After Re8+, the king must move, and any piece on the e-file is exposed. This is a classic back-rank skewer.",
+          "expectedMove": "Re8+",
+          "hints": [
+            "The rook can check the king along the e-file.",
+            "After the check, the king must move, exposing any piece behind it.",
+            "Re8+! is a skewer that wins material."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Discovered Attacks",
+      "content": "A discovered attack occurs when moving one piece reveals an attack by another piece behind it. This is arguably the most powerful tactical motif because it creates two threats simultaneously.\n\n**How discovered attacks work:**\n\n- Piece A is blocking Piece B's line of attack.\n- Piece A moves, revealing Piece B's attack on a target.\n- Meanwhile, Piece A creates its own threat on a different target.\n- The opponent can only respond to one threat, so the other succeeds.\n\n**Types of discovered attacks:**\n\n1. **Discovered check**: The revealed attack is a check. This is the most powerful type because the opponent must respond to the check immediately.\n2. **Double attack**: Both the moving piece and the revealed piece attack valuable targets.\n3. **Discovered capture**: The revealed piece captures while the moving piece creates a threat.\n\n**The knight is the most common discoverer** because it can jump out of the way without being captured itself.\n\n**How to spot discovered attacks:**\n\n- Look for pieces blocking long-range pieces (queen, rook, bishop).\n- Ask: 'If this piece moves, what does the piece behind it attack?'\n- Look for knights in front of bishops or queens.\n- Calculate: 'What two threats can I create simultaneously?'",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/8/5N2/PPPPBPPP/R3K2R w Q - 0 8",
+          "commentary": "White's knight on f3 is in front of the bishop on e2. If the knight moves, the bishop's diagonal is opened. This is a potential discovered attack — the knight can move to create a threat while the bishop attacks along the diagonal.",
+          "hints": [
+            "The knight on f3 blocks the bishop on e2. Moving the knight reveals the bishop's attack.",
+            "Discovered attacks create two threats at once.",
+            "Look for knight moves that both create a threat and reveal the bishop's attack."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/8/5N2/PPPPBPPP/R3K2R w Q - 0 8",
+          "commentary": "White plays Nd4!, a discovered attack. The knight moves to d4, attacking the queen on d8, while the bishop on e2 now attacks along the a8-h1 diagonal. Black must respond to both threats.",
+          "expectedMove": "Nd4",
+          "hints": [
+            "The knight can jump to d4, revealing the bishop's attack.",
+            "Nd4! attacks the queen and reveals the bishop's diagonal.",
+            "This is a classic discovered attack — two threats at once."
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/ppp2ppp/2n5/3np3/8/8/PPPPNPPP/R1BQ1RK1 w - - 1 8",
+      "title": "Find the Fork",
+      "description": "White to play. Find the knight fork that wins material.",
+      "targetColor": "w",
+      "expectedMoves": ["Nf4"],
+      "hints": [
+        "Look for a knight move that attacks two pieces at once.",
+        "The knight on e2 can jump to f4.",
+        "Nf4! forks the queen on d5 and the bishop on e5."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/2NPBN2/PPP2PPP/R2QK2R b KQkq - 5 6",
+      "title": "Exploit the Pin",
+      "description": "Black to play. The knight on c6 is pinned. Find the best move to deal with the pin and develop.",
+      "targetColor": "b",
+      "expectedMoves": ["d6"],
+      "hints": [
+        "The knight on c6 is pinned to the king.",
+        "Blocking the pin with d6 is a natural response.",
+        "d6 blocks the pin and prepares to develop the bishop."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1",
+      "title": "Find the Skewer",
+      "description": "White to play. Find the rook skewer that wins material.",
+      "targetColor": "w",
+      "expectedMoves": ["Re8+"],
+      "hints": [
+        "The rook can check the king along the e-file.",
+        "After the check, the king must move.",
+        "Re8+! skewers the king and any piece behind it."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/8/5N2/PPPPBPPP/R3K2R w Q - 0 8",
+      "title": "Find the Discovered Attack",
+      "description": "White to play. Find the discovered attack that creates two threats at once.",
+      "targetColor": "w",
+      "expectedMoves": ["Nd4"],
+      "hints": [
+        "The knight on f3 blocks the bishop on e2.",
+        "Moving the knight reveals the bishop's attack.",
+        "Nd4! is a discovered attack that threatens the queen and opens the bishop's diagonal."
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "caro-kann",
+  "title": "The Caro-Kann Defense",
+  "category": "openings",
+  "difficulty": "beginner",
+  "description": "A reliable, low-risk defense to 1.e4. Black supports a future d5 with c6, avoiding the cramped bishop of the French while keeping a sturdy structure.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Solid structure",
+    "Free light bishop",
+    "Endgame soundness",
+    "Central break with d5",
+    "Few weaknesses"
+  ],
+  "sections": [
+    {
+      "title": "Why c6?",
+      "content": "After 1.e4 c6, Black prepares d5 with pawn support. Unlike the French, the light-squared bishop can develop actively to f5 or g4 before being locked in.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "The Caro-Kann. Black will follow with d5, challenging the center while keeping the c8 bishop's diagonal open.",
+          "expectedMove": "d4",
+          "hints": [
+            "Build a broad center",
+            "Prepare to meet d5"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Active Bishop",
+      "content": "A hallmark of the Caro-Kann is developing the light-squared bishop to f5 before playing e6. This solves the classic problem bishop of 1.e4 e6 setups.",
+      "positions": [
+        {
+          "fen": "rn1qkbnr/pp2pppp/2p5/3p1b2/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 1 4",
+          "commentary": "Black has developed the bishop to f5 outside the pawn chain — a key strategic achievement of the Caro-Kann.",
+          "expectedMove": "Nc3",
+          "hints": [
+            "Develop and pressure d5",
+            "Prepare to challenge the bishop"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkbnr/pp2pppp/2p5/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq d6 0 3",
+      "title": "Challenge the Center",
+      "description": "White to play. Develop a knight to attack the d5 pawn.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nc3"
+      ],
+      "hints": [
+        "Develop toward the center",
+        "Add a defender of e4 and attacker of d5"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

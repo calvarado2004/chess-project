@@ -1,0 +1,63 @@
+{
+  "id": "chess-fundamentals",
+  "title": "Core Chess Fundamentals",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "description": "The bedrock principles every strong player relies on: control the center, develop pieces, castle early, and connect your rooks. Master these before anything else.",
+  "estimatedMinutes": 15,
+  "keyConcepts": [
+    "Center control",
+    "Piece development",
+    "King safety",
+    "Connecting rooks",
+    "Not moving pieces twice"
+  ],
+  "sections": [
+    {
+      "title": "The Opening Checklist",
+      "content": "Every good opening follows the same goals: occupy or control the center, develop knights and bishops toward the center, castle to safety, and connect your rooks. If you do these four things, you will rarely get a bad position.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "From the start, aim to control the center with pawns and pieces. The four golden rules — center, development, castle, connect — guide every opening.",
+          "expectedMove": "e4",
+          "hints": [
+            "Fight for the center first",
+            "A central pawn opens lines for pieces"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Develop with Purpose",
+      "content": "Bring every minor piece into the game before launching an attack. Avoid moving the same piece twice in the opening without reason, and do not bring the queen out too early where it can be chased with tempo.",
+      "positions": [
+        {
+          "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+          "commentary": "Both sides develop knights toward the center — a model opening. Each move improves a piece and prepares to castle.",
+          "expectedMove": "Nc3",
+          "hints": [
+            "Develop a new piece each move",
+            "Head toward castling"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+      "title": "Develop Toward the Center",
+      "description": "White to play. Make a natural developing move that brings a knight out and prepares castling.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nf3"
+      ],
+      "hints": [
+        "Develop a knight",
+        "Aim for the center and prepare O-O"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

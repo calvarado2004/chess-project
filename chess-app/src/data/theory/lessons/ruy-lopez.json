@@ -1,0 +1,63 @@
+{
+  "id": "ruy-lopez",
+  "title": "The Ruy Lopez",
+  "category": "openings",
+  "difficulty": "intermediate",
+  "description": "One of the oldest and most respected openings. White develops the bishop to b5, pressuring the knight that defends e5, and builds a lasting initiative.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Pin on the knight",
+    "Central control",
+    "The Spanish bishop",
+    "Slow maneuvering",
+    "Pawn on e5 pressure"
+  ],
+  "sections": [
+    {
+      "title": "The Main Idea",
+      "content": "After 1.e4 e5 2.Nf3 Nc6 3.Bb5, White attacks the knight on c6 that defends the e5 pawn. The threat is not immediate, but the bishop creates long-term pressure on Black's center.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "commentary": "The starting position of the Ruy Lopez. The bishop on b5 eyes the c6 knight. Black usually plays 3...a6 to question the bishop immediately.",
+          "expectedMove": "a6",
+          "hints": [
+            "Challenge the bishop",
+            "The Morphy Defense begins with a7-a6"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Closed System",
+      "content": "In the Closed Ruy Lopez, both sides develop slowly and castle. White plays c3 and d4 to build a big center, while Black counters on the queenside. Patience and maneuvering define this opening.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 b kq - 2 7",
+          "commentary": "A typical Closed Ruy Lopez structure. White has retreated the bishop to b3 and castled. The slow battle for the center begins.",
+          "expectedMove": "d6",
+          "hints": [
+            "Support the e5 pawn",
+            "Solidify before counterattacking"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+      "title": "Maintain the Pressure",
+      "description": "White to play. After ...a6, where does the bishop go to keep the pin alive?",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Bb3"
+      ],
+      "hints": [
+        "Retreat along the a4-e8 diagonal",
+        "Keep aiming at f7"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "london-system",
+  "title": "The London System",
+  "category": "openings",
+  "difficulty": "beginner",
+  "description": "A popular, easy-to-learn system for White. Develop the dark-squared bishop to f4 early and follow a reliable setup against almost anything Black plays.",
+  "estimatedMinutes": 16,
+  "keyConcepts": [
+    "System-based play",
+    "Bishop to f4",
+    "Solid pawn triangle",
+    "Easy development",
+    "Kingside safety"
+  ],
+  "sections": [
+    {
+      "title": "The London Setup",
+      "content": "After 1.d4 d5 2.Bf4, White develops the bishop outside the pawn chain before playing e3. The same setup — Bf4, e3, Bd3, Nf3, c3 — works against many Black defenses.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2",
+          "commentary": "The London System. The bishop is developed to f4 before the e-pawn moves, avoiding the bad-bishop problem entirely.",
+          "expectedMove": "Nf6",
+          "hints": [
+            "Develop naturally",
+            "Control the e4 square"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "A Reliable Structure",
+      "content": "White's pawns on c3, d4, and e3 form a sturdy triangle. The plan is simple: complete development, castle, and look for a kingside attack or central break with e4 at the right time.",
+      "positions": [
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/2N1P3/PPP2PPP/R2QKBNR w KQkq - 0 5",
+          "commentary": "A typical London structure. White has the classic triangle and easy development. The setup is hard to break down.",
+          "expectedMove": "Bd3",
+          "hints": [
+            "Complete development",
+            "Aim the bishop at h7"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 2 3",
+      "title": "Build the Triangle",
+      "description": "White to play. Support the d4 pawn and open the f1 bishop with a modest pawn move.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "e3"
+      ],
+      "hints": [
+        "Reinforce d4",
+        "Free the light-squared bishop"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

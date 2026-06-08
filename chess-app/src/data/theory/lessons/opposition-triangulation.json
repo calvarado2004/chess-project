@@ -1,0 +1,65 @@
+{
+  "id": "opposition-triangulation",
+  "title": "Opposition and Triangulation",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Master the most important king-and-pawn technique: the opposition. Then learn triangulation — losing a move to put your opponent in zugzwang.",
+  "estimatedMinutes": 22,
+  "keyConcepts": [
+    "Direct opposition",
+    "Distant opposition",
+    "Triangulation",
+    "Key squares",
+    "Zugzwang"
+  ],
+  "sections": [
+    {
+      "title": "The Direct Opposition",
+      "content": "When kings face each other with one square between them and it is the opponent's move, you \"have the opposition.\" The player to move must give way. This single idea decides countless pawn endings.",
+      "positions": [
+        {
+          "fen": "8/8/8/4k3/8/4K3/4P3/8 w - - 0 1",
+          "commentary": "The kings stand in direct opposition. Whoever does NOT have to move controls the key squares. Here White wants to outflank to win.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "Sidestep to gain ground",
+            "Take the opposition at the right moment"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Triangulation",
+      "content": "Sometimes you want to keep the same position but with the opponent to move. By maneuvering your king in a triangle while the enemy king can only shuffle, you lose a tempo and hand them the zugzwang.",
+      "positions": [
+        {
+          "fen": "8/8/3k4/3P4/3K4/8/8/8 w - - 0 1",
+          "commentary": "White triangulates with the king to reach the same position with Black to move, forcing the black king to abandon the blockade of the passed pawn.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "Lose a move on purpose",
+            "Force Black into zugzwang"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/4k3/8/4K3/8/4P3/8 b - - 0 1",
+      "title": "Take the Opposition",
+      "description": "It is Black to move and the white king must be opposed. As White, you want Black forced to give way — understand who holds the opposition here.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Kd4",
+        "Kf4",
+        "Ke3"
+      ],
+      "hints": [
+        "Keep the kings opposed",
+        "Force the opponent to step aside"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "bishop-pair",
+  "title": "The Bishop Pair",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Two bishops working together control both color complexes and dominate open positions. Learn when the bishop pair is an advantage and how to use it.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Two bishops",
+    "Open positions",
+    "Color complexes",
+    "Opening lines",
+    "Long-term advantage"
+  ],
+  "sections": [
+    {
+      "title": "Power in Open Positions",
+      "content": "When the position opens, two bishops cover long diagonals across the whole board. Together they control both light and dark squares, something a bishop and knight cannot match.",
+      "positions": [
+        {
+          "fen": "6k1/5ppp/8/8/8/2B5/1B3PPP/6K1 w - - 0 1",
+          "commentary": "Two bishops on adjacent diagonals form a powerful battery, sweeping the board. In open positions this pair is a serious long-term advantage.",
+          "expectedMove": "Bd4",
+          "hints": [
+            "Coordinate the bishops",
+            "Control the long diagonals"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Opening the Position",
+      "content": "The bishop pair thrives when lines open. If you hold two bishops, seek pawn breaks that open the board. If you face them, keep the position closed and find outposts for your knights.",
+      "positions": [
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+          "commentary": "White aims to keep both bishops and open the center later. Knowing when to open lines is the key to exploiting the bishop pair.",
+          "expectedMove": "c3",
+          "hints": [
+            "Prepare a central break",
+            "Keep the bishops' scope"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "6k1/5ppp/8/8/8/2B5/1B3PPP/6K1 w - - 0 1",
+      "title": "Aim the Battery",
+      "description": "White to play. Centralize a bishop on the long diagonal to maximize the pair's reach.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Bd4"
+      ],
+      "hints": [
+        "Centralize a bishop",
+        "Control the long diagonal"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

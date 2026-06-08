@@ -1,0 +1,186 @@
+{
+  "id": "king-and-pawn",
+  "title": "King and Pawn Endings",
+  "category": "endings",
+  "difficulty": "beginner",
+  "description": "Master the fundamentals of king and pawn endings. Learn opposition, key squares, distant opposition, and triangulation — the building blocks of all endgame technique.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Opposition",
+    "Key squares",
+    "Distant opposition",
+    "Triangulation",
+    "Pawn races",
+    "King activity"
+  ],
+  "sections": [
+    {
+      "title": "Opposition",
+      "content": "Opposition is the most fundamental concept in king and pawn endings. It occurs when the two kings face each other with exactly one square between them. The side that does NOT have to move has the opposition — and this is usually a winning advantage.\n\n**Why opposition matters:**\n\n- The king that has the opposition can force the other king to move aside.\n- This creates space for your own king to advance.\n- In pawn endings, the king with the opposition can often penetrate the opponent's position.\n\n**Types of opposition:**\n\n1. **Direct opposition**: Kings face each other on the same file or rank with one square between.\n2. **Distant opposition**: Kings face each other on the same file or rank with an odd number of squares between.\n\n**How to use opposition:**\n\n- **Keep the opposition**: When you have the opposition, make moves that maintain it.\n- **Force the opponent to yield**: The opponent must move aside, giving you space.\n- **Advance your king**: Use the space gained to advance your king toward the opponent's pawns or your own passed pawn.\n\n**Example:**\n\nIf White's king is on e5 and Black's king is on e7, and it's Black's move, White has the opposition. Black must move the king aside (to d7 or f7), and White's king can advance to e6, getting closer to Black's position.\n\nThe key principle: **the side with the opposition can force the other king to move aside, gaining space and penetration**.",
+      "positions": [
+        {
+          "fen": "8/4k3/8/4K3/8/8/8/8 w - - 0 1",
+          "commentary": "White has the opposition. The kings face each other on the e-file with one square between. It's White's move, so White must give up the opposition. After 1.Kf5 Kf7 2.Kg5 Kg7, White maintains the opposition and can advance.",
+          "expectedMove": "Kf5",
+          "hints": [
+            "The kings face each other with one square between — this is direct opposition.",
+            "White must move first, so White gives up the opposition.",
+            "The goal is to maintain opposition after Black moves."
+          ]
+        },
+        {
+          "fen": "8/4k3/8/4K3/8/8/8/8 b - - 0 1",
+          "commentary": "Black to move — Black has the opposition (White doesn't have to move). Black must move the king aside, and White's king can advance. This is a winning advantage for White.",
+          "expectedMove": "Kd7",
+          "hints": [
+            "Black must move — Black gives up the opposition.",
+            "After ...Kd7, White plays Ke6 and the king penetrates.",
+            "Having the opposition when the opponent must move is a winning advantage."
+          ]
+        },
+        {
+          "fen": "8/4k3/8/4K3/4P3/8/8/8 w - - 0 1",
+          "commentary": "White has the opposition and a pawn on e4. White's plan is to advance the king and pawn together. The opposition ensures that Black's king cannot stop the pawn from promoting.",
+          "expectedMove": "Kf5",
+          "hints": [
+            "With the opposition and a pawn, White can force the pawn's advance.",
+            "The king supports the pawn while maintaining opposition.",
+            "This is a basic winning king and pawn ending."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Key Squares",
+      "content": "Key squares are the squares that the attacking king needs to occupy to guarantee a win in a king and pawn ending. For a pawn on the 4th rank, the key squares are on the 6th rank.\n\n**Key squares for a pawn:**\n\n- **Pawn on the 2nd rank**: Key squares are on the 4th rank (two ranks ahead).\n- **Pawn on the 3rd rank**: Key squares are on the 5th rank.\n- **Pawn on the 4th rank**: Key squares are on the 6th rank.\n- **Pawn on the 5th rank**: Key squares are on the 7th rank.\n\n**How key squares work:**\n\n- If the attacking king can reach a key square, the pawn promotes (assuming it's the attacker's turn).\n- If the defending king can prevent the attacking king from reaching a key square, the position is drawn.\n- The key squares are the two squares directly in front of the pawn and the two squares adjacent to them.\n\n**Example:**\n\nFor a white pawn on e4, the key squares are c6, d6, and e6. If White's king can reach any of these squares, White wins. If Black's king can prevent this, the position is drawn.\n\n**How to use key squares:**\n\n1. **Calculate the key squares**: Identify which squares your king needs to reach.\n2. **Use opposition**: Gain opposition to force the defending king aside.\n3. **Advance the king**: March your king toward the key squares.\n4. **Support the pawn**: Once on a key square, advance the pawn with king support.\n\nThe key principle: **if your king can reach a key square, you win. If the opponent's king can prevent this, it's a draw**.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/4P3/4K3/8/4k3 w - - 0 1",
+          "commentary": "White's pawn is on e4. The key squares are c6, d6, and e6. White's king needs to reach one of these squares to win. Currently, White's king is on e3 and Black's king is on e1. White needs to advance the king and pawn.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "The key squares for a pawn on e4 are c6, d6, and e6.",
+            "White's king needs to reach one of these squares to win.",
+            "Advance the king toward the key squares while maintaining opposition."
+          ]
+        },
+        {
+          "fen": "8/8/8/8/4P3/8/4K3/4k3 w - - 0 1",
+          "commentary": "White has the opposition. The king on e2 faces the king on e1. White can advance the king and pawn together. The key squares are still c6, d6, and e6.",
+          "expectedMove": "Kf2",
+          "hints": [
+            "White has the opposition — the king on e2 faces the king on e1.",
+            "White can advance the king while maintaining opposition.",
+            "The goal is to reach the key squares (c6, d6, e6)."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Distant Opposition",
+      "content": "Distant opposition occurs when the two kings face each other on the same file or rank with an odd number of squares between them. It works the same way as direct opposition — the side that does NOT have to move has the advantage.\n\n**How distant opposition works:**\n\n- The kings are on the same file or rank with 3, 5, 7, etc. squares between them.\n- The side with the opposition can maintain it by mirroring the opponent's moves.\n- Eventually, the distant opposition becomes direct opposition as the kings approach each other.\n\n**Example:**\n\nIf White's king is on e1 and Black's king is on e6, and it's Black's move, White has the distant opposition (5 squares between). Black must move, and White mirrors. Eventually, the kings reach direct opposition, and the side with the opposition wins.\n\n**How to use distant opposition:**\n\n1. **Maintain the opposition**: Mirror the opponent's moves along the file or rank.\n2. **Close the distance**: As the kings approach, the distant opposition becomes direct opposition.\n3. **Force the opponent to yield**: The opponent must move aside, giving you space.\n4. **Penetrate**: Use the space gained to penetrate the opponent's position.\n\nThe key principle: **distant opposition works the same as direct opposition — the side that doesn't have to move has the advantage**.",
+      "positions": [
+        {
+          "fen": "4k3/8/8/8/8/8/4K3/8 w - - 0 1",
+          "commentary": "White has the distant opposition. The kings are on the e-file with 4 squares between them (an even number). It's White's move, so White must give up the opposition. After 1.Kf3 Kf5 2.Kg3 Kg5, White maintains the opposition.",
+          "expectedMove": "Kf3",
+          "hints": [
+            "The kings are on the same file with an even number of squares between — distant opposition.",
+            "White must move first, giving up the opposition.",
+            "The goal is to maintain opposition after Black moves."
+          ]
+        },
+        {
+          "fen": "4k3/8/8/8/8/8/4K3/8 b - - 0 1",
+          "commentary": "Black to move — Black gives up the distant opposition. White mirrors Black's moves, maintaining the opposition. Eventually, the kings reach direct opposition, and White wins.",
+          "expectedMove": "Kf7",
+          "hints": [
+            "Black must move — Black gives up the distant opposition.",
+            "White mirrors Black's moves, maintaining the opposition.",
+            "Distant opposition eventually becomes direct opposition."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Triangulation",
+      "content": "Triangulation is a technique where the king makes three moves to return to the same square, effectively losing a tempo. This is useful when you need to force the opponent to move first in a critical position.\n\n**Why triangulation matters:**\n\n- In king and pawn endings, the side to move can be at a disadvantage (zugzwang).\n- Triangulation allows you to pass the move to your opponent.\n- By losing a tempo, you force the opponent to move first in a critical position.\n\n**How triangulation works:**\n\n1. The king makes a three-move triangle (e.g., e5-f5-f6-e6).\n2. The king returns to a square near the starting position.\n3. The opponent is now in zugzwang — any move worsens their position.\n\n**Example:**\n\nWhite's king on e5, Black's king on e7. White plays 1.Kf5 Kf7 2.Kg5 Kg7 3.Kf5, and now it's Black's move again. Black must move the king aside, and White's king can advance.\n\n**When to use triangulation:**\n\n- When you need to pass the move to your opponent.\n- When the opponent is in a critical position and must move first.\n- When direct opposition is not enough to win.\n\nThe key principle: **triangulation is a way to lose a tempo and force the opponent to move first**.",
+      "positions": [
+        {
+          "fen": "8/4k3/8/4K3/8/8/8/8 w - - 0 1",
+          "commentary": "White needs to triangulate. By playing 1.Kf5 Kf7 2.Kg5 Kg7 3.Kf5, White returns to a similar position but now it's Black's move. Black must give up the opposition, and White's king can advance.",
+          "expectedMove": "Kf5",
+          "hints": [
+            "White needs to lose a tempo to force Black to move first.",
+            "Triangulation: the king makes three moves to return to a similar position.",
+            "After triangulation, Black is in zugzwang."
+          ]
+        },
+        {
+          "fen": "8/4k3/8/4K3/8/8/8/8 w - - 0 1",
+          "commentary": "White plays 1.Kf5, starting the triangulation. After Black responds, White continues the triangle. The goal is to return to a similar position with Black to move.",
+          "expectedMove": "Kf5",
+          "hints": [
+            "1.Kf5 starts the triangulation.",
+            "The king moves in a triangle to lose a tempo.",
+            "After the triangle, Black must move first."
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/4k3/8/4K3/8/8/8/8 b - - 0 1",
+      "title": "Opposition: Black to Move",
+      "description": "Black to move. White has the opposition. Find the best move for Black.",
+      "targetColor": "b",
+      "expectedMoves": ["Kd7"],
+      "hints": [
+        "White has the opposition — Black must move first.",
+        "Black must move the king aside, giving up the opposition.",
+        "After ...Kd7, White plays Ke6 and the king penetrates."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/8/8/4K3/4P3/8/8/4k3 w - - 0 1",
+      "title": "Key Squares: Advance the King",
+      "description": "White to play. The key squares for the e4 pawn are c6, d6, and e6. Advance your king toward the key squares.",
+      "targetColor": "w",
+      "expectedMoves": ["Kd5", "Kd6"],
+      "hints": [
+        "The key squares for a pawn on e4 are c6, d6, and e6.",
+        "Advance the king toward d6, a key square.",
+        "Use opposition to force Black's king aside."
+      ],
+      "maxMoves": 2
+    },
+    {
+      "fen": "4k3/8/8/8/8/8/4K3/8 w - - 0 1",
+      "title": "Distant Opposition",
+      "description": "White to play. Use distant opposition to advance your king.",
+      "targetColor": "w",
+      "expectedMoves": ["Kf3"],
+      "hints": [
+        "The kings are on the same file with distant opposition.",
+        "White must move first, giving up the opposition.",
+        "After 1.Kf3 Kf5 2.Kg3 Kg5, White maintains the opposition."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/4k3/8/4K3/8/8/8/8 w - - 0 1",
+      "title": "Triangulation",
+      "description": "White to play. Use triangulation to lose a tempo and force Black to move first.",
+      "targetColor": "w",
+      "expectedMoves": ["Kf5"],
+      "hints": [
+        "White needs to triangulate — make three moves to return to a similar position.",
+        "1.Kf5 starts the triangle.",
+        "After the triangle, Black is in zugzwang and must give up the opposition."
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "fortress-draws",
+  "title": "Fortresses and Defensive Draws",
+  "category": "endings",
+  "difficulty": "advanced",
+  "description": "Sometimes a material deficit can be held with a fortress — an impregnable setup the stronger side cannot break. Learn to build defensive walls and save lost-looking endings.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Fortress",
+    "Impenetrable setup",
+    "Defensive technique",
+    "Material vs structure",
+    "Holding the draw"
+  ],
+  "sections": [
+    {
+      "title": "The Idea of a Fortress",
+      "content": "A fortress is a position where the defending side, though materially worse, sets up a wall the opponent simply cannot break. Recognizing fortress potential can save half points from seemingly lost positions.",
+      "positions": [
+        {
+          "fen": "8/8/8/3k4/8/3B4/3K4/8 w - - 0 1",
+          "commentary": "A lone bishop cannot deliver mate, and many bishop endings without pawns are dead draws. Knowing which material cannot win is a vital defensive skill.",
+          "expectedMove": "Bf5",
+          "hints": [
+            "Understand insufficient material",
+            "Hold the position calmly"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Building the Wall",
+      "content": "Defensive fortresses often rely on a blockade — placing pieces and pawns so the enemy king and pieces have no entry. Keep the structure intact and avoid creating new weaknesses.",
+      "positions": [
+        {
+          "fen": "8/8/4k3/4p3/4P3/4K3/8/8 w - - 0 1",
+          "commentary": "Locked pawns and opposing kings can produce a fortress where neither side can break through, ending in a draw despite the tension.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "Maintain the blockade",
+            "Keep the opposition and hold"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/4k3/4p3/4P3/4K3/8/8 w - - 0 1",
+      "title": "Hold the Wall",
+      "description": "White to play. Maintain the blockade and opposition to hold the draw.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Kd3",
+        "Kf3",
+        "Ke2"
+      ],
+      "hints": [
+        "Do not let the black king in",
+        "Keep the kings opposed"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

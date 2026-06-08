@@ -1,0 +1,73 @@
+{
+  "id": "knight-endings",
+  "title": "Knight and Pawn Endings",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Master knight endgames: outposts, fork threats, knight vs bishop comparisons, and the critical role of king activity in knight endings.",
+  "estimatedMinutes": 20,
+  "keyConcepts": ["Knight outposts", "Knight forks", "King activity", "Blockading knights", "Knight vs bishop"],
+  "sections": [
+    {
+      "title": "The Knight in Endgames",
+      "content": "Knights are surprisingly effective in closed positions and around pawn chains. Unlike bishops, knights can attack squares of both colors and excel at forking. The key is to place the knight on an outpost — a square protected by a pawn where the opponent cannot drive it away with pawns.",
+      "positions": [
+        {
+          "fen": "8/8/8/4n3/4P3/8/8/8 w - - 0 1",
+          "commentary": "The black knight on e5 is on a strong outpost. It cannot be driven away by pawns and controls key central squares. In knight endings, outposts are extremely valuable.",
+          "expectedMove": "Kf3",
+          "hints": ["Try to challenge the knight outpost with your king", "The knight on e5 controls d3, c4, f3, and g4"]
+        },
+        {
+          "fen": "8/8/8/3N4/4p3/8/8/8 b - - 0 1",
+          "commentary": "White knight on d5 vs black pawn on e4. The knight is well-placed, but the active king often decides knight endings. Bring your king closer to the action.",
+          "expectedMove": "Kf6",
+          "hints": ["Active king is crucial in knight endings", "The knight supports the king's advance"]
+        }
+      ]
+    },
+    {
+      "title": "Knight Forks and Double Attacks",
+      "content": "The knight's unique L-shaped movement creates fork opportunities that bishops and rooks cannot match. In endings, a well-placed knight can simultaneously attack two or more pieces, forcing material gain.",
+      "positions": [
+        {
+          "fen": "8/8/8/4n3/4K3/8/8/8 w - - 0 1",
+          "commentary": "Black knight threatens forks on c3 and f3. White must be careful — the king cannot easily escape the knight's reach. In knight endings, king safety is as important as material.",
+          "expectedMove": "Kf3",
+          "hints": ["Move toward the knight to challenge it", "The knight's fork squares are c3, f3, c4, f4, c6, f6, d7, e7"]
+        }
+      ]
+    },
+    {
+      "title": "Knight vs Bishop",
+      "content": "Knight vs bishop endings depend on the position structure. Bishops dominate in open positions with pawns on both wings. Knights excel in closed positions with pawn chains. As a general rule: if the position is closed, the knight is better; if open, the bishop is stronger.",
+      "positions": [
+        {
+          "fen": "8/8/4b3/8/4P3/8/8/8 w - - 0 1",
+          "commentary": "White pawn vs black bishop. The bishop is the wrong color — it cannot attack the e4 pawn. In bishop endings, the 'wrong-colored bishop' is a drawing resource.",
+          "expectedMove": "Kf3",
+          "hints": ["The bishop cannot attack the e4 pawn from its diagonal", "Wrong-colored bishops often lead to draws"]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/3N4/4p3/8/4K3/8 w - - 0 1",
+      "title": "Knight Outpost",
+      "description": "White to play. The knight is well-placed on d5. Use it to support the king's advance and attack the e4 pawn.",
+      "targetColor": "w",
+      "expectedMoves": ["Kf3"],
+      "hints": ["The knight on d5 controls e3, f4, c3, and b4", "Bring the king closer to attack the e4 pawn"],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/8/8/4n3/4K3/8/8/8 b - - 0 1",
+      "title": "Knight Fork Threat",
+      "description": "Black to play. Can you fork the white king and gain an advantage?",
+      "targetColor": "b",
+      "expectedMoves": ["Nc4"],
+      "hints": ["Look for knight moves that attack the king and control key squares", "The knight can jump to c4, f3, c6, f6, d7, e7, d3, f3"],
+      "maxMoves": 1
+    }
+  ]
+}

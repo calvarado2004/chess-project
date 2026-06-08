@@ -28,6 +28,9 @@ RUN npm ci --omit=dev
 # Copy built output
 COPY --from=build /app/dist ./dist
 
+# Copy lesson data for seeding
+COPY lessons/ ./lessons/
+
 # Copy init SQL for DB migration
 COPY init-db.sql ./init-db.sql
 

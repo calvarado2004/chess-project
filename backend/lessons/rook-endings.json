@@ -1,0 +1,105 @@
+{
+  "id": "rook-endings",
+  "title": "Rook Endings",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Rook endings are the most common type of ending. Learn the two most important theoretical positions: the Lucena winning technique and the Philidor drawing method.",
+  "estimatedMinutes": 30,
+  "keyConcepts": [
+    "Lucena position",
+    "Philidor position",
+    "Rook behind passed pawns",
+    "Active rook placement",
+    "Cutting off the king"
+  ],
+  "sections": [
+    {
+      "title": "The Lucena Position",
+      "content": "The Lucena position is the most fundamental winning rook ending. When you have a rook and a passed pawn against a lone rook, and your king is in front of the pawn, you can force promotion using the 'bridge' technique.\n\n**The key idea**: When the defending king approaches your pawn, you use your rook to build a 'bridge' on the fourth rank, shielding your king from checks and allowing the pawn to promote.\n\n**Steps to win:**\n\n1. Advance your pawn to the 7th rank with your king in front\n2. When the enemy king approaches, place your rook on the 4th rank\n3. When the enemy rook checks, move your king forward\n4. Your rook on the 4th rank blocks (the 'bridge'), allowing your king to escape\n5. The pawn promotes\n\n**Common mistake**: Trying to promote without the bridge often leads to perpetual check. The bridge is the only reliable winning method.\n\n**Practical tip**: In real games, you rarely get the exact Lucena position. The key is to recognize when you have a similar structure and apply the bridge idea.",
+      "positions": [
+        {
+          "fen": "r7/4P3/4k3/8/8/8/4K3/4R3 w - - 0 1",
+          "commentary": "The classic Lucena position. White has a rook and a pawn on the 7th rank, with the king in front of the pawn. Black's king is approaching, but White can force promotion. The winning move is Rg1!, preparing to build a bridge when Black checks.",
+          "expectedMove": "Rg1",
+          "hints": [
+            "White needs to prepare for Black's checks along the e-file.",
+            "The rook should move to the g-file, away from the e-file.",
+            "Rg1! prepares to build a bridge on the 4th rank when Black checks."
+          ]
+        },
+        {
+          "fen": "r7/4P3/4k3/8/8/8/4K3/4R3 b - - 0 1",
+          "commentary": "Black to move in the Lucena position. Black's only chance is to check: Re1+. But White has the bridge ready. After Kf2, the rook on g4 (or any 4th rank square) blocks the check, and the pawn promotes.",
+          "hints": [
+            "Black must check immediately to prevent promotion.",
+            "Even with checks, White's bridge technique wins.",
+            "This is why the Lucena position is a theoretical win."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Philidor Position",
+      "content": "The Philidor position is the most important drawing technique in rook endings. When you are defending against a rook and pawn, you can often draw by keeping your rook on the 3rd rank (from the perspective of the defending side), preventing the enemy king from advancing.\n\n**The key idea**: Keep your rook on the 3rd rank, cutting off the enemy king. When the pawn advances, you check from behind. This prevents the enemy king from supporting the pawn.\n\n**Steps to draw:**\n\n1. Place your rook on the 3rd rank (relative to the attacking pawn)\n2. Keep the rook active, checking from behind when the pawn advances\n3. Do not let your rook be trapped\n4. Once the pawn reaches the 6th rank, switch to checking from behind\n\n**Common mistake**: Allowing the enemy king to reach the 6th rank in front of the pawn. Once the king is there, the Lucena position may arise.\n\n**Practical tip**: The Philidor defense works best when the defending king is near the pawn. If the king is far away, the position may still be winning for the attacker.",
+      "positions": [
+        {
+          "fen": "r7/4P3/4k3/8/8/8/4K3/4R3 w - - 0 1",
+          "commentary": "If Black plays correctly, this position draws. Black's rook stays on the 3rd rank (Re8), preventing White's king from advancing. When the pawn moves to e6, Black checks from behind with Re2+.",
+          "hints": [
+            "The defending rook should stay active on the 3rd rank.",
+            "Checking from behind prevents the king from supporting the pawn.",
+            "The Philidor defense is a theoretical draw."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Rook Behind Passed Pawns",
+      "content": "A fundamental principle in rook endings: place your rook behind your passed pawn (or your opponent's passed pawn). A rook behind a passed pawn controls the promotion square and supports the pawn's advance.\n\n**Why it works:**\n\n- A rook behind a pawn controls all squares ahead of it\n- The rook supports the pawn from behind, allowing the king to be more active\n- A rook in front of a pawn blocks its own pawn and is passive\n\n**Active vs passive rooks:**\n\n- Active rook: behind a passed pawn, cutting off the enemy king, or attacking weak pawns\n- Passive rook: blocked by its own pawns, trapped on the back rank, or defending passive positions\n\n**Practical advice:**\n\n- Always try to place your rook behind passed pawns\n- If both sides have passed pawns, place your rook behind yours\n- An active rook is often worth more than a pawn",
+      "positions": [
+        {
+          "fen": "8/4P3/8/8/8/8/4k3/4R3 w - - 0 1",
+          "commentary": "White's rook is behind the passed pawn on e1, supporting its advance. The king is actively placed in front of the pawn. This is a winning position because the rook supports promotion from behind.",
+          "hints": [
+            "The rook behind the pawn is the ideal placement.",
+            "The king supports the pawn from the front.",
+            "This combination of active king and active rook wins."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Practical Rook Ending Tips",
+      "content": "Here are the most important practical principles for rook endings:\n\n1. **Active king**: The king should be as active as possible, ideally near the center or supporting passed pawns.\n\n2. **Active rook**: Place your rook behind passed pawns, on open files, or cutting off the enemy king.\n\n3. **Create passed pawns**: In rook endings, passed pawns are crucial. Work to create them.\n\n4. **The 6th rank**: A rook on the 6th rank (relative to the enemy) is very powerful, restricting the enemy king.\n\n5. **Avoid back rank traps**: Be careful of back rank mates when your king is trapped behind pawns.\n\n6. **Count accurately**: In rook endings, precise calculation is essential. One wrong move can turn a win into a draw.\n\n7. **Lucena and Philidor**: Know these two positions cold. They appear in countless practical endings.",
+      "positions": []
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r7/4P3/4k3/8/8/8/4K3/4R3 w - - 0 1",
+      "title": "Lucena Position - Build the Bridge",
+      "description": "White to play and win. Find the winning move that prepares the bridge technique.",
+      "targetColor": "w",
+      "expectedMoves": ["Rg1"],
+      "hints": [
+        "The rook needs to move to a file where it can build a bridge.",
+        "The g-file is ideal - it's away from the e-file where checks will come.",
+        "Rg1! is the winning move."
+      ],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/4P3/4k3/8/8/8/4K3/4R3 w - - 0 1",
+      "title": "Promote the Pawn",
+      "description": "White to play. The king and rook are perfectly placed. Promote the pawn!",
+      "targetColor": "w",
+      "expectedMoves": ["e8=Q"],
+      "hints": [
+        "The pawn is on the 7th rank with the king in front.",
+        "Promote to queen to win easily.",
+        "e8=Q wins the queen and the game."
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

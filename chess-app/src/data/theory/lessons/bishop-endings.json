@@ -1,0 +1,64 @@
+{
+  "id": "bishop-endings",
+  "title": "Bishop Endings",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Learn bishop endgame principles: same-colored bishop draws, bishop vs knight, and using the bishop to support passed pawns.",
+  "estimatedMinutes": 25,
+  "keyConcepts": [
+    "Same-colored bishop draws",
+    "Bishop vs knight evaluation",
+    "Outpost squares",
+    "Bishop and pawn coordination",
+    "Blocking with the bishop"
+  ],
+  "sections": [
+    {
+      "title": "Same-Colored Bishops",
+      "content": "When both sides have bishops on the same color complex, the position is often drawn. The defending bishop can control all squares of its color, creating an impenetrable barrier. To win, you need a passed pawn on the opposite color or a significantly superior pawn structure.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/3B4/8/4b3/6K1 w - - 0 1",
+          "commentary": "Same-colored bishops. Black's bishop on e2 controls all dark squares, creating a fortress. White cannot make progress without pawn breaks.",
+          "expectedMove": "Bc5",
+          "hints": ["Same-colored bishops often lead to draws", "The defending bishop controls all squares of its color"]
+        }
+      ]
+    },
+    {
+      "title": "Bishop vs Knight",
+      "content": "In open positions with pawns on both sides, the bishop generally outperforms the knight. The bishop can influence both wings simultaneously and control distant squares. The knight excels in closed positions with fixed pawn chains and when outposts are available.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/3B4/8/5N2/6K1 w - - 0 1",
+          "commentary": "Bishop vs knight endgame. With pawns on both wings, the bishop's long-range power gives it an advantage. The bishop can switch from one side to the other instantly.",
+          "expectedMove": "Bc5",
+          "hints": ["Bishop is superior in open positions", "The knight cannot control both wings at once"]
+        }
+      ]
+    },
+    {
+      "title": "Bishop Supporting Passed Pawns",
+      "content": "A bishop behind a passed pawn is a powerful combination. The bishop protects the pawn's advance while controlling promotion squares. The key is to place the bishop on the same diagonal as the pawn's promotion path.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/3P4/3B4/8/4B3 w - - 0 1",
+          "commentary": "The bishop on d3 supports the d-pawn's advance. This is a winning technique — the bishop protects the pawn while controlling key squares along its path.",
+          "expectedMove": "d5",
+          "hints": ["Push the passed pawn with bishop support", "The bishop controls the promotion diagonal"]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/8/3P4/3B4/5b2/6K1 w - - 0 1",
+      "title": "Block with the Bishop",
+      "description": "White to play. Block the black bishop's influence and advance your pawn.",
+      "targetColor": "w",
+      "expectedMoves": ["d5"],
+      "hints": ["The bishop supports the pawn from behind"],
+      "maxMoves": 1
+    }
+  ]
+}

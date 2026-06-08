@@ -1,0 +1,73 @@
+{
+  "id": "blocked-pawns",
+  "title": "Blocked Pawn Positions",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Learn how to handle blocked pawn structures: passed pawns, blockading pieces, and the critical role of king activity in locked positions.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Passed pawns",
+    "Blockading pieces",
+    "King activity",
+    "Pawn breaks",
+    "Zugzwang in blocked positions"
+  ],
+  "sections": [
+    {
+      "title": "The Blocked Pawn Chain",
+      "content": "When pawn chains lock the position, the game often becomes a struggle for king activity. The side with the more active king can create threats on the weak side of the chain. The general rule: attack on the side where your pawns are blocked.",
+      "positions": [
+        {
+          "fen": "8/8/4p3/4P3/8/8/8/8 w - - 0 1",
+          "commentary": "A blocked pawn chain. White's e5 pawn is blocked by black's e6 pawn. In such positions, the king should march to the opposite wing to create a passed pawn or exploit weaknesses.",
+          "expectedMove": "Kf3",
+          "hints": ["The king should go to the opposite wing from the block", "Look for pawn breaks or weaknesses on the flanks"]
+        }
+      ]
+    },
+    {
+      "title": "The Blockading Piece",
+      "content": "A blockading piece (usually a knight or bishop) sits in front of a passed pawn, preventing its advance. The blockader is a double-edged sword: it stops the pawn but can become a target. To break the blockade, use your king to attack the blockading piece.",
+      "positions": [
+        {
+          "fen": "8/8/8/4p3/4N3/8/8/8 w - - 0 1",
+          "commentary": "White knight blocks the black e-pawn. This is a classic blockade. The knight is well-placed, but the black king should try to attack it. If the knight is forced away, the pawn advances.",
+          "expectedMove": "Kf3",
+          "hints": ["The blockading knight controls d3, f3, c5, f5, d7, f7, c3, f3", "Bring your king to attack the blockader"]
+        }
+      ]
+    },
+    {
+      "title": "Zugzwang in Blocked Positions",
+      "content": "In blocked positions, the side to move often faces zugzwang — any move worsens their position. This is especially common in king and pawn endings where the defending king must maintain a precise square. Force the opponent to move first to win.",
+      "positions": [
+        {
+          "fen": "8/8/8/4k3/4P3/4K3/8/8 w - - 0 1",
+          "commentary": "White to move. This is a zugzwang position. If white moves the king, black gets the opposition. The key is to maintain the opposition and force black to yield.",
+          "expectedMove": "Kf3",
+          "hints": ["Maintain the opposition — keep your king opposite the black king", "Zugzwang means the opponent must move first, worsening their position"]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/4p3/4P3/8/4K3/8/4k3 w - - 0 1",
+      "title": "Opposition in Blocked Position",
+      "description": "White to play. Use the opposition to force black's king away and create a passed pawn.",
+      "targetColor": "w",
+      "expectedMoves": ["Kf3"],
+      "hints": ["Take the opposition — move your king to face the black king", "The goal is to force black's king to move away"],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/8/8/4p3/4N3/4K3/8/4k3 b - - 0 1",
+      "title": "Attack the Blockader",
+      "description": "Black to play. The white knight blocks your e-pawn. Can you attack it with your king?",
+      "targetColor": "b",
+      "expectedMoves": ["Kf2"],
+      "hints": ["Move your king toward the blockading knight", "If the knight is forced away, the pawn advances"],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "italian-game",
+  "title": "The Italian Game",
+  "category": "openings",
+  "difficulty": "beginner",
+  "description": "Study one of the oldest and most instructive openings in chess. The Italian Game teaches fundamental principles of development, central control, and piece coordination.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Classical development",
+    "Central tension",
+    "Giuoco Piano",
+    "Evans Gambit",
+    "Piece coordination"
+  ],
+  "sections": [
+    {
+      "title": "The Main Lines",
+      "content": "The Italian Game arises after 1.e4 e5 2.Nf3 Nc6 3.Bc4. It is one of the oldest openings in chess — first mentioned in 1484 by Damiano.\n\nWhy is it so popular?\n\n- **It follows all opening principles**: controls the center, develops pieces, and eyes f7.\n- **It's flexible**: can lead to sharp tactical games or quiet positional battles.\n- **It teaches fundamental ideas**: piece coordination, central tension, and attacking plans.\n\nBlack's main responses to 3.Bc4:\n\n1. **3...Bc5 (Giuoco Piano)**: The most classical response. Black mirrors White's development.\n2. **3...Nf6 (Two Knights Defense)**: A more aggressive approach, immediately challenging White's center.\n3. **3...Bc5 is the most common and best for learning** the fundamental ideas.\n\nThe Italian Game is an excellent opening for players rated 800-1800 because it produces positions that are rich in strategic and tactical content without being overwhelmingly complex.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppppppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "commentary": "The Italian Game position after 3.Bc4. White has developed two pieces and controls the center. The bishop on c4 pressures f7 and supports a future d2-d4 push. Black must now decide how to respond.",
+          "hints": ["White's setup is very natural. The bishop on c4 is well-placed, eyeing f7 and supporting central expansion."]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 3",
+          "commentary": "After 3...Bc5, Black mirrors White's development. Both bishops are on active diagonals, and both sides have developed a knight and bishop. This symmetrical position is called the Giuoco Piano (Quiet Game).",
+          "hints": ["This is a symmetrical position. Both sides have developed similarly. The game will be decided by who creates the first advantage."]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",
+          "commentary": "White castles early, securing the king and connecting the rooks. This is a very solid approach. Now White will typically continue with d3, c3 (preparing d4), or d4 directly.",
+          "hints": ["Castling early is a good principle. Now White's rook on f1 supports the center and the king is safe."]
+        }
+      ]
+    },
+    {
+      "title": "Giuoco Piano",
+      "content": "The Giuoco Piano (Italian for 'Quiet Game') is the most classical continuation of the Italian Game. It arises after 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5.\n\nThe main line continues: 4.c3 (preparing d4) 0-0 5.d4 exd4 6.cxd4 Bb4+ 7.Nc3 d6 8.0-0.\n\nKey ideas for White:\n\n- **c3 and d4**: White wants to challenge Black's central pawn and open lines for the pieces.\n- **Piece activity**: White's pieces become very active after the center opens.\n- **Development lead**: White often has a slight lead in development that can be converted into an attack.\n\nKey ideas for Black:\n\n- **Hold the center**: Black tries to maintain the e5 pawn or exchange it favorably.\n- **Counterplay**: Black looks for ...d5 breaks or queenside expansion with ...b5.\n- **Solid defense**: The Giuoco Piano can be very sharp, so precise defense is needed.\n\nThe Giuoco Piano is an excellent opening for learning because every move has a clear purpose and the positions are rich in instructive themes.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 3",
+          "commentary": "The Giuoco Piano position. White's most common continuation is 4.c3, preparing d4 to challenge the center. This is the main line and leads to rich, instructive positions.",
+          "hints": ["c3 prepares d4, which challenges Black's central pawn. This is the most ambitious and popular continuation."]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PP1P1PPP/RNBQK2R b KQkq - 5 4",
+          "commentary": "After 4.c3 0-0, Black has castled safely. Now 5.d4! is the critical move, immediately challenging the center. If 5...exd4 6.cxd4 Bb4+, Black gets a check but White gains time with 7.Nc3.",
+          "hints": ["After c3, d4 is the key move. It opens the center and activates White's pieces."]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n5/8/2BPP1b1/5N2/PP3PPP/RNBQK2R b KQ - 8 5",
+          "commentary": "After 5.d4 exd4 6.cxd4 Bb4+, Black gets a check but White responds with 7.Nc3, developing with tempo. The bishop on b4 is now awkward and will likely have to exchange or retreat.",
+          "hints": ["White gains a tempo with Nc3, attacking the bishop. This is a classic theme: develop with check or attack to gain time."]
+        }
+      ]
+    },
+    {
+      "title": "The Evans Gambit",
+      "content": "The Evans Gambit is one of the most famous gambits in chess. It arises after 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.b4!\n\nWhite sacrifices a pawn (the b4 pawn) to:\n\n1. **Gain rapid development**: After 4...Bxb4 5.c3 Ba5 6.d4, White has opened the center with excellent piece activity.\n2. **Open lines for an attack**: The c-file and d-file become powerful for White's rooks and queen.\n3. **Create lasting pressure**: Even after regaining the pawn, White's piece activity often compensates.\n\nThe Evans Gambit was hugely popular in the 19th century. Paul Morphy and Adolf Anderssen were its greatest exponents. It was considered one of the sharpest and most testing openings of its era.\n\nModern assessment:\n\n- The gambit is **sound** — White gets enough compensation for the pawn.\n- It requires **precise play** from White to maintain the initiative.\n- It's an excellent opening for **learning attacking chess**.\n\nThe main line: 4...Bxb4 5.c3 Ba5 6.d4 exd4 7.cxd4 Bb4+ 8.Nc3, and White has excellent compensation for the pawn with active pieces and open lines.",
+      "positions": [
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 3",
+          "commentary": "Instead of the quiet 4.c3, White can play the aggressive 4.b4! — the Evans Gambit. White offers a pawn to accelerate development and open lines for an attack. This is one of the most exciting gambits in chess.",
+          "hints": ["4.b4! is a bold sacrifice. White gives up a pawn for rapid development and attacking chances."]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PP1P1PPP/RNBQK2R b KQkq - 5 4",
+          "commentary": "After 4.b4 Bxb4, Black accepts the gambit. Now 5.c3! is the key follow-up, preparing d4 and attacking the bishop. If 5...Ba5 6.d4, White has opened the center with excellent piece activity.",
+          "hints": ["5.c3 attacks the bishop and prepares d4. White's compensation is the open center and active pieces."]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/8/1PB1P3/2N2N2/PP2QPPP/R1B2RK1 b - - 10 8",
+          "commentary": "After the main Evans Gambit line, White has excellent piece activity. The queen on e2 supports the center, both knights are developed, and the bishops are active. Black has an extra pawn but White's pieces are far more active — this is typical gambit compensation.",
+          "hints": ["White's pieces are incredibly active. The queen, knights, and bishops all control important central squares. This is what gambit compensation looks like."]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/pppp1ppp/2n2n2/8/1PB1P3/2N2N2/PP2QPPP/R1B2RK1 w - - 10 8",
+      "title": "Italian Game: Find the Key Move",
+      "description": "White to play in this Italian Game position. White has a powerful central break that opens lines for the pieces and creates immediate threats. Find the best move.",
+      "targetColor": "w",
+      "expectedMoves": ["d5"],
+      "hints": [
+        "Look for a central pawn break that opens lines for your pieces.",
+        "The d-pawn can advance with tempo, attacking the knight on c6.",
+        "d5! opens the diagonal for the bishop on c4 and creates threats against Black's position."
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

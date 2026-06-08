@@ -1,0 +1,63 @@
+{
+  "id": "outposts",
+  "title": "Outposts and Weak Squares",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "A protected square in enemy territory that cannot be attacked by a pawn is an outpost. Knights love outposts. Learn to create and exploit them.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Outposts",
+    "Weak squares",
+    "Knight placement",
+    "Pawn support",
+    "Permanent advantages"
+  ],
+  "sections": [
+    {
+      "title": "What Makes an Outpost",
+      "content": "An outpost is a square, usually on the fifth or sixth rank, that your piece occupies and a pawn protects, where no enemy pawn can ever drive it away. A knight on a strong outpost can be worth more than a rook.",
+      "positions": [
+        {
+          "fen": "r2qkb1r/pp2pppp/2n2n2/3N4/8/8/PPP1PPPP/R1BQKB1R b KQkq - 0 7",
+          "commentary": "The white knight sits proudly on d5 — a classic outpost. No black pawn can challenge it, making it a permanent thorn in Black's position.",
+          "expectedMove": "Nxd5",
+          "hints": [
+            "Eliminate the strong knight",
+            "Trade off the outpost piece"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Creating Weak Squares",
+      "content": "Weak squares often arise from pawn moves that can't be undone. When the opponent advances a pawn, the squares it used to guard may become permanent homes for your pieces.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/ppp2ppp/2np1n2/4p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 6",
+          "commentary": "Black's pawn structure leaves the d5 square soft. White will maneuver a knight toward d5 to establish a dominant outpost.",
+          "expectedMove": "Nd5",
+          "hints": [
+            "Head for the weak square",
+            "Plant a knight on the outpost"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r2qkb1r/pp2pppp/2n2n2/3N4/8/8/PPP1PPPP/R1BQKB1R w KQkq - 0 7",
+      "title": "Cement the Outpost",
+      "description": "White to play. Develop a piece to support the powerful d5 knight and complete development.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "c4"
+      ],
+      "hints": [
+        "Reinforce the outpost",
+        "A pawn can support the knight"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

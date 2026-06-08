@@ -1,0 +1,73 @@
+{
+  "id": "minor-piece-endings",
+  "title": "Minor Piece Endings",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Study bishop and knight endings, including same-colored bishop draws, bishop vs knight comparisons, and the power of the bishop pair.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Bishop pair advantage",
+    "Same-colored bishop draws",
+    "Bishop vs knight",
+    "Knight outposts",
+    "Wrong-colored bishop"
+  ],
+  "sections": [
+    {
+      "title": "The Bishop Pair",
+      "content": "Two bishops working together are often superior to two knights or a bishop and knight. The bishop pair can control both color complexes, create batteries, and influence both wings simultaneously. This advantage grows in open positions.",
+      "positions": [
+        {
+          "fen": "8/8/3b4/8/3B4/8/8/8 w - - 0 1",
+          "commentary": "Bishop vs bishop. The bishops are on opposite colors, so they cannot directly challenge each other. This often leads to draws unless there are weak pawns to target.",
+          "expectedMove": "Bc5",
+          "hints": ["Opposite-colored bishops cannot attack each other", "Look for weak pawns on the bishop's color"]
+        }
+      ]
+    },
+    {
+      "title": "Knight Outposts",
+      "content": "A knight on an outpost — a square protected by pawns where the opponent cannot challenge it with pawns — is a powerful asset. The knight controls key squares, attacks weak pawns, and cannot be easily displaced.",
+      "positions": [
+        {
+          "fen": "8/8/8/3N4/3p4/8/8/8 w - - 0 1",
+          "commentary": "The knight on d5 is on an outpost. It cannot be challenged by black pawns and controls important central squares. This is a typical winning minor piece advantage.",
+          "expectedMove": "Kf3",
+          "hints": ["The knight on d5 controls e3, f4, c3, b4", "Use the knight to support king advances and pawn attacks"]
+        }
+      ]
+    },
+    {
+      "title": "Wrong-Colored Bishop",
+      "content": "A 'wrong-colored bishop' is one that cannot attack the opponent's pawns because they are on the opposite color. This is a major drawing resource — even with an extra pawn, the bishop may be unable to make progress.",
+      "positions": [
+        {
+          "fen": "8/8/8/4p3/4B3/8/8/8 w - - 0 1",
+          "commentary": "The white bishop on e4 is the wrong color — it cannot attack the e5 pawn. Black can often hold this position despite being a pawn down, as the bishop cannot penetrate.",
+          "expectedMove": "Bf5",
+          "hints": ["The bishop cannot attack pawns on the opposite color", "Try to create passed pawns on the bishop's color"]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/3n4/8/3B4/8/8/8 w - - 0 1",
+      "title": "Bishop vs Knight",
+      "description": "White to play. The bishop is more active than the knight. Try to create weaknesses that the bishop can exploit.",
+      "targetColor": "w",
+      "expectedMoves": ["Bc5"],
+      "hints": ["The bishop controls long diagonals", "Look for squares the knight cannot reach"],
+      "maxMoves": 1
+    },
+    {
+      "fen": "8/8/8/4p3/4B3/8/8/8 b - - 0 1",
+      "title": "Wrong-Colored Bishop Defense",
+      "description": "Black to play. The white bishop is the wrong color. Use this to your advantage by keeping pawns on the opposite color.",
+      "targetColor": "b",
+      "expectedMoves": ["Kf8"],
+      "hints": ["Keep your king active to defend", "The bishop cannot attack pawns on dark squares"],
+      "maxMoves": 1
+    }
+  ]
+}

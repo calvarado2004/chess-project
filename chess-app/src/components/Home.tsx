@@ -45,6 +45,13 @@ export default function Home() {
       color: '#cba6f7',
       to: '/pgn',
     },
+    {
+      icon: '📚',
+      title: 'Learn',
+      description: 'Study openings, tactics, and endgame technique',
+      color: '#f5c2e7',
+      to: '/learn',
+    },
   ];
 
   return (

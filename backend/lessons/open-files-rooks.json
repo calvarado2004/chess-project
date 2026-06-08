@@ -1,0 +1,63 @@
+{
+  "id": "open-files-rooks",
+  "title": "Open Files and Rooks",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Rooks crave open files. Learn how to seize and exploit open and half-open files, double rooks, and invade the seventh rank.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Open files",
+    "Half-open files",
+    "Doubling rooks",
+    "The seventh rank",
+    "Rook activity"
+  ],
+  "sections": [
+    {
+      "title": "Seizing the Open File",
+      "content": "A file with no pawns is an open file — a highway for rooks. The side that controls it first can invade the enemy position. Place a rook on the file and contest control.",
+      "positions": [
+        {
+          "fen": "3r2k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+          "commentary": "The d-file is open. Whoever controls it dominates. White should contest or seize the file and look to penetrate to the seventh or eighth rank.",
+          "expectedMove": "Rd1",
+          "hints": [
+            "Contest the only open file",
+            "Rooks belong on open files"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Seventh Rank",
+      "content": "A rook on the seventh rank (the enemy's second) attacks pawns and traps the king. Two rooks on the seventh — \"pigs on the seventh\" — are often decisive.",
+      "positions": [
+        {
+          "fen": "6k1/R4ppp/8/8/8/8/5PPP/6K1 w - - 0 1",
+          "commentary": "A rook on the seventh rank devours pawns and cuts off the enemy king. This is one of the most powerful rook placements in chess.",
+          "expectedMove": "Ra8",
+          "hints": [
+            "Attack from behind",
+            "Use the rook's activity"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "3r2k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+      "title": "Claim the File",
+      "description": "White to play. Contest the open d-file with your rook.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Rd1"
+      ],
+      "hints": [
+        "Put the rook on the open file",
+        "Challenge for control"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

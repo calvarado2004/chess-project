@@ -1,0 +1,63 @@
+{
+  "id": "evaluating-positions",
+  "title": "How to Evaluate a Position",
+  "category": "fundamentals",
+  "difficulty": "intermediate",
+  "description": "Judge any position using four pillars: material, king safety, pawn structure, and piece activity. A clear evaluation tells you whether to attack, defend, or simplify.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Material balance",
+    "King safety",
+    "Pawn structure",
+    "Piece activity",
+    "Making a plan"
+  ],
+  "sections": [
+    {
+      "title": "The Four Pillars",
+      "content": "Evaluate every position by asking four questions: Who has more material? Whose king is safer? Who has the better pawn structure? Whose pieces are more active? The answers point you to the right plan.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 7",
+          "commentary": "A balanced position. Material is equal, both kings are castled, structures are sound. The battle will be decided by who activates their pieces better.",
+          "expectedMove": "Be3",
+          "hints": [
+            "Assess all four factors",
+            "Activity often decides equal positions"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "From Evaluation to Plan",
+      "content": "Your evaluation dictates your strategy. If you are better, increase the pressure and avoid simplifying into nothing. If you are worse, seek activity or simplify toward a draw. If equal, improve your worst-placed piece.",
+      "positions": [
+        {
+          "fen": "r4rk1/ppp2ppp/2n1bn2/3qp3/8/2NP1NP1/PPP1PPBP/R2Q1RK1 w - - 0 11",
+          "commentary": "When unsure what to do, improve your worst-placed piece. This simple rule turns a vague position into a concrete plan.",
+          "expectedMove": "Re1",
+          "hints": [
+            "Improve your worst piece",
+            "Let the evaluation guide the plan"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r4rk1/ppp2ppp/2n1bn2/3qp3/8/2NP1NP1/PPP1PPBP/R2Q1RK1 w - - 0 11",
+      "title": "Improve a Piece",
+      "description": "White to play. Activate the least useful rook by bringing it toward an open or soon-to-open file.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Re1"
+      ],
+      "hints": [
+        "Find your worst-placed piece",
+        "A rook belongs on a central file"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

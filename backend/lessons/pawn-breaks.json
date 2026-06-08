@@ -1,0 +1,63 @@
+{
+  "id": "pawn-breaks",
+  "title": "Pawn Breaks and Levers",
+  "category": "middlegame",
+  "difficulty": "advanced",
+  "description": "Pawn breaks open lines, free your pieces, and change the structure in your favor. Learn to identify and time the critical lever in any position.",
+  "estimatedMinutes": 22,
+  "keyConcepts": [
+    "Pawn levers",
+    "Opening lines",
+    "Timing breaks",
+    "Changing structure",
+    "Creating weaknesses"
+  ],
+  "sections": [
+    {
+      "title": "The Lever Concept",
+      "content": "A pawn lever is a pawn advance that, if captured, opens a file or diagonal. Breaks like c5, f5, d5, or e5 are the engines of middlegame play — they transform static positions into dynamic ones.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP3PPP/R1BQ1RK1 b - c3 0 8",
+          "commentary": "Black can consider the ...dxc4 or ...c5 break to challenge White's center. Choosing the right lever defines the entire plan.",
+          "expectedMove": "c5",
+          "hints": [
+            "Strike at the center",
+            "Open lines for your pieces"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Timing Is Everything",
+      "content": "A break played too early may just create weaknesses; too late and the chance is gone. Prepare a break by bringing pieces to support it, then strike when the lines opening favor you.",
+      "positions": [
+        {
+          "fen": "2rq1rk1/pp1bbppp/2n1pn2/3p4/3P4/2NBPN2/PP3PPP/R1BQ1RK1 b - - 0 10",
+          "commentary": "Black has prepared the ...e5 break with full piece support. Now opening the center will activate the well-placed pieces.",
+          "expectedMove": "e5",
+          "hints": [
+            "Open the center with support",
+            "Activate your developed pieces"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP3PPP/R1BQ1RK1 b - c3 0 8",
+      "title": "Choose the Lever",
+      "description": "Black to play. Strike at White's center with the thematic queenside break.",
+      "targetColor": "b",
+      "expectedMoves": [
+        "c5"
+      ],
+      "hints": [
+        "Challenge the d4 pawn",
+        "The c5 break opens lines"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

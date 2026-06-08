@@ -12,7 +12,11 @@ import PGNLoader from './components/PGNLoader';
 import Profile from './components/Profile';
 import GameHistory from './components/GameHistory';
 import Home from './components/Home';
+import Learn from './components/Learn';
+import LessonsList from './components/LessonsList';
+import TheoryLesson from './components/TheoryLesson';
 import { isNativeApp } from './lib/auth';
+import { TheoryProvider } from './context/TheoryContext';
 import './index.css';
 
 function AppRoutes() {
@@ -56,6 +60,9 @@ function AppRoutes() {
       <Route path="/pgn" element={<MainApp><PGNLoader /></MainApp>} />
       <Route path="/profile" element={<MainApp><ProtectedRoute><Profile /></ProtectedRoute></MainApp>} />
       <Route path="/history" element={<MainApp><GameHistory /></MainApp>} />
+      <Route path="/learn" element={<MainApp><Learn /></MainApp>} />
+      <Route path="/learn/:categoryId" element={<MainApp><LessonsList /></MainApp>} />
+      <Route path="/learn/lesson/:id" element={<MainApp><TheoryLesson /></MainApp>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -192,7 +199,9 @@ export default function App() {
     <Router>
       <AuthProvider>
         <GameWebSocketProvider>
-          <AppRoutes />
+          <TheoryProvider>
+            <AppRoutes />
+          </TheoryProvider>
         </GameWebSocketProvider>
       </AuthProvider>
     </Router>

@@ -1,0 +1,129 @@
+{
+  "id": "piece-activity",
+  "title": "Piece Activity and Coordination",
+  "category": "middlegame",
+  "difficulty": "beginner",
+  "description": "Learn to evaluate piece activity, understand the value of well-placed pieces, and develop the ability to coordinate your pieces for maximum effectiveness.",
+  "estimatedMinutes": 15,
+  "keyConcepts": [
+    "Active vs passive pieces",
+    "Piece coordination",
+    "Outposts",
+    "Bishop pair advantage",
+    "Good vs bad bishops",
+    "Piece placement"
+  ],
+  "sections": [
+    {
+      "title": "Good vs Bad Pieces",
+      "content": "Not all pieces are equal. A well-placed piece can be worth more than a poorly placed piece of the same type. Understanding piece activity is one of the most important skills in chess.\n\n**Active pieces:**\n\n- Control important squares (center, open files, diagonals).\n- Have multiple useful moves available.\n- Support each other and create threats.\n- Restrict the opponent's pieces.\n\n**Passive pieces:**\n\n- Are confined to a small area of the board.\n- Have few useful moves available.\n- Do not participate in the main action.\n- Can become targets for the opponent.\n\n**How to improve piece activity:**\n\n1. **Place pieces on active squares**: Center squares, open files, and long diagonals.\n2. **Remove obstacles**: Pawns and pieces that block your own pieces should be moved or exchanged.\n3. **Create targets**: Weak squares and pawns that your pieces can attack.\n4. **Coordinate with other pieces**: Pieces that work together are more powerful than isolated pieces.\n\n**Good vs bad bishops:**\n\n- A **good bishop** operates on open diagonals and is not blocked by its own pawns.\n- A **bad bishop** is blocked by its own pawns and has limited scope.\n- The bishop's quality depends on the pawn structure — the same bishop can be good in one structure and bad in another.\n\nThe key principle: **an active piece is worth more than a passive piece of the same type**. Always strive to improve the activity of your pieces.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White's bishop on c4 is an active piece — it controls the long a2-g8 diagonal and pressures f7. Compare this to a bishop on c1, which would be passive and blocked by pawns.",
+          "hints": [
+            "The bishop on c4 is active because it controls an important diagonal.",
+            "Active pieces control important squares and create threats.",
+            "Compare the bishop on c4 to a bishop on c1 — the difference in activity is huge."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White's knight on f3 is active — it controls d4, e5, g5, and h4. It supports the e4 pawn and can jump to g5 or e5 for attacks. A knight on b1 would be passive by comparison.",
+          "hints": [
+            "The knight on f3 controls important central squares.",
+            "Knights are most active when placed near the center.",
+            "A knight on the rim is dim — always try to keep knights central."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Piece Coordination",
+      "content": "Piece coordination means your pieces work together to control squares, create threats, and support each other. Coordinated pieces are far more powerful than the sum of their individual values.\n\n**How pieces coordinate:**\n\n1. **Controlling the same squares**: Multiple pieces controlling the same square makes it very difficult for the opponent to occupy.\n2. **Supporting each other**: Pieces that defend each other cannot be easily captured.\n3. **Creating combined threats**: Two pieces attacking the same target creates a double attack.\n4. **Covering escape squares**: In attacks, pieces cover the squares the opponent's king might escape to.\n\n**Examples of coordination:**\n\n- **Rooks on the same file**: Doubling rooks on an open file creates overwhelming pressure.\n- **Queen and rook on the same rank**: A classic mating battery.\n- **Bishop and knight**: The bishop controls long diagonals while the knight controls nearby squares.\n- **Knight and pawn**: A knight supported by a pawn is a strong attacking unit.\n\n**How to improve coordination:**\n\n1. **Develop pieces to complementary squares**: Each piece should cover squares the others don't.\n2. **Avoid blocking your own pieces**: Pieces should not obstruct each other's lines of action.\n3. **Create batteries**: Place pieces behind each other on the same line for maximum power.\n4. **Plan your moves**: Think about how each move improves the coordination of your pieces.\n\nThe key principle: **coordinated pieces are exponentially more powerful than isolated pieces**.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White's pieces are well-coordinated. The bishop on c4, knight on f3, and queen on d1 all support the e4 pawn and pressure Black's position. The rooks are connected and ready to be placed on open files.",
+          "hints": [
+            "White's pieces work together to control the center and pressure Black's position.",
+            "Coordinated pieces are more powerful than isolated pieces.",
+            "Notice how the bishop, knight, and queen all support the e4 pawn."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White's queen on d1 and rook on f1 are coordinated along the first rank. If the d-file opens, the queen and rook can double on it for maximum pressure. This is a classic coordination pattern.",
+          "hints": [
+            "The queen and rook are connected and ready to double on open files.",
+            "Doubled rooks on an open file create overwhelming pressure.",
+            "Coordination means pieces work together to create threats."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outposts",
+      "content": "An outpost is a square where a piece (usually a knight) can be placed safely, protected by a pawn, and cannot be easily driven away by enemy pawns. Outposts are one of the most powerful strategic concepts in chess.\n\n**Characteristics of a good outpost:**\n\n- **Protected by a pawn**: The square is defended by a friendly pawn.\n- **Cannot be attacked by enemy pawns**: No enemy pawns can attack the square.\n- **In the enemy's half**: The outpost is in the opponent's territory.\n- **Central or near-central**: Outposts on d5, e5, d4, or e4 are the most valuable.\n\n**Why outposts are powerful:**\n\n- **The knight on an outpost** cannot be driven away by pawns.\n- **It controls important squares** around it.\n- **It creates permanent pressure** on the opponent's position.\n- **It can support pawn advances** or piece attacks.\n\n**How to create outposts:**\n\n1. **Advance pawns to support the square**: e4 supports d5 and f5; d4 supports c5 and e5.\n2. **Exchange pawns that could attack the square**: Remove enemy pawns that could challenge the outpost.\n3. **Place a knight on the outpost**: The knight is the best piece for an outpost.\n4. **Support the knight**: Use other pieces to defend the knight on the outpost.\n\n**How to eliminate outposts:**\n\n1. **Exchange the knight**: Trade the knight on the outpost for another piece.\n2. **Blockade the square**: Place a piece on the square to prevent the knight from occupying it.\n3. **Attack the supporting pawn**: If the pawn supporting the outpost is weak, attack it.\n\nThe key principle: **a knight on an outpost is one of the most powerful pieces on the board**.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White can aim for a knight outpost on d5. The d5 square is protected by the e4 pawn and cannot be attacked by Black's pawns. A knight on d5 would be a powerful piece.",
+          "hints": [
+            "The d5 square is a potential outpost for White's knight.",
+            "A knight on d5 would be protected by the e4 pawn.",
+            "Outposts are squares where a piece can be placed safely and cannot be driven away."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "If White can place a knight on d5, it would control c7, e7, f6, and b6. The knight on d5 would be a permanent thorn in Black's position, creating ongoing pressure.",
+          "hints": [
+            "A knight on d5 controls important squares in Black's position.",
+            "The knight on d5 cannot be driven away by pawns.",
+            "This is a classic outpost — a powerful strategic asset."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Two Bishops",
+      "content": "The bishop pair — having both bishops while the opponent has only one bishop (or none) — is a significant advantage in open positions. The two bishops can control both colors of squares and create powerful batteries.\n\n**When the bishop pair is strong:**\n\n- **Open positions**: When the center is open, bishops have long diagonals to operate on.\n- **Two-wing attacks**: Bishops can attack on both wings simultaneously.\n- **Endgames**: In open endgames, the bishop pair is often worth a full pawn.\n- **Dynamic positions**: When the position is fluid, bishops can quickly switch from defense to attack.\n\n**When the bishop pair is weak:**\n\n- **Closed positions**: When pawns block the diagonals, bishops lose their range.\n- **One-sided positions**: When the action is on one wing, having two bishops doesn't help much.\n- **Against a strong knight**: A well-placed knight can be more effective than two bishops in closed positions.\n\n**How to use the bishop pair:**\n\n1. **Control both colors**: Use each bishop on its own color to control the entire board.\n2. **Create batteries**: Place bishops on the same diagonal for maximum power.\n3. **Switch sides**: Bishops can quickly switch from one wing to the other.\n4. **Support pawn advances**: Bishops support pawn storms and central breaks.\n\nThe key principle: **the bishop pair is a long-term advantage that grows stronger in open positions**.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "White has the bishop pair (bishops on c1 and c4). The bishop on c4 is active on the a2-g8 diagonal, while the bishop on c1 can be developed to d3 or g5. The bishop pair gives White flexibility and control over both colors.",
+          "hints": [
+            "White has both bishops, giving control over both light and dark squares.",
+            "The bishop pair is a long-term advantage in open positions.",
+            "Each bishop operates on its own color, covering the entire board."
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+          "commentary": "The bishop on c4 and the potential bishop on d3 create a powerful battery. Together, they control the long diagonals and support the center. This is a classic bishop pair setup.",
+          "hints": [
+            "The bishops on c4 and d3 would control both diagonals.",
+            "Bishops on complementary diagonals create maximum pressure.",
+            "The bishop pair is most powerful when the position is open."
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/ppp2ppp/2np1n2/8/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 4 7",
+      "title": "Improve Piece Placement",
+      "description": "White to play. Improve the placement of your pieces to increase their activity and coordination.",
+      "targetColor": "w",
+      "expectedMoves": ["Be3", "Qd2", "Rfe1"],
+      "hints": [
+        "Develop the dark-squared bishop to e3, controlling important diagonals.",
+        "Place the queen on d2, supporting the center and preparing to join an attack.",
+        "Place the rook on e1, controlling the e-file and supporting the center."
+      ],
+      "maxMoves": 3
+    }
+  ]
+}

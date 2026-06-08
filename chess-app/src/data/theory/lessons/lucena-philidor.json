@@ -1,0 +1,63 @@
+{
+  "id": "lucena-philidor",
+  "title": "Lucena and Philidor Positions",
+  "category": "endings",
+  "difficulty": "advanced",
+  "description": "The two most important rook endgames. The Lucena shows how to win with an extra pawn; the Philidor shows how to draw a pawn down. Know both cold.",
+  "estimatedMinutes": 25,
+  "keyConcepts": [
+    "Building a bridge",
+    "The third-rank defense",
+    "Cutting off the king",
+    "Rook activity",
+    "Drawing technique"
+  ],
+  "sections": [
+    {
+      "title": "The Lucena Position (Winning)",
+      "content": "With a rook and pawn versus a rook, the Lucena position is the key winning method. The technique is \"building a bridge\" — using the rook to shield your king from checks so the pawn can promote.",
+      "positions": [
+        {
+          "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+          "commentary": "The Lucena position. White wins by building a bridge: the rook will cover the checks while the king escorts the pawn to promotion.",
+          "expectedMove": "Rc4",
+          "hints": [
+            "Prepare to block checks",
+            "Build a bridge for the king"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Philidor Position (Drawing)",
+      "content": "When defending a rook down a pawn, the Philidor draw is your lifeline. Keep your rook on the third rank to stop the enemy king from advancing, then check from behind once the pawn pushes.",
+      "positions": [
+        {
+          "fen": "4k3/8/8/4P3/4K3/8/r7/4R3 b - - 0 1",
+          "commentary": "The Philidor drawing setup: Black keeps the rook active and ready to check from behind once the white pawn advances past the third rank, holding the draw.",
+          "expectedMove": "Ra1",
+          "hints": [
+            "Defend from the third rank",
+            "Check from behind when the pawn pushes"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+      "title": "Build the Bridge",
+      "description": "White to play. Begin the Lucena winning method by lifting the rook to the fourth rank.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Rc4"
+      ],
+      "hints": [
+        "Lift the rook to shield the king",
+        "The fourth rank builds the bridge"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

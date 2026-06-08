@@ -1,0 +1,63 @@
+{
+  "id": "scandinavian",
+  "title": "The Scandinavian Defense",
+  "category": "openings",
+  "difficulty": "beginner",
+  "description": "A direct defense: Black immediately challenges e4 with 1...d5. Simple to learn, it leads to clear plans and a sound, if slightly passive, position.",
+  "estimatedMinutes": 16,
+  "keyConcepts": [
+    "Immediate central challenge",
+    "Early queen development",
+    "Solid structure",
+    "Quick development",
+    "Clear plans"
+  ],
+  "sections": [
+    {
+      "title": "The Direct Challenge",
+      "content": "After 1.e4 d5, Black instantly attacks the e4 pawn. White almost always takes with 2.exd5, after which Black recaptures with the queen or plays a gambit with Nf6.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2",
+          "commentary": "The Scandinavian Defense. Black challenges the center immediately. White typically captures on d5.",
+          "expectedMove": "exd5",
+          "hints": [
+            "Win the central pawn",
+            "Force Black to recapture"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Queen Recapture",
+      "content": "After 2...Qxd5 3.Nc3, the queen is hit by the knight and must move, usually to a5 or d6. Black gains development time for White but reaches a solid structure.",
+      "positions": [
+        {
+          "fen": "rnb1kbnr/ppp1pppp/8/q7/8/2N5/PPPP1PPP/R1BQKBNR w KQkq - 2 4",
+          "commentary": "The queen has retreated to a5 after being attacked. Black's structure is sound; White is slightly ahead in development.",
+          "expectedMove": "d4",
+          "hints": [
+            "Build the center with tempo",
+            "Develop while gaining space"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnb1kbnr/ppp1pppp/8/3q4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
+      "title": "Gain a Tempo",
+      "description": "White to play. Develop a knight while attacking the exposed black queen.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nc3"
+      ],
+      "hints": [
+        "Hit the queen with development",
+        "Knight to c3"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

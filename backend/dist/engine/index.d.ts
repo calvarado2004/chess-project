@@ -3,4 +3,6 @@ export type { Coord, ChessMove, GameStatus, CastlingRights, GameMode, } from './
 export { createEmptyBoard, initBoard, isSquareAttackedBy, findKing, isInCheck, pseudoLegalMoves, getLegalMoves, getAllLegalMoves, applyMoveToBoard, createInitialState, cloneState, } from './logic.js';
 export type { GameContext } from './logic.js';
 export { generateFEN, parseUCIMove } from './notation.js';
+export { calculateRatingChange, calculateELOStats, calculateAveragePerformance, calculatePerformanceRating, expectedScore, getKFactor, } from './elo.js';
+export type { ELOResult } from './elo.js';
 //# sourceMappingURL=index.d.ts.map

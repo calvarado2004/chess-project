@@ -1,0 +1,64 @@
+{
+  "id": "common-mistakes",
+  "title": "Common Mistakes to Avoid",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "description": "Avoid the errors that cost beginners and club players the most points: hanging pieces, ignoring threats, premature attacks, and neglecting king safety.",
+  "estimatedMinutes": 15,
+  "keyConcepts": [
+    "Blunder checking",
+    "King safety",
+    "Counting attackers",
+    "Avoiding premature attacks",
+    "Responding to threats"
+  ],
+  "sections": [
+    {
+      "title": "Always Check for Threats",
+      "content": "Before every move, ask: what is my opponent threatening? Most lost games come from missing a simple threat. Look for checks, captures, and attacks against your pieces before deciding on your plan.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/ppp2ppp/8/3pp3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq d6 0 3",
+          "commentary": "Before grabbing material, always ask what the opponent threatens in reply. A two-second safety check prevents most blunders.",
+          "expectedMove": "Nxe5",
+          "hints": [
+            "Look before you leap",
+            "Check what the opponent threatens"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Don't Attack Too Early",
+      "content": "Launching an attack before completing development usually backfires. A premature queen raid or pawn lunge can be repelled with tempo, leaving the attacker behind in development and exposed.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/6P1/8/PPPPPP1P/RNBQKBNR b KQkq g3 0 2",
+          "commentary": "Weakening pawn moves like g4 create lasting holes around the king. Avoid loosening your structure without a concrete reason.",
+          "expectedMove": "Qh4",
+          "hints": [
+            "Punish premature weakening",
+            "Exploit the weakened kingside"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+      "title": "Punish the Weakening",
+      "description": "A reminder of why loose pawn moves are dangerous. White must now deal with the threat to the king — the lesson is in the danger created.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Ke2",
+        "Nf3"
+      ],
+      "hints": [
+        "The king is exposed",
+        "Weak pawn moves invite attacks"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

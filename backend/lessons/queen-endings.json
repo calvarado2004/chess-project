@@ -1,0 +1,79 @@
+{
+  "id": "queen-endings",
+  "title": "Queen Endings Fundamentals",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Learn the essential principles of queen endings: checking from behind, avoiding stalemate, and queen versus pawn conversions.",
+  "estimatedMinutes": 25,
+  "keyConcepts": ["Checking from behind", "Stalemate prevention", "Queen vs pawn", "Opposition with queen", "Perpetual check"],
+  "sections": [
+    {
+      "title": "The Power of the Queen in Endings",
+      "content": "Queen endings are the most complex endgame type. The queen's power often leads to draws through perpetual check, but accurate technique can convert winning positions. The golden rule: check from behind whenever possible.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/8/4q3/5K2/7k w - - 0 1",
+          "commentary": "White to move. The queen is far from the action. In queen endings, the side who can check from behind (with the opponent's king in front of their queen) often gains a decisive advantage.",
+          "expectedMove": "Ke2",
+          "hints": ["Try to get your king closer to the queen to support advancement", "The king should head toward the center"]
+        },
+        {
+          "fen": "8/8/8/8/8/8/5K2/4Q3 w - - 0 1",
+          "commentary": "White queen behind the black king. This is the ideal position — checking from behind forces the king backward while your own king advances.",
+          "expectedMove": "Qe8+",
+          "hints": ["Check from behind — put the queen on the far rank", "This forces the black king away from your advancing king"]
+        }
+      ]
+    },
+    {
+      "title": "Avoiding Stalemate Traps",
+      "content": "Stalemate is the #1 practical problem in queen endings. When you have a queen against a lone king, you must be careful not to accidentally stalemate. Always leave the defending king an escape square until you can deliver checkmate.",
+      "positions": [
+        {
+          "fen": "7K/8/8/8/8/8/6Q1/7k w - - 0 1",
+          "commentary": "White to move. DO NOT play Qg1+ — that would be stalemate! Instead, use your king to help corner the black king. The mate requires both queen and king working together.",
+          "expectedMove": "Kg8",
+          "hints": ["Qg1+ would stalemate — never leave the defending king with no legal moves", "Use your king to restrict the black king's space", "March the king toward the black king"]
+        },
+        {
+          "fen": "8/8/8/8/8/8/5Q2/6K1 w - - 0 1",
+          "commentary": "Correct technique: the king approaches while the queen stays at a distance, gradually reducing the black king's space. This avoids stalemate while making progress.",
+          "expectedMove": "Qf7",
+          "hints": ["Keep the queen close enough to control squares but far enough to avoid stalemate", "The goal is to drive the black king to the edge of the board"]
+        }
+      ]
+    },
+    {
+      "title": "Queen vs Passed Pawn",
+      "content": "A queen can often stop a passed pawn, but timing is critical. The general rule: if the defending king is within a certain distance of the promotion square, the queen alone can stop the pawn. If the king is too far, you need your own king to help.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/8/5P2/5Q2/7k w - - 0 1",
+          "commentary": "White to move. The black king is far from the f-pawn. Can the queen alone stop promotion? Yes — by checking from the side or behind, the queen can delay long enough for the white king to arrive.",
+          "expectedMove": "Qf7",
+          "hints": ["Control the promotion square f8", "Check from the side to delay the pawn", "The queen alone can often hold a distant pawn"]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/8/8/8/5K2/4Q3 w - - 0 1",
+      "title": "Check from Behind",
+      "description": "White to play and win. Use the checking-from-behind technique to force the black king back while your king advances.",
+      "targetColor": "w",
+      "expectedMoves": ["Qe8+"],
+      "hints": ["Place the queen on the far rank to check from behind"],
+      "maxMoves": 1
+    },
+    {
+      "fen": "7K/8/8/8/8/8/6Q1/7k w - - 0 1",
+      "title": "Avoid Stalemate",
+      "description": "White to play toward checkmate. Do NOT stalemate — use your king to help corner the black king.",
+      "targetColor": "w",
+      "expectedMoves": ["Kg8"],
+      "hints": ["Qg1+ is stalemate — bring the king closer instead"],
+      "maxMoves": 1
+    }
+  ]
+}

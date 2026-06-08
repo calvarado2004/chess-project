@@ -1,0 +1,65 @@
+{
+  "id": "zugzwang",
+  "title": "Zugzwang",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "Zugzwang is the situation where any move worsens your position — but you must move. It is the deciding factor in countless endgames. Learn to recognize and create it.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Compulsion to move",
+    "Mutual zugzwang",
+    "Waiting moves",
+    "Endgame technique",
+    "Tempo"
+  ],
+  "sections": [
+    {
+      "title": "Forced to Worsen",
+      "content": "In most positions, having the move is good. In zugzwang it is a curse: every legal move makes things worse, yet passing is illegal. Endgames are where zugzwang most often decides the result.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/8/1k6/p7/K7 w - - 0 1",
+          "commentary": "White is in zugzwang. Any king move either allows the pawn to promote or loses immediately. The compulsion to move is fatal.",
+          "expectedMove": "Ka1",
+          "hints": [
+            "Recognize there are no good moves",
+            "Every move loses ground"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Creating Zugzwang",
+      "content": "Strong players engineer zugzwang by removing the opponent's useful moves until only damaging ones remain. A well-timed waiting move can hand the opponent a lost position.",
+      "positions": [
+        {
+          "fen": "8/p7/P7/8/8/8/1k6/K7 w - - 0 1",
+          "commentary": "With pawns locked, the position becomes a pure king battle where running out of moves — zugzwang — determines who must give way.",
+          "expectedMove": "Kb1",
+          "hints": [
+            "Make a waiting move",
+            "Hand the opponent the burden of moving"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/3k4/3p4/3K4/8/8 w - - 0 1",
+      "title": "Feel the Squeeze",
+      "description": "White to move and the king is forced to give way. Step aside while keeping in front of the pawn.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Kd2",
+        "Ke2",
+        "Kc2"
+      ],
+      "hints": [
+        "You must move even though it hurts",
+        "Stay as close to the pawn as possible"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

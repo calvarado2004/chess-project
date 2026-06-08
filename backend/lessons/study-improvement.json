@@ -1,0 +1,63 @@
+{
+  "id": "study-improvement",
+  "title": "How to Study and Improve",
+  "category": "fundamentals",
+  "difficulty": "beginner",
+  "description": "Practical advice for getting better: solve tactics daily, analyze your own games, learn essential endgames, and study master games. A roadmap to real progress.",
+  "estimatedMinutes": 15,
+  "keyConcepts": [
+    "Tactics training",
+    "Analyzing your games",
+    "Endgame study",
+    "Learning from masters",
+    "Consistent practice"
+  ],
+  "sections": [
+    {
+      "title": "Tactics and Endgames First",
+      "content": "The fastest way to gain rating is daily tactics practice — pattern recognition wins games at every level. Pair this with the essential endgames (king and pawn, basic rook endings) which decide a huge share of games.",
+      "positions": [
+        {
+          "fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+          "commentary": "Studying simple winning techniques like rook endgames pays off in real games. Endgame knowledge converts small advantages into full points.",
+          "expectedMove": "Rd8",
+          "hints": [
+            "Practice essential endgames",
+            "Technique turns advantages into wins"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Analyze Your Own Games",
+      "content": "The single most valuable study habit is reviewing your own games — especially losses. Find the moment things went wrong, understand why, and you will stop repeating the same mistakes. Studying annotated master games builds positional understanding over time.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "Improvement is a cycle: play, analyze, learn, repeat. Review your games honestly, study masters, and practice consistently to climb steadily.",
+          "expectedMove": "d4",
+          "hints": [
+            "Review your own games",
+            "Learn from every loss"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+      "title": "Use Your Rook",
+      "description": "White to play. Demonstrate basic rook activity by seizing the open file with an aggressive rook move.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Rd8"
+      ],
+      "hints": [
+        "Activate the rook",
+        "Invade on the open file"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

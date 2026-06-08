@@ -1,0 +1,63 @@
+{
+  "id": "kings-indian",
+  "title": "The King's Indian Defense",
+  "category": "openings",
+  "difficulty": "advanced",
+  "description": "A hypermodern, fighting defense. Black lets White build a big center, then strikes back with e5 or c5 and launches a kingside pawn storm.",
+  "estimatedMinutes": 25,
+  "keyConcepts": [
+    "Hypermodern strategy",
+    "Fianchetto",
+    "Kingside pawn storm",
+    "Central counterstrike",
+    "Closed center dynamics"
+  ],
+  "sections": [
+    {
+      "title": "Inviting the Center",
+      "content": "After 1.d4 Nf6 2.c4 g6, Black prepares to fianchetto the bishop and allows White a broad pawn center, planning to undermine it later. This is hypermodern thinking in action.",
+      "positions": [
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "The King's Indian setup begins. Black will fianchetto with Bg7 and castle, then counter the center with e5.",
+          "expectedMove": "Nc3",
+          "hints": [
+            "Build the big center",
+            "Develop and support e4"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Kingside Attack",
+      "content": "In the classical King's Indian, the center locks and the play becomes a race: White attacks on the queenside, Black storms the kingside with f5-f4, g5-g4 aiming at White's king.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp1npbp/3p1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
+          "commentary": "A classical King's Indian. The center is closed; Black prepares f5 to attack the kingside while White expands with c5 on the other wing.",
+          "expectedMove": "f5",
+          "hints": [
+            "Start the kingside pawn storm",
+            "Strike at White's e4 pawn"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 1 4",
+      "title": "Claim the Center",
+      "description": "White to play. Occupy the center with a pawn now that Black has committed to the fianchetto.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "e4"
+      ],
+      "hints": [
+        "Take full central control",
+        "Build the broad pawn center"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "slav-defense",
+  "title": "The Slav Defense",
+  "category": "openings",
+  "difficulty": "intermediate",
+  "description": "A rock-solid answer to the Queen's Gambit. Black supports d5 with c6 instead of e6, keeping the light-squared bishop free to develop.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Solid d5 support",
+    "Free light bishop",
+    "Pawn structure integrity",
+    "The c4-d5 tension",
+    "Queenside development"
+  ],
+  "sections": [
+    {
+      "title": "Supporting d5 with c6",
+      "content": "After 1.d4 d5 2.c4 c6, Black defends the d5 pawn while keeping the c8 bishop's diagonal open — a key improvement over the Queen's Gambit Declined.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "The Slav Defense. Black's c6 supports d5 without blocking the light-squared bishop, which can later reach f5 or g4.",
+          "expectedMove": "Nf3",
+          "hints": [
+            "Develop the kingside",
+            "Control e5 before committing"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Releasing the Bishop",
+      "content": "A core Slav idea is to play dxc4 at the right moment and develop the bishop to f5 or g4. Timing the capture and freeing the bishop is the strategic heart of the opening.",
+      "positions": [
+        {
+          "fen": "rn1qkbnr/pp2pppp/2p5/3p1b2/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 1 5",
+          "commentary": "Black has developed the light-squared bishop to f5 — the dream setup of the Slav. The structure is harmonious and solid.",
+          "expectedMove": "e3",
+          "hints": [
+            "Solidify the center",
+            "Open the f1 bishop"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 1 4",
+      "title": "Develop the Kingside",
+      "description": "White to play. Bring the king's knight into the game toward e5 control.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nf3"
+      ],
+      "hints": [
+        "Develop a knight",
+        "Prepare to castle"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}
