@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 import { query } from './index.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function runMigrations() {
-    const sqlPath = path.join(__dirname, '../../../init-db.sql');
+    // init-db.sql sits at the backend root (one level above src/ and dist/).
+    const sqlPath = path.join(__dirname, '../../init-db.sql');
     const sql = fs.readFileSync(sqlPath, 'utf-8');
     try {
         // Start a transaction
