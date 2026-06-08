@@ -1,0 +1,65 @@
+{
+  "id": "king-activity-endgame",
+  "title": "King Activity in the Endgame",
+  "category": "endings",
+  "difficulty": "beginner",
+  "description": "In the endgame the king becomes a strong piece. Learn to activate and centralize your king to attack pawns and support your own.",
+  "estimatedMinutes": 16,
+  "keyConcepts": [
+    "Centralizing the king",
+    "King as an attacker",
+    "Racing to key pawns",
+    "Opposition",
+    "Activity over material"
+  ],
+  "sections": [
+    {
+      "title": "Centralize the King",
+      "content": "When the queens come off, rush the king toward the center. A centralized king influences both wings, attacks weak pawns, and shepherds passers. Do not leave it idle on the back rank.",
+      "positions": [
+        {
+          "fen": "8/8/8/3k4/8/8/4K3/8 w - - 0 1",
+          "commentary": "In a king-and-pawn endgame, the more active, centralized king usually wins. Race your king to the center and the key pawns.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "Centralize immediately",
+            "An active king is decisive"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The King as Attacker",
+      "content": "An active king can win enemy pawns directly. While the opponent's king defends one weakness, yours marches in to capture another. Activity often outweighs a pawn.",
+      "positions": [
+        {
+          "fen": "8/p4pkp/6p1/8/8/1P6/P3KPPP/8 w - - 0 1",
+          "commentary": "White's king heads to the queenside to attack the a7 pawn, exploiting its greater activity to win material.",
+          "expectedMove": "Kd3",
+          "hints": [
+            "Send the king to the weak pawns",
+            "Outpace the enemy king"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/3k4/8/8/4K3/8 w - - 0 1",
+      "title": "Race to the Center",
+      "description": "White to play. Take the most active step toward the center with the king.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Kd3",
+        "Ke3",
+        "Kd2"
+      ],
+      "hints": [
+        "Centralize the king",
+        "Toward d4/e4"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -3,59 +3,507 @@
   "title": "The Ruy Lopez",
   "category": "openings",
   "difficulty": "intermediate",
-  "description": "One of the oldest and most respected openings. White develops the bishop to b5, pressuring the knight that defends e5, and builds a lasting initiative.",
-  "estimatedMinutes": 20,
+  "description": "The Spanish Opening — one of the deepest in chess. We cover the Closed Main Line, the Exchange Variation, and the Berlin Defense, the choice of world champions.",
+  "estimatedMinutes": 30,
   "keyConcepts": [
-    "Pin on the knight",
-    "Central control",
+    "Pressure on e5 via the pin",
     "The Spanish bishop",
-    "Slow maneuvering",
-    "Pawn on e5 pressure"
+    "Closed center maneuvering",
+    "The Berlin endgame",
+    "Queenside expansion"
   ],
   "sections": [
     {
-      "title": "The Main Idea",
-      "content": "After 1.e4 e5 2.Nf3 Nc6 3.Bb5, White attacks the knight on c6 that defends the e5 pawn. The threat is not immediate, but the bishop creates long-term pressure on Black's center.",
+      "title": "Closed Main Line",
+      "content": "The classical battleground. White builds the center with c3 and d4; Black expands on the queenside and reroutes the knight to the kingside.",
       "positions": [
         {
-          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
-          "commentary": "The starting position of the Ruy Lopez. The bishop on b5 eyes the c6 knight. Black usually plays 3...a6 to question the bishop immediately.",
-          "expectedMove": "a6",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.e4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e4",
           "hints": [
-            "Challenge the bishop",
-            "The Morphy Defense begins with a7-a6"
+            "Play e4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...e5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+          "commentary": "2...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+          "commentary": "3.Bb5 — the Ruy Lopez bishop pins the c6 knight to the king, indirectly pressuring e5.",
+          "expectedMove": "f1b5",
+          "hints": [
+            "Play Bb5"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "commentary": "3...a6 — the Morphy Defense, questioning the bishop.",
+          "expectedMove": "a7a6",
+          "hints": [
+            "Play a6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+          "commentary": "4.Ba4 — maintaining the pin along the a4-e8 diagonal.",
+          "expectedMove": "b5a4",
+          "hints": [
+            "Play Ba4"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 4",
+          "commentary": "4...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+          "commentary": "5.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 3 5",
+          "commentary": "5...Be7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8e7",
+          "hints": [
+            "Play Be7"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+          "commentary": "6.Re1. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1e1",
+          "hints": [
+            "Play Re1"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQR1K1 b kq - 5 6",
+          "commentary": "6...b5 — gaining space and forcing the bishop back.",
+          "expectedMove": "b7b5",
+          "hints": [
+            "Play b5"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/B3P3/5N2/PPPP1PPP/RNBQR1K1 w kq - 0 7",
+          "commentary": "7.Bb3 — the bishop retreats to its long-term post.",
+          "expectedMove": "a4b3",
+          "hints": [
+            "Play Bb3"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 b kq - 1 7",
+          "commentary": "7...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/2p1bppp/p1np1n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 w kq - 0 8",
+          "commentary": "8.c3 — the key move c3 supports the coming d4 break.",
+          "expectedMove": "c2c3",
+          "hints": [
+            "Play c3"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 b kq - 0 8",
+          "commentary": "8...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 w - - 1 9",
+          "commentary": "9.h3 — a useful luft, preventing ...Bg4 pins before playing d4.",
+          "expectedMove": "h2h3",
+          "hints": [
+            "Play h3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N1P/PP1P1PP1/RNBQR1K1 b - - 0 9",
+          "commentary": "9...Na5 — the Chigorin: Black's knight heads to c4 or back to influence the center.",
+          "expectedMove": "c6a5",
+          "hints": [
+            "Play Na5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/2p1bppp/p2p1n2/np2p3/4P3/1BP2N1P/PP1P1PP1/RNBQR1K1 w - - 1 10",
+          "commentary": "10.Bc2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b3c2",
+          "hints": [
+            "Play Bc2"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/2p1bppp/p2p1n2/np2p3/4P3/2P2N1P/PPBP1PP1/RNBQR1K1 b - - 2 10",
+          "commentary": "10...c5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c7c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/4bppp/p2p1n2/npp1p3/4P3/2P2N1P/PPBP1PP1/RNBQR1K1 w - - 0 11",
+          "commentary": "11.d4 — White finally strikes in the center with d4.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/4bppp/p2p1n2/npp1p3/3PP3/2P2N1P/PPB2PP1/RNBQR1K1 b - - 0 11",
+          "commentary": "11...Qc7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d8c7",
+          "hints": [
+            "Play Qc7"
+          ]
+        },
+        {
+          "fen": "r1b2rk1/2q1bppp/p2p1n2/npp1p3/3PP3/2P2N1P/PPB2PP1/RNBQR1K1 w - - 1 12",
+          "commentary": "The classical Closed Ruy tabiya. White presses in the center and on the kingside; Black counters on the queenside."
         }
       ]
     },
     {
-      "title": "The Closed System",
-      "content": "In the Closed Ruy Lopez, both sides develop slowly and castle. White plays c3 and d4 to build a big center, while Black counters on the queenside. Patience and maneuvering define this opening.",
+      "title": "Exchange Variation",
+      "content": "White trades on c6, doubling Black's pawns and heading for a favorable endgame where the kingside majority is healthy.",
       "positions": [
         {
-          "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 b kq - 2 7",
-          "commentary": "A typical Closed Ruy Lopez structure. White has retreated the bishop to b3 and castled. The slow battle for the center begins.",
-          "expectedMove": "d6",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.e4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e4",
           "hints": [
-            "Support the e5 pawn",
-            "Solidify before counterattacking"
+            "Play e4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...e5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+          "commentary": "2...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+          "commentary": "3.Bb5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1b5",
+          "hints": [
+            "Play Bb5"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "commentary": "3...a6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "a7a6",
+          "hints": [
+            "Play a6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+          "commentary": "4.Bxc6 — the Exchange Variation — White accepts giving up the bishop pair to damage Black's structure.",
+          "expectedMove": "b5c6",
+          "hints": [
+            "Play Bxc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1ppp1ppp/p1B5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 4",
+          "commentary": "4...dxc6 — recapturing toward the center, opening the d-file and the c8 bishop.",
+          "expectedMove": "d7c6",
+          "hints": [
+            "Play dxc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp2ppp/p1p5/4p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 5",
+          "commentary": "5.O-O — castling; White's plan is a healthy 4-vs-3 kingside majority in the endgame.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp2ppp/p1p5/4p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 1 5",
+          "commentary": "5...f6 — reinforcing e5.",
+          "expectedMove": "f7f6",
+          "hints": [
+            "Play f6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p1p2p2/4p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 0 6",
+          "commentary": "6.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p1p2p2/4p3/3PP3/5N2/PPP2PPP/RNBQ1RK1 b kq - 0 6",
+          "commentary": "6...exd4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e5d4",
+          "hints": [
+            "Play exd4"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p1p2p2/8/3pP3/5N2/PPP2PPP/RNBQ1RK1 w kq - 0 7",
+          "commentary": "7.Nxd4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f3d4",
+          "hints": [
+            "Play Nxd4"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p1p2p2/8/3NP3/8/PPP2PPP/RNBQ1RK1 b kq - 0 7",
+          "commentary": "7...c5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c6c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p4p2/2p5/3NP3/8/PPP2PPP/RNBQ1RK1 w kq - 0 8",
+          "commentary": "8.Ne2 — heading to g3; White avoids trades that help Black's bishops.",
+          "expectedMove": "d4e2",
+          "hints": [
+            "Play Ne2"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/1pp3pp/p4p2/2p5/4P3/8/PPP1NPPP/RNBQ1RK1 b kq - 1 8",
+          "commentary": "8...Qxd1 — the queens come off — White wants an endgame.",
+          "expectedMove": "d8d1",
+          "hints": [
+            "Play Qxd1"
+          ]
+        },
+        {
+          "fen": "r1b1kbnr/1pp3pp/p4p2/2p5/4P3/8/PPP1NPPP/RNBq1RK1 w kq - 0 9",
+          "commentary": "9.Rxd1. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1d1",
+          "hints": [
+            "Play Rxd1"
+          ]
+        },
+        {
+          "fen": "r1b1kbnr/1pp3pp/p4p2/2p5/4P3/8/PPP1NPPP/RNBR2K1 b kq - 0 9",
+          "commentary": "9...Bd6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8d6",
+          "hints": [
+            "Play Bd6"
+          ]
+        },
+        {
+          "fen": "r1b1k1nr/1pp3pp/p2b1p2/2p5/4P3/8/PPP1NPPP/RNBR2K1 w kq - 1 10",
+          "commentary": "A structural endgame battle: White's clean kingside majority versus Black's bishop pair and central pawns."
+        }
+      ]
+    },
+    {
+      "title": "Berlin Defense",
+      "content": "The rock-solid 3...Nf6. After the famous queen trade Black reaches the \"Berlin Wall\" endgame — slightly worse structure but very hard to break.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.e4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e4",
+          "hints": [
+            "Play e4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...e5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+          "commentary": "2...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+          "commentary": "3.Bb5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1b5",
+          "hints": [
+            "Play Bb5"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "commentary": "3...Nf6 — the Berlin Defense — Black counterattacks e4 immediately.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+          "commentary": "4.O-O — castling, offering the e-pawn.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",
+          "commentary": "4...Nxe4 — grabbing the pawn (the open Berlin).",
+          "expectedMove": "f6e4",
+          "hints": [
+            "Play Nxe4"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n5/1B2p3/4n3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 0 5",
+          "commentary": "5.d4 — striking the center and chasing the knight.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n5/1B2p3/3Pn3/5N2/PPP2PPP/RNBQ1RK1 b kq - 0 5",
+          "commentary": "5...Nd6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e4d6",
+          "hints": [
+            "Play Nd6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2nn4/1B2p3/3P4/5N2/PPP2PPP/RNBQ1RK1 w kq - 1 6",
+          "commentary": "6.Bxc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b5c6",
+          "hints": [
+            "Play Bxc6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2Bn4/4p3/3P4/5N2/PPP2PPP/RNBQ1RK1 b kq - 0 6",
+          "commentary": "6...dxc6 — damaging Black's queenside but conceding the bishop pair.",
+          "expectedMove": "d7c6",
+          "hints": [
+            "Play dxc6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/ppp2ppp/2pn4/4p3/3P4/5N2/PPP2PPP/RNBQ1RK1 w kq - 0 7",
+          "commentary": "7.dxe5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d4e5",
+          "hints": [
+            "Play dxe5"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/ppp2ppp/2pn4/4P3/8/5N2/PPP2PPP/RNBQ1RK1 b kq - 0 7",
+          "commentary": "7...Nf5 — the knight reroutes to f5.",
+          "expectedMove": "d6f5",
+          "hints": [
+            "Play Nf5"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/ppp2ppp/2p5/4Pn2/8/5N2/PPP2PPP/RNBQ1RK1 w kq - 1 8",
+          "commentary": "8.Qxd8+ — the trademark queen trade — Black must recapture with the king, losing castling rights.",
+          "expectedMove": "d1d8",
+          "hints": [
+            "Play Qxd8+"
+          ]
+        },
+        {
+          "fen": "r1bQkb1r/ppp2ppp/2p5/4Pn2/8/5N2/PPP2PPP/RNB2RK1 b kq - 0 8",
+          "commentary": "8...Kxd8. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8d8",
+          "hints": [
+            "Play Kxd8"
+          ]
+        },
+        {
+          "fen": "r1bk1b1r/ppp2ppp/2p5/4Pn2/8/5N2/PPP2PPP/RNB2RK1 w - - 0 9",
+          "commentary": "The Berlin Wall endgame: Black's king is stuck in the center but the position is famously solid and drawish."
         }
       ]
     }
   ],
   "exercises": [
     {
-      "fen": "r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
-      "title": "Maintain the Pressure",
-      "description": "White to play. After ...a6, where does the bishop go to keep the pin alive?",
+      "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+      "title": "Keep the Pin",
+      "description": "White to play after 3...a6. Maintain the bishop's pressure on the c6 knight.",
       "targetColor": "w",
       "expectedMoves": [
-        "Bb3"
+        "b5a4"
       ],
       "hints": [
-        "Retreat along the a4-e8 diagonal",
-        "Keep aiming at f7"
+        "Retreat along the diagonal",
+        "Do not give up the bishop yet"
       ],
       "maxMoves": 1
     }

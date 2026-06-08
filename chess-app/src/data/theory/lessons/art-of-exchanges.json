@@ -1,0 +1,63 @@
+{
+  "id": "art-of-exchanges",
+  "title": "The Art of Exchanges",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Knowing what to trade is as important as knowing how to attack. Learn which exchanges help you and which help your opponent.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Trade when cramped relieve... no",
+    "Trade to exploit weaknesses",
+    "Keep attackers when attacking",
+    "Trade the opponent's good pieces",
+    "Simplify when ahead"
+  ],
+  "sections": [
+    {
+      "title": "Trade Off the Defenders",
+      "content": "When attacking, exchange the pieces that defend the enemy king. Removing a key defender often collapses the defense, even at the cost of your own attacker.",
+      "positions": [
+        {
+          "fen": "r2q1rk1/pp3ppp/2n1pn2/3p4/3P2b1/2NBPN2/PP3PPP/R1BQ1RK1 w - - 0 1",
+          "commentary": "White trades the light-squared bishop for the knight that guards the kingside, weakening the squares around the black king.",
+          "expectedMove": "h3",
+          "hints": [
+            "Question the pinning bishop",
+            "Remove a kingside defender"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Simplify When Ahead",
+      "content": "With a material or structural advantage, exchanging pieces (but not pawns) brings you closer to a winning endgame and reduces the opponent's chances of complications.",
+      "positions": [
+        {
+          "fen": "3r2k1/pp3ppp/4p3/2bp4/8/1PN1P3/P4PPP/3R2K1 w - - 0 1",
+          "commentary": "A slightly better White trades minor pieces to reach a clean rook endgame where the small edge is easier to convert.",
+          "expectedMove": "Nxd5",
+          "hints": [
+            "Simplify toward the endgame",
+            "Trade pieces, keep pawns"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "3r2k1/pp3ppp/4p3/2bp4/8/1PN1P3/P4PPP/3R2K1 w - - 0 1",
+      "title": "Simplify the Win",
+      "description": "White to play. Exchange into a favorable endgame by capturing the central pawn with the knight.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nxd5"
+      ],
+      "hints": [
+        "Trade toward the endgame",
+        "Capture on d5"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

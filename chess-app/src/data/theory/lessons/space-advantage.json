@@ -1,0 +1,64 @@
+{
+  "id": "space-advantage",
+  "title": "Using a Space Advantage",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "More space means more room for your pieces and less for your opponent's. Learn to gain space, avoid trades, and convert a cramping bind.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Space and mobility",
+    "Avoiding trades when cramping",
+    "The maneuvering edge",
+    "Pawn chains",
+    "Restricting pieces"
+  ],
+  "sections": [
+    {
+      "title": "Cramp and Restrict",
+      "content": "When you have more space, avoid exchanges — every trade relieves the opponent's cramped position. Keep pieces on the board and maneuver to the better squares.",
+      "positions": [
+        {
+          "fen": "r1bqk2r/pp1n1ppp/2p1pn2/3pP3/2PP4/2N2N2/PP3PPP/R1BQKB1R w KQkq - 0 1",
+          "commentary": "White's advanced e5 pawn grabs kingside space and cramps Black. White keeps pieces on and prepares a kingside attack.",
+          "expectedMove": "Bd3",
+          "hints": [
+            "Keep pieces on the board",
+            "Build toward a kingside attack"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Expanding the Bind",
+      "content": "A space advantage can be widened with further pawn advances, squeezing the opponent until their pieces have no good squares. Patience converts space into something concrete.",
+      "positions": [
+        {
+          "fen": "2r1r1k1/pp1n1ppp/3p1n2/2pPp3/2P1P3/2N3P1/PP3PBP/2R1R1K1 w - - 0 1",
+          "commentary": "White has a Benoni-style space bind. Slow expansion and piece maneuvers gradually suffocate Black's position.",
+          "expectedMove": "b4",
+          "hints": [
+            "Expand on the queenside",
+            "Widen the bind"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bqk2r/pp1n1ppp/2p1pn2/3pP3/2PP4/2N2N2/PP3PPP/R1BQKB1R w KQkq - 0 1",
+      "title": "Keep the Tension",
+      "description": "White to play. Develop a piece while keeping the cramping e5 pawn and avoiding helpful trades.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Bd3",
+        "Be2"
+      ],
+      "hints": [
+        "Develop, do not trade",
+        "Aim at the kingside"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

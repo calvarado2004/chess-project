@@ -37,6 +37,20 @@ describe('theory lesson data', () => {
     }
   });
 
+  it('has the expected catalogue size per category', () => {
+    expect(getLessonsByCategory('openings').length).toBeGreaterThanOrEqual(15);
+    expect(getLessonsByCategory('middlegame').length).toBeGreaterThanOrEqual(15);
+    expect(getLessonsByCategory('endings').length).toBeGreaterThanOrEqual(15);
+  });
+
+  it('opening lessons are deep (multiple variations with many boards)', () => {
+    for (const lesson of getLessonsByCategory('openings')) {
+      expect(lesson.sections.length).toBeGreaterThanOrEqual(2);
+      const boards = lesson.sections.reduce((n, s) => n + s.positions.length, 0);
+      expect(boards).toBeGreaterThanOrEqual(20); // principal variations, not just 2 boards
+    }
+  });
+
   it('getLessonById finds known lessons and returns undefined otherwise', () => {
     expect(getLessonById('ruy-lopez')?.title).toBe('The Ruy Lopez');
     expect(getLessonById('does-not-exist')).toBeUndefined();

@@ -1,0 +1,63 @@
+{
+  "id": "rook-lifts",
+  "title": "Rook Lifts and Batteries",
+  "category": "middlegame",
+  "difficulty": "advanced",
+  "description": "Rooks are not just for open files. Learn to lift rooks into the attack along the third rank and to build powerful batteries.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Rook lift",
+    "Third-rank maneuver",
+    "Doubling rooks",
+    "Queen+rook battery",
+    "Bringing the last piece in"
+  ],
+  "sections": [
+    {
+      "title": "The Rook Lift",
+      "content": "A rook lift (e.g. Re1-e3-g3/h3) swings a rook in front of its pawns to join a kingside attack. It is often the move that brings the decisive extra attacker.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1R1K w - - 0 1",
+          "commentary": "White prepares a kingside attack with a rook lift Rf1-f3-g3/h3, adding a heavy piece to the assault."
+        },
+        {
+          "fen": "r1bq1rk1/ppp2pp1/2np1n1p/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1R1K w - - 0 2",
+          "commentary": "The rook is ready to swing to g3 or h3, joining the queen and bishop in a direct attack on the black king."
+        }
+      ]
+    },
+    {
+      "title": "Building a Battery",
+      "content": "A battery lines up two pieces on the same file or diagonal — queen behind rook on a file, or bishop behind queen on a diagonal — multiplying their power against a single target.",
+      "positions": [
+        {
+          "fen": "3r2k1/pp3ppp/2p5/8/8/1P2Q3/P4PPP/3R2K1 w - - 0 1",
+          "commentary": "White doubles queen and rook on the d-file, a battery that overloads the defense of the back rank and the d-file.",
+          "expectedMove": "Qd3",
+          "hints": [
+            "Line up heavy pieces",
+            "Build a battery on the open file"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "3r2k1/pp3ppp/2p5/8/8/1P2Q3/P4PPP/3R2K1 w - - 0 1",
+      "title": "Form the Battery",
+      "description": "White to play. Combine the queen with the rook on the open d-file.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Qd3",
+        "Qe8+"
+      ],
+      "hints": [
+        "Stack heavy pieces on the file",
+        "Queen supports the rook"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

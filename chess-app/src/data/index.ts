@@ -1,93 +1,40 @@
 import type { TheoryLesson, TheoryProgress } from './theory/types';
 
 // ===================== Lesson Data (offline-first) =====================
-// Lessons are bundled as JSON so they work fully offline.
+// Lessons are bundled as JSON so they work fully offline. They are
+// auto-discovered from the lessons folder, so dropping a new validated
+// JSON file in there is all that is needed to add a lesson — no manual
+// import list to keep in sync.
 
-import italianGame from './theory/lessons/italian-game.json';
-import sicilianDefense from './theory/lessons/sicilian-defense.json';
-import openingsPrinciples from './theory/lessons/openings-principles.json';
-import tacticalMotifs from './theory/lessons/tactical-motifs.json';
-import pieceActivity from './theory/lessons/piece-activity.json';
-import attackingTheKing from './theory/lessons/attacking-the-king.json';
-import pawnStructures from './theory/lessons/pawn-structures.json';
-import kingAndPawn from './theory/lessons/king-and-pawn.json';
-import rookEndings from './theory/lessons/rook-endings.json';
-import queenEndings from './theory/lessons/queen-endings.json';
-import bishopEndings from './theory/lessons/bishop-endings.json';
-import knightEndings from './theory/lessons/knight-endings.json';
-import blockedPawns from './theory/lessons/blocked-pawns.json';
-import minorPieceEndings from './theory/lessons/minor-piece-endings.json';
+const lessonModules = import.meta.glob<{ default: TheoryLesson }>(
+  './theory/lessons/*.json',
+  { eager: true },
+);
 
-// Openings (new)
-import ruyLopez from './theory/lessons/ruy-lopez.json';
-import frenchDefense from './theory/lessons/french-defense.json';
-import caroKann from './theory/lessons/caro-kann.json';
-import queensGambit from './theory/lessons/queens-gambit.json';
-import kingsIndian from './theory/lessons/kings-indian.json';
-import englishOpening from './theory/lessons/english-opening.json';
-import scandinavian from './theory/lessons/scandinavian.json';
-import slavDefense from './theory/lessons/slav-defense.json';
-import londonSystem from './theory/lessons/london-system.json';
-import scotchGame from './theory/lessons/scotch-game.json';
+// Order lessons by category (matching the category cards), then by
+// difficulty (beginner -> advanced), then alphabetically by title, so each
+// category reads as a sensible learning progression.
+const CATEGORY_ORDER: Record<string, number> = {
+  openings: 0,
+  middlegame: 1,
+  endings: 2,
+  fundamentals: 3,
+};
+const DIFFICULTY_ORDER: Record<string, number> = {
+  beginner: 0,
+  intermediate: 1,
+  advanced: 2,
+};
 
-// Middlegame (new)
-import openFilesRooks from './theory/lessons/open-files-rooks.json';
-import outposts from './theory/lessons/outposts.json';
-import bishopPair from './theory/lessons/bishop-pair.json';
-import pawnBreaks from './theory/lessons/pawn-breaks.json';
-
-// Endings (new)
-import oppositionTriangulation from './theory/lessons/opposition-triangulation.json';
-import lucenaPhilidor from './theory/lessons/lucena-philidor.json';
-import zugzwang from './theory/lessons/zugzwang.json';
-import fortressDraws from './theory/lessons/fortress-draws.json';
-
-// Fundamentals & Tips (new category)
-import chessFundamentals from './theory/lessons/chess-fundamentals.json';
-import commonMistakes from './theory/lessons/common-mistakes.json';
-import calculationVisualization from './theory/lessons/calculation-visualization.json';
-import evaluatingPositions from './theory/lessons/evaluating-positions.json';
-import studyImprovement from './theory/lessons/study-improvement.json';
-
-export const lessons: TheoryLesson[] = [
-  italianGame,
-  sicilianDefense,
-  openingsPrinciples,
-  ruyLopez,
-  frenchDefense,
-  caroKann,
-  queensGambit,
-  kingsIndian,
-  englishOpening,
-  scandinavian,
-  slavDefense,
-  londonSystem,
-  scotchGame,
-  tacticalMotifs,
-  pieceActivity,
-  attackingTheKing,
-  pawnStructures,
-  openFilesRooks,
-  outposts,
-  bishopPair,
-  pawnBreaks,
-  kingAndPawn,
-  rookEndings,
-  queenEndings,
-  bishopEndings,
-  knightEndings,
-  minorPieceEndings,
-  blockedPawns,
-  oppositionTriangulation,
-  lucenaPhilidor,
-  zugzwang,
-  fortressDraws,
-  chessFundamentals,
-  commonMistakes,
-  calculationVisualization,
-  evaluatingPositions,
-  studyImprovement,
-] as unknown as TheoryLesson[];
+export const lessons: TheoryLesson[] = (
+  Object.values(lessonModules).map((m) => m.default) as TheoryLesson[]
+).sort((a, b) => {
+  const cat = (CATEGORY_ORDER[a.category] ?? 99) - (CATEGORY_ORDER[b.category] ?? 99);
+  if (cat !== 0) return cat;
+  const diff = (DIFFICULTY_ORDER[a.difficulty] ?? 99) - (DIFFICULTY_ORDER[b.difficulty] ?? 99);
+  if (diff !== 0) return diff;
+  return a.title.localeCompare(b.title);
+});
 
 // ===================== Categories =====================
 export const categories = [

@@ -1,0 +1,63 @@
+{
+  "id": "knight-vs-bishop",
+  "title": "Knight vs Bishop",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "The eternal debate. Learn when the knight outshines the bishop and vice versa, and how to steer the position toward your better minor piece.",
+  "estimatedMinutes": 18,
+  "keyConcepts": [
+    "Open vs closed positions",
+    "Good and bad bishops",
+    "Knight outposts",
+    "Fixing pawns",
+    "Trading the right piece"
+  ],
+  "sections": [
+    {
+      "title": "The Good Knight",
+      "content": "In closed positions with fixed pawn chains, a knight on a strong outpost can dominate a bishop hemmed in by its own pawns. Fix the pawns on the bishop's color to entomb it.",
+      "positions": [
+        {
+          "fen": "5k2/1p3pp1/p1p1p3/2PpP3/1P1P1P2/4N3/6PP/5K2 w - - 0 1",
+          "commentary": "A closed structure where the knight is superior. The black bishop would be a \"bad bishop\", blocked by its own fixed pawns.",
+          "expectedMove": "Nc2",
+          "hints": [
+            "Reroute the knight to a strong square",
+            "Closed position favors the knight"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Good Bishop",
+      "content": "In open positions with pawns on both wings, the bishop's long-range power lets it dominate. Open the position and create targets on both sides to maximize the bishop.",
+      "positions": [
+        {
+          "fen": "5k2/pp3ppp/2p5/8/2P5/1P3B2/P4PPP/4n1K1 w - - 0 1",
+          "commentary": "With pawns on both wings and open lines, the bishop is much stronger than the knight, switching wings in a single move.",
+          "expectedMove": "Be4",
+          "hints": [
+            "Activate the long-range bishop",
+            "Target pawns on both wings"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "5k2/pp3ppp/2p5/8/2P5/1P3B2/P4PPP/4n1K1 w - - 0 1",
+      "title": "Maximize the Bishop",
+      "description": "White to play. Centralize the bishop to dominate both wings and restrict the knight.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Be4"
+      ],
+      "hints": [
+        "Centralize on the long diagonal",
+        "Restrict the knight"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

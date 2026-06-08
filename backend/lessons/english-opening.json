@@ -3,59 +3,491 @@
   "title": "The English Opening",
   "category": "openings",
   "difficulty": "intermediate",
-  "description": "A flexible flank opening starting with 1.c4. White fights for the center from the side and can transpose into many structures, keeping the opponent guessing.",
-  "estimatedMinutes": 20,
+  "description": "A flexible flank opening with 1.c4, fighting for d5 from the side. We study the Reversed Sicilian, the Symmetrical, and the King's English.",
+  "estimatedMinutes": 30,
   "keyConcepts": [
-    "Flank control",
-    "Flexibility",
+    "Flank control of d5",
+    "Fianchetto pressure",
     "Reversed Sicilian",
-    "Fianchetto setups",
-    "Transpositions"
+    "Flexibility and transpositions",
+    "Queenside space"
   ],
   "sections": [
     {
-      "title": "Controlling d5",
-      "content": "1.c4 stakes a claim on the d5 square without committing the center pawns. White keeps options open and often fianchettoes the king's bishop for long-diagonal pressure.",
+      "title": "Reversed Sicilian",
+      "content": "After 1...e5 the position is a Sicilian with colors reversed and White a tempo up.",
       "positions": [
         {
-          "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1",
-          "commentary": "The English Opening. White controls d5 from the wing and retains maximum flexibility about the central structure.",
-          "expectedMove": "e5",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.c4 — the English — controlling d5 from the wing.",
+          "expectedMove": "c2c4",
           "hints": [
-            "Grab central space",
-            "Play a reversed Sicilian"
+            "Play c4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...e5 — grabbing the center; now it is a reversed Sicilian.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR b KQkq - 1 2",
+          "commentary": "2...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq - 2 3",
+          "commentary": "3.g3 — the fianchetto, the soul of the English.",
+          "expectedMove": "g2g3",
+          "hints": [
+            "Play g3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 3",
+          "commentary": "3...d5 — Black challenges the center.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/5n2/3pp3/2P5/2N3P1/PP1PPP1P/R1BQKBNR w KQkq - 0 4",
+          "commentary": "4.cxd5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c4d5",
+          "hints": [
+            "Play cxd5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/5n2/3Pp3/8/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 4",
+          "commentary": "4...Nxd5 — the knight recaptures and sits actively.",
+          "expectedMove": "f6d5",
+          "hints": [
+            "Play Nxd5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/8/3np3/8/2N3P1/PP1PPP1P/R1BQKBNR w KQkq - 0 5",
+          "commentary": "5.Bg2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1g2",
+          "hints": [
+            "Play Bg2"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/8/3np3/8/2N3P1/PP1PPPBP/R1BQK1NR b KQkq - 1 5",
+          "commentary": "5...Nb6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d5b6",
+          "hints": [
+            "Play Nb6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/1n6/4p3/8/2N3P1/PP1PPPBP/R1BQK1NR w KQkq - 2 6",
+          "commentary": "6.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/1n6/4p3/8/2N2NP1/PP1PPPBP/R1BQK2R b KQkq - 3 6",
+          "commentary": "6...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/ppp2ppp/1nn5/4p3/8/2N2NP1/PP1PPPBP/R1BQK2R w KQkq - 4 7",
+          "commentary": "7.O-O — White completes a harmonious fianchetto setup.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/ppp2ppp/1nn5/4p3/8/2N2NP1/PP1PPPBP/R1BQ1RK1 b kq - 5 7",
+          "commentary": "7...Be7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8e7",
+          "hints": [
+            "Play Be7"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/ppp1bppp/1nn5/4p3/8/2N2NP1/PP1PPPBP/R1BQ1RK1 w kq - 6 8",
+          "commentary": "8.d3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d3",
+          "hints": [
+            "Play d3"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/ppp1bppp/1nn5/4p3/8/2NP1NP1/PP2PPBP/R1BQ1RK1 b kq - 0 8",
+          "commentary": "8...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp1bppp/1nn5/4p3/8/2NP1NP1/PP2PPBP/R1BQ1RK1 w - - 1 9",
+          "commentary": "9.a3 — a3 prepares queenside expansion with b4.",
+          "expectedMove": "a2a3",
+          "hints": [
+            "Play a3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp1bppp/1nn5/4p3/8/P1NP1NP1/1P2PPBP/R1BQ1RK1 b - - 0 9",
+          "commentary": "9...a5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "a7a5",
+          "hints": [
+            "Play a5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/1pp1bppp/1nn5/p3p3/8/P1NP1NP1/1P2PPBP/R1BQ1RK1 w - - 0 10",
+          "commentary": "A reversed Sicilian Dragon where White's extra tempo gives a small but lasting initiative."
         }
       ]
     },
     {
-      "title": "The Reversed Sicilian",
-      "content": "If Black answers 1...e5, the position resembles a Sicilian Defense with colors reversed — and an extra tempo for White. Understanding Sicilian themes helps here.",
+      "title": "Symmetrical Variation",
+      "content": "Black mirrors with ...c5. Both sides fianchetto and maneuver in a flexible, strategic game.",
       "positions": [
         {
-          "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/8/PP1PPPPP/RNBQKBNR w KQkq e6 0 2",
-          "commentary": "A Reversed Sicilian. White enjoys Sicilian-style play with an extra move, often fianchettoing to pressure the long diagonal.",
-          "expectedMove": "g3",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
           "hints": [
-            "Prepare the fianchetto",
-            "Aim the bishop at the center"
+            "Play c4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...c5 — the Symmetrical English.",
+          "expectedMove": "c7c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pp1ppppp/8/2p5/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pp1ppppp/8/2p5/2P5/2N5/PP1PPPPP/R1BQKBNR b KQkq - 1 2",
+          "commentary": "2...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pp1ppppp/2n5/2p5/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq - 2 3",
+          "commentary": "3.g3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g2g3",
+          "hints": [
+            "Play g3"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pp1ppppp/2n5/2p5/2P5/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 3",
+          "commentary": "3...g6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g7g6",
+          "hints": [
+            "Play g6"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pp1ppp1p/2n3p1/2p5/2P5/2N3P1/PP1PPP1P/R1BQKBNR w KQkq - 0 4",
+          "commentary": "4.Bg2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1g2",
+          "hints": [
+            "Play Bg2"
+          ]
+        },
+        {
+          "fen": "r1bqkbnr/pp1ppp1p/2n3p1/2p5/2P5/2N3P1/PP1PPPBP/R1BQK1NR b KQkq - 1 4",
+          "commentary": "4...Bg7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8g7",
+          "hints": [
+            "Play Bg7"
+          ]
+        },
+        {
+          "fen": "r1bqk1nr/pp1pppbp/2n3p1/2p5/2P5/2N3P1/PP1PPPBP/R1BQK1NR w KQkq - 2 5",
+          "commentary": "5.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "r1bqk1nr/pp1pppbp/2n3p1/2p5/2P5/2N2NP1/PP1PPPBP/R1BQK2R b KQkq - 3 5",
+          "commentary": "5...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/pp1pppbp/2n2np1/2p5/2P5/2N2NP1/PP1PPPBP/R1BQK2R w KQkq - 4 6",
+          "commentary": "6.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/pp1pppbp/2n2np1/2p5/2P5/2N2NP1/PP1PPPBP/R1BQ1RK1 b kq - 5 6",
+          "commentary": "6...O-O — both sides have mirrored fianchetto setups.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/2n2np1/2p5/2P5/2N2NP1/PP1PPPBP/R1BQ1RK1 w - - 6 7",
+          "commentary": "7.d4 — White breaks the symmetry with the central d4 push.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/2n2np1/2p5/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 b - - 0 7",
+          "commentary": "7...cxd4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c5d4",
+          "hints": [
+            "Play cxd4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/2n2np1/8/2Pp4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 0 8",
+          "commentary": "8.Nxd4 — trading in the center.",
+          "expectedMove": "f3d4",
+          "hints": [
+            "Play Nxd4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/2n2np1/8/2PN4/2N3P1/PP2PPBP/R1BQ1RK1 b - - 0 8",
+          "commentary": "8...Nxd4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c6d4",
+          "hints": [
+            "Play Nxd4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/5np1/8/2Pn4/2N3P1/PP2PPBP/R1BQ1RK1 w - - 0 9",
+          "commentary": "9.Qxd4 — the queen recaptures, eyeing the long diagonal.",
+          "expectedMove": "d1d4",
+          "hints": [
+            "Play Qxd4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1pppbp/5np1/8/2PQ4/2N3P1/PP2PPBP/R1B2RK1 b - - 0 9",
+          "commentary": "9...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp2ppbp/3p1np1/8/2PQ4/2N3P1/PP2PPBP/R1B2RK1 w - - 0 10",
+          "commentary": "A Maroczy-bind type position where White has a small space edge and pressure on the long diagonal."
+        }
+      ]
+    },
+    {
+      "title": "King's English with ...Bb4",
+      "content": "Black develops actively with ...Bb4, pinning the c3 knight in Nimzo-English style.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...e5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR b KQkq - 1 2",
+          "commentary": "2...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq - 2 3",
+          "commentary": "3.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N2N2/PP1PPPPP/R1BQKB1R b KQkq - 3 3",
+          "commentary": "3...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2P5/2N2N2/PP1PPPPP/R1BQKB1R w KQkq - 4 4",
+          "commentary": "4.g3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g2g3",
+          "hints": [
+            "Play g3"
+          ]
+        },
+        {
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2P5/2N2NP1/PP1PPP1P/R1BQKB1R b KQkq - 0 4",
+          "commentary": "4...Bb4 — a Nimzo-style pin in the English.",
+          "expectedMove": "f8b4",
+          "hints": [
+            "Play Bb4"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/pppp1ppp/2n2n2/4p3/1bP5/2N2NP1/PP1PPP1P/R1BQKB1R w KQkq - 1 5",
+          "commentary": "5.Bg2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1g2",
+          "hints": [
+            "Play Bg2"
+          ]
+        },
+        {
+          "fen": "r1bqk2r/pppp1ppp/2n2n2/4p3/1bP5/2N2NP1/PP1PPPBP/R1BQK2R b KQkq - 2 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/4p3/1bP5/2N2NP1/PP1PPPBP/R1BQK2R w KQ - 3 6",
+          "commentary": "6.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/4p3/1bP5/2N2NP1/PP1PPPBP/R1BQ1RK1 b - - 4 6",
+          "commentary": "6...e4 — gaining space and kicking the knight.",
+          "expectedMove": "e5e4",
+          "hints": [
+            "Play e4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/8/1bP1p3/2N2NP1/PP1PPPBP/R1BQ1RK1 w - - 0 7",
+          "commentary": "7.Ng5 — the knight jumps to g5 to round up e4.",
+          "expectedMove": "f3g5",
+          "hints": [
+            "Play Ng5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/6N1/1bP1p3/2N3P1/PP1PPPBP/R1BQ1RK1 b - - 1 7",
+          "commentary": "7...Bxc3 — Black trades and damages White's pawns.",
+          "expectedMove": "b4c3",
+          "hints": [
+            "Play Bxc3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/6N1/2P1p3/2b3P1/PP1PPPBP/R1BQ1RK1 w - - 0 8",
+          "commentary": "8.bxc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b2c3",
+          "hints": [
+            "Play bxc3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppp1ppp/2n2n2/6N1/2P1p3/2P3P1/P2PPPBP/R1BQ1RK1 b - - 0 8",
+          "commentary": "8...Re8. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8e8",
+          "hints": [
+            "Play Re8"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppp1ppp/2n2n2/6N1/2P1p3/2P3P1/P2PPPBP/R1BQ1RK1 w - - 1 9",
+          "commentary": "9.f3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f2f3",
+          "hints": [
+            "Play f3"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppp1ppp/2n2n2/6N1/2P1p3/2P2PP1/P2PP1BP/R1BQ1RK1 b - - 0 9",
+          "commentary": "9...exf3 — opening the position; the pawn structure is the key imbalance.",
+          "expectedMove": "e4f3",
+          "hints": [
+            "Play exf3"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppp1ppp/2n2n2/6N1/2P5/2P2pP1/P2PP1BP/R1BQ1RK1 w - - 0 10",
+          "commentary": "An imbalanced fight with White's bishop pair and center against Black's pressure on the doubled c-pawns."
         }
       ]
     }
   ],
   "exercises": [
     {
-      "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/6P1/PP1PPP1P/RNBQKBNR b KQkq - 0 2",
-      "title": "Develop Naturally",
-      "description": "Black to play. Develop a knight toward the center to support e5.",
+      "fen": "rnbqkb1r/ppp2ppp/5n2/3Pp3/8/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 4",
+      "title": "Recapture Actively",
+      "description": "Black to play. Recapture the d5 pawn with the piece that lands on a strong central square.",
       "targetColor": "b",
       "expectedMoves": [
-        "Nc6"
+        "f6d5"
       ],
       "hints": [
-        "Develop a piece",
-        "Defend the e5 pawn"
+        "Use the knight",
+        "Centralize on d5"
       ],
       "maxMoves": 1
     }

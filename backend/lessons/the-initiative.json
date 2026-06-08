@@ -1,0 +1,63 @@
+{
+  "id": "the-initiative",
+  "title": "The Initiative",
+  "category": "middlegame",
+  "difficulty": "advanced",
+  "description": "The initiative is the power to make threats that force the opponent to react. Learn to seize it, keep it, and convert it before it fades.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Forcing moves",
+    "Tempo",
+    "Dictating play",
+    "Sacrificing for initiative",
+    "Not letting up"
+  ],
+  "sections": [
+    {
+      "title": "Forcing the Opponent to React",
+      "content": "Holding the initiative means your opponent must answer your threats instead of pursuing their own plans. A stream of checks, captures, and threats keeps them on the back foot.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/ppp2ppp/2n5/3np3/1b6/2NP1NP1/PPP1PPBP/R1BQ1RK1 w - - 0 1",
+          "commentary": "White seizes the initiative by challenging the centralized black knight and gaining tempo with each developing threat.",
+          "expectedMove": "e4",
+          "hints": [
+            "Strike with tempo",
+            "Hit the centralized knight"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Sacrificing for the Initiative",
+      "content": "Sometimes a pawn or even a piece is worth giving up to keep the opponent reacting. If the attack flows fast enough, material matters less than tempo and king safety.",
+      "positions": [
+        {
+          "fen": "r2qkb1r/ppp2ppp/2n5/3np1B1/2B5/5N2/PPP2PPP/RN1QK2R w KQkq - 0 1",
+          "commentary": "White keeps the initiative with active piece play, refusing to let Black consolidate the extra central pawn.",
+          "expectedMove": "Nc3",
+          "hints": [
+            "Develop with threats",
+            "Pressure d5 immediately"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/ppp2ppp/2n5/3np3/1b6/2NP1NP1/PPP1PPBP/R1BQ1RK1 w - - 0 1",
+      "title": "Seize the Initiative",
+      "description": "White to play. Gain time by challenging the strong black knight in the center.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "e4"
+      ],
+      "hints": [
+        "Hit the knight with a pawn",
+        "Gain a tempo"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "lesson-gen",
+  "private": true,
+  "type": "module",
+  "description": "Authoring-time tool to generate validated theory lesson JSON",
+  "dependencies": { "chess.js": "^1.0.0" }
+}

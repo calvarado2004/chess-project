@@ -1,0 +1,63 @@
+{
+  "id": "prophylaxis",
+  "title": "Prophylaxis and Planning",
+  "category": "middlegame",
+  "difficulty": "advanced",
+  "description": "Prophylaxis means preventing the opponent's plans before pursuing your own. Learn to ask \"what does my opponent want?\" and stop it.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Prophylactic thinking",
+    "Anticipating threats",
+    "Improving slowly",
+    "Restraint",
+    "Nimzowitsch's legacy"
+  ],
+  "sections": [
+    {
+      "title": "What Does the Opponent Want?",
+      "content": "Before making your own plan, identify the opponent's best idea and prevent it. A single prophylactic move can neutralize an entire plan and leave you free to improve.",
+      "positions": [
+        {
+          "fen": "r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP2BPPP/R1BQ1RK1 w - - 0 1",
+          "commentary": "White plays h3, a quiet prophylactic move stopping ...Bg4 and ...Ng4 ideas before continuing the plan.",
+          "expectedMove": "h3",
+          "hints": [
+            "Prevent ...Bg4 and ...Ng4",
+            "A quiet move that stops counterplay"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Improve Your Worst Piece",
+      "content": "When there is no immediate plan, prophylaxis pairs with the rule: improve your worst-placed piece. Restrain the opponent, then slowly better your own position.",
+      "positions": [
+        {
+          "fen": "2r2rk1/pp1bppbp/3p1np1/q7/2PNP3/2N1B3/PP2BPPP/R2Q1RK1 w - - 0 1",
+          "commentary": "White centralizes and restrains Black's queenside play, improving the position without committing to a premature attack.",
+          "expectedMove": "Nb3",
+          "hints": [
+            "Restrain the enemy queen",
+            "Improve a passive piece"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP2BPPP/R1BQ1RK1 w - - 0 1",
+      "title": "Play Prophylaxis",
+      "description": "White to play. Make the quiet move that prevents Black's ...Bg4 and ...Ng4 pin ideas.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "h3"
+      ],
+      "hints": [
+        "Stop the pin before it happens",
+        "A little luft helps too"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

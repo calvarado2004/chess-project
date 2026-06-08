@@ -3,59 +3,507 @@
   "title": "The King's Indian Defense",
   "category": "openings",
   "difficulty": "advanced",
-  "description": "A hypermodern, fighting defense. Black lets White build a big center, then strikes back with e5 or c5 and launches a kingside pawn storm.",
-  "estimatedMinutes": 25,
+  "description": "A hypermodern fighting defense. Black cedes the center then strikes back with ...e5 and a kingside pawn storm. We study the Classical, the Sämisch, and the Fianchetto.",
+  "estimatedMinutes": 30,
   "keyConcepts": [
     "Hypermodern strategy",
-    "Fianchetto",
     "Kingside pawn storm",
-    "Central counterstrike",
-    "Closed center dynamics"
+    "Central counterstrike ...e5",
+    "Closed-center races",
+    "The g7 bishop"
   ],
   "sections": [
     {
-      "title": "Inviting the Center",
-      "content": "After 1.d4 Nf6 2.c4 g6, Black prepares to fianchetto the bishop and allows White a broad pawn center, planning to undermine it later. This is hypermodern thinking in action.",
+      "title": "Classical Main Line",
+      "content": "White builds the big center; Black castles, plays ...e5, and prepares the thematic ...f5 kingside attack.",
       "positions": [
         {
-          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
-          "commentary": "The King's Indian setup begins. Black will fianchetto with Bg7 and castle, then counter the center with e5.",
-          "expectedMove": "Nc3",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Build the big center",
-            "Develop and support e4"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...Nf6 — flexible development, eyeing e4 and the long diagonal.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+          "commentary": "2.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...g6 — preparing the fianchetto.",
+          "expectedMove": "g7g6",
+          "hints": [
+            "Play g6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+          "commentary": "3...Bg7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8g7",
+          "hints": [
+            "Play Bg7"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
+          "commentary": "4.e4 — White takes the full center — exactly what Black invites.",
+          "expectedMove": "e2e4",
+          "hints": [
+            "Play e4"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR b KQkq - 0 4",
+          "commentary": "4...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 5",
+          "commentary": "5.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R b KQkq - 1 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R w KQ - 2 6",
+          "commentary": "6.Be2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1e2",
+          "hints": [
+            "Play Be2"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP2BPPP/R1BQK2R b KQ - 3 6",
+          "commentary": "6...e5 — the central counterstrike, the heart of the KID.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ - 0 7",
+          "commentary": "7.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 1 7",
+          "commentary": "7...Nc6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2pbp/2np1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQ1RK1 w - - 2 8",
+          "commentary": "8.d5 — White locks the center with d5, committing to queenside play.",
+          "expectedMove": "d4d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp2pbp/2np1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
+          "commentary": "8...Ne7 — the knight reroutes toward the kingside via e7-g6.",
+          "expectedMove": "c6e7",
+          "hints": [
+            "Play Ne7"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp1npbp/3p1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 w - - 1 9",
+          "commentary": "9.Ne1 — White's knight heads to d3 to support the c5 break.",
+          "expectedMove": "f3e1",
+          "hints": [
+            "Play Ne1"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/ppp1npbp/3p1np1/3Pp3/2P1P3/2N5/PP2BPPP/R1BQNRK1 b - - 2 9",
+          "commentary": "9...Nd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f6d7",
+          "hints": [
+            "Play Nd7"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnnpbp/3p2p1/3Pp3/2P1P3/2N5/PP2BPPP/R1BQNRK1 w - - 3 10",
+          "commentary": "10.Nd3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1d3",
+          "hints": [
+            "Play Nd3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnnpbp/3p2p1/3Pp3/2P1P3/2NN4/PP2BPPP/R1BQ1RK1 b - - 4 10",
+          "commentary": "10...f5 — the thematic ...f5 — Black's kingside attack begins!",
+          "expectedMove": "f7f5",
+          "hints": [
+            "Play f5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnn1bp/3p2p1/3Ppp2/2P1P3/2NN4/PP2BPPP/R1BQ1RK1 w - - 0 11",
+          "commentary": "The classic KID race: White attacks on the queenside with c5, Black storms the kingside with f5-f4-g5-g4."
         }
       ]
     },
     {
-      "title": "The Kingside Attack",
-      "content": "In the classical King's Indian, the center locks and the play becomes a race: White attacks on the queenside, Black storms the kingside with f5-f4, g5-g4 aiming at White's king.",
+      "title": "Sämisch Variation",
+      "content": "White plays f3 to build an iron center and castle queenside, inviting a sharp mutual attack.",
       "positions": [
         {
-          "fen": "r1bq1rk1/ppp1npbp/3p1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
-          "commentary": "A classical King's Indian. The center is closed; Black prepares f5 to attack the kingside while White expands with c5 on the other wing.",
-          "expectedMove": "f5",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Start the kingside pawn storm",
-            "Strike at White's e4 pawn"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+          "commentary": "2.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...g6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g7g6",
+          "hints": [
+            "Play g6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+          "commentary": "3...Bg7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8g7",
+          "hints": [
+            "Play Bg7"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
+          "commentary": "4.e4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e4",
+          "hints": [
+            "Play e4"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR b KQkq - 0 4",
+          "commentary": "4...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 5",
+          "commentary": "5.f3 — the Sämisch — f3 over-protects e4 and prepares Be3 and Qd2.",
+          "expectedMove": "f2f3",
+          "hints": [
+            "Play f3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N2P2/PP4PP/R1BQKBNR b KQkq - 0 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N2P2/PP4PP/R1BQKBNR w KQ - 1 6",
+          "commentary": "6.Be3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c1e3",
+          "hints": [
+            "Play Be3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N1BP2/PP4PP/R2QKBNR b KQ - 2 6",
+          "commentary": "6...e5 — the standard central break.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N1BP2/PP4PP/R2QKBNR w KQ - 0 7",
+          "commentary": "7.d5 — closing the center.",
+          "expectedMove": "d4d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p1np1/3Pp3/2P1P3/2N1BP2/PP4PP/R2QKBNR b KQ - 0 7",
+          "commentary": "7...Nh5 — rerouting the knight and preparing ...f5.",
+          "expectedMove": "f6h5",
+          "hints": [
+            "Play Nh5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p2p1/3Pp2n/2P1P3/2N1BP2/PP4PP/R2QKBNR w KQ - 1 8",
+          "commentary": "8.Qd2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d1d2",
+          "hints": [
+            "Play Qd2"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2pbp/3p2p1/3Pp2n/2P1P3/2N1BP2/PP1Q2PP/R3KBNR b KQ - 2 8",
+          "commentary": "8...f5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f7f5",
+          "hints": [
+            "Play f5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp3bp/3p2p1/3Ppp1n/2P1P3/2N1BP2/PP1Q2PP/R3KBNR w KQ - 0 9",
+          "commentary": "9.O-O-O — castling queenside — opposite-side attacks loom.",
+          "expectedMove": "e1c1",
+          "hints": [
+            "Play O-O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp3bp/3p2p1/3Ppp1n/2P1P3/2N1BP2/PP1Q2PP/2KR1BNR b - - 1 9",
+          "commentary": "9...Nd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8d7",
+          "hints": [
+            "Play Nd7"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppn2bp/3p2p1/3Ppp1n/2P1P3/2N1BP2/PP1Q2PP/2KR1BNR w - - 2 10",
+          "commentary": "A double-edged Sämisch battle with opposite-side castling and mutual pawn storms."
+        }
+      ]
+    },
+    {
+      "title": "Fianchetto Variation",
+      "content": "White fianchettoes too, blunting the g7 bishop and aiming for a calmer positional game.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+          "commentary": "2.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...g6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g7g6",
+          "hints": [
+            "Play g6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.g3 — the Fianchetto System — g3 neutralizes the long diagonal.",
+          "expectedMove": "g2g3",
+          "hints": [
+            "Play g3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/6P1/PP2PP1P/RNBQKBNR b KQkq - 0 3",
+          "commentary": "3...Bg7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8g7",
+          "hints": [
+            "Play Bg7"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/6P1/PP2PP1P/RNBQKBNR w KQkq - 1 4",
+          "commentary": "4.Bg2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1g2",
+          "hints": [
+            "Play Bg2"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/6P1/PP2PPBP/RNBQK1NR b KQkq - 2 4",
+          "commentary": "4...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppppppbp/5np1/8/2PP4/6P1/PP2PPBP/RNBQK1NR w KQ - 3 5",
+          "commentary": "5.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppppppbp/5np1/8/2PP4/5NP1/PP2PPBP/RNBQK2R b KQ - 4 5",
+          "commentary": "5...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PP4/5NP1/PP2PPBP/RNBQK2R w KQ - 0 6",
+          "commentary": "6.O-O — developing the knight to d7, the flexible setup.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b - - 1 6",
+          "commentary": "6...Nbd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8d7",
+          "hints": [
+            "Play Nbd7"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnppbp/3p1np1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 w - - 2 7",
+          "commentary": "7.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnppbp/3p1np1/8/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 b - - 3 7",
+          "commentary": "7...e5 — the central break, here with ...c6 support coming.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppn1pbp/3p1np1/4p3/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 0 8",
+          "commentary": "8.e4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e4",
+          "hints": [
+            "Play e4"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppn1pbp/3p1np1/4p3/2PPP3/2N2NP1/PP3PBP/R1BQ1RK1 b - - 0 8",
+          "commentary": "8...c6 — preparing ...exd4 and central play rather than a pawn storm.",
+          "expectedMove": "c7c6",
+          "hints": [
+            "Play c6"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1n1pbp/2pp1np1/4p3/2PPP3/2N2NP1/PP3PBP/R1BQ1RK1 w - - 0 9",
+          "commentary": "9.h3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "h2h3",
+          "hints": [
+            "Play h3"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pp1n1pbp/2pp1np1/4p3/2PPP3/2N2NPP/PP3PB1/R1BQ1RK1 b - - 0 9",
+          "commentary": "9...Qb6 — Qb6 pressures b2 and d4.",
+          "expectedMove": "d8b6",
+          "hints": [
+            "Play Qb6"
+          ]
+        },
+        {
+          "fen": "r1b2rk1/pp1n1pbp/1qpp1np1/4p3/2PPP3/2N2NPP/PP3PB1/R1BQ1RK1 w - - 1 10",
+          "commentary": "A calmer KID where Black plays in the center with ...c6 and ...exd4 rather than a kingside storm."
         }
       ]
     }
   ],
   "exercises": [
     {
-      "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 1 4",
-      "title": "Claim the Center",
-      "description": "White to play. Occupy the center with a pawn now that Black has committed to the fianchetto.",
-      "targetColor": "w",
+      "fen": "r1bq1rk1/ppp2pbp/2np1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
+      "title": "Reroute the Knight",
+      "description": "Black to play. White locked the center with d5, attacking the c6 knight. Reroute it toward the kingside.",
+      "targetColor": "b",
       "expectedMoves": [
-        "e4"
+        "c6e7"
       ],
       "hints": [
-        "Take full central control",
-        "Build the broad pawn center"
+        "The knight is attacked",
+        "Head for g6 via e7 to support ...f5"
       ],
       "maxMoves": 1
     }

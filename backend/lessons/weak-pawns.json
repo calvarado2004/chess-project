@@ -1,0 +1,77 @@
+{
+  "id": "weak-pawns",
+  "title": "Weak Pawns: Isolated, Doubled, Backward",
+  "category": "middlegame",
+  "difficulty": "intermediate",
+  "description": "Learn to recognize and exploit the three classic pawn weaknesses — and how to handle them when they are yours.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Isolated pawns",
+    "Doubled pawns",
+    "Backward pawns",
+    "Blockade",
+    "Targeting weaknesses"
+  ],
+  "sections": [
+    {
+      "title": "The Isolated Queen Pawn",
+      "content": "An isolated pawn has no friendly pawns on adjacent files, so it cannot be defended by a pawn. It grants active piece play but becomes a target in the endgame. Blockade it with a knight and trade pieces to exploit it.",
+      "positions": [
+        {
+          "fen": "3rr1k1/pp3ppp/2n2n2/3p4/3P4/2N2N2/PP3PPP/3RR1K1 w - - 0 1",
+          "commentary": "Black has an isolated pawn on d5. White blockades it with a knight on d4 and aims to trade down to a winning endgame.",
+          "expectedMove": "Nd4",
+          "hints": [
+            "Blockade the isolani",
+            "A knight on d4 is ideal"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Doubled Pawns",
+      "content": "Doubled pawns cannot defend each other and often cannot advance. They can be useful when they open a file for a rook, but as a static weakness they are a long-term liability.",
+      "positions": [
+        {
+          "fen": "6k1/pp3ppp/2p5/2P5/8/1P6/P4PPP/6K1 w - - 0 1",
+          "commentary": "White has doubled c-pawns. They are weak and can be fixed and attacked. Black will target them with pieces and the king.",
+          "expectedMove": "b4",
+          "hints": [
+            "Try to free the doubled pawns",
+            "Advance to challenge the structure"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Backward Pawn",
+      "content": "A backward pawn lags behind its neighbors on a half-open file and cannot be supported by them. The square in front of it is a perfect outpost for the opponent. Pile pressure on it.",
+      "positions": [
+        {
+          "fen": "3r2k1/1p3ppp/p2p4/3P4/8/1P6/P4PPP/3R2K1 w - - 0 1",
+          "commentary": "Black's d6 pawn is backward on the half-open d-file. White stacks rooks on the d-file and wins it.",
+          "expectedMove": "Rd4",
+          "hints": [
+            "Pressure the backward pawn",
+            "Use the half-open file"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "3rr1k1/pp3ppp/2n2n2/3p4/3P4/2N2N2/PP3PPP/3RR1K1 w - - 0 1",
+      "title": "Blockade the Isolani",
+      "description": "White to play. Establish the ideal blockade in front of the isolated d-pawn.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Nd4"
+      ],
+      "hints": [
+        "Knight to the blockade square"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

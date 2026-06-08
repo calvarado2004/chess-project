@@ -3,59 +3,491 @@
   "title": "The London System",
   "category": "openings",
   "difficulty": "beginner",
-  "description": "A popular, easy-to-learn system for White. Develop the dark-squared bishop to f4 early and follow a reliable setup against almost anything Black plays.",
-  "estimatedMinutes": 16,
+  "description": "An easy-to-learn system for White: Bf4, e3, Bd3, c3, Nbd2. We study setups against ...d5, against the King's Indian, and the modern Nf3-c4 try.",
+  "estimatedMinutes": 30,
   "keyConcepts": [
     "System-based play",
-    "Bishop to f4",
+    "The Bf4 bishop",
     "Solid pawn triangle",
     "Easy development",
-    "Kingside safety"
+    "Kingside attack with Ne5"
   ],
   "sections": [
     {
-      "title": "The London Setup",
-      "content": "After 1.d4 d5 2.Bf4, White develops the bishop outside the pawn chain before playing e3. The same setup — Bf4, e3, Bd3, Nf3, c3 — works against many Black defenses.",
+      "title": "London vs ...d5",
+      "content": "The classic London setup against a symmetrical center, aiming for a kingside attack with Ne5 and a queen lift.",
       "positions": [
         {
-          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2",
-          "commentary": "The London System. The bishop is developed to f4 before the e-pawn moves, avoiding the bad-bishop problem entirely.",
-          "expectedMove": "Nf6",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4 — starting the London.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Develop naturally",
-            "Control the e4 square"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...d5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Bf4 — the defining move — the bishop comes out before e3.",
+          "expectedMove": "c1f4",
+          "hints": [
+            "Play Bf4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2",
+          "commentary": "2...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 2 3",
+          "commentary": "3.e3 — building the pawn triangle c3-d4-e3.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/4P3/PPP2PPP/RN1QKBNR b KQkq - 0 3",
+          "commentary": "3...e6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e6",
+          "hints": [
+            "Play e6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/4P3/PPP2PPP/RN1QKBNR w KQkq - 0 4",
+          "commentary": "4.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 1 4",
+          "commentary": "4...Bd6 — Black mirrors with ...Bd6, challenging the f4 bishop.",
+          "expectedMove": "f8d6",
+          "hints": [
+            "Play Bd6"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp2ppp/3bpn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 2 5",
+          "commentary": "5.Bg3 — sidestepping the trade and keeping the strong bishop.",
+          "expectedMove": "f4g3",
+          "hints": [
+            "Play Bg3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp2ppp/3bpn2/3p4/3P4/4PNB1/PPP2PPP/RN1QKB1R b KQkq - 3 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2ppp/3bpn2/3p4/3P4/4PNB1/PPP2PPP/RN1QKB1R w KQ - 4 6",
+          "commentary": "6.Bd3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1d3",
+          "hints": [
+            "Play Bd3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2ppp/3bpn2/3p4/3P4/3BPNB1/PPP2PPP/RN1QK2R b KQ - 5 6",
+          "commentary": "6...b6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b7b6",
+          "hints": [
+            "Play b6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p2ppp/1p1bpn2/3p4/3P4/3BPNB1/PPP2PPP/RN1QK2R w KQ - 0 7",
+          "commentary": "7.Nbd2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1d2",
+          "hints": [
+            "Play Nbd2"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p2ppp/1p1bpn2/3p4/3P4/3BPNB1/PPPN1PPP/R2QK2R b KQ - 1 7",
+          "commentary": "7...Bb7 — the powerful Ne5 outpost, the heart of the London attack.",
+          "expectedMove": "c8b7",
+          "hints": [
+            "Play Bb7"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pbp2ppp/1p1bpn2/3p4/3P4/3BPNB1/PPPN1PPP/R2QK2R w KQ - 2 8",
+          "commentary": "8.Ne5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f3e5",
+          "hints": [
+            "Play Ne5"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pbp2ppp/1p1bpn2/3pN3/3P4/3BP1B1/PPPN1PPP/R2QK2R b KQ - 3 8",
+          "commentary": "8...Nbd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8d7",
+          "hints": [
+            "Play Nbd7"
+          ]
+        },
+        {
+          "fen": "r2q1rk1/pbpn1ppp/1p1bpn2/3pN3/3P4/3BP1B1/PPPN1PPP/R2QK2R w KQ - 4 9",
+          "commentary": "9.f4 — f4 supports the knight and prepares a kingside pawn storm.",
+          "expectedMove": "f2f4",
+          "hints": [
+            "Play f4"
+          ]
+        },
+        {
+          "fen": "r2q1rk1/pbpn1ppp/1p1bpn2/3pN3/3P1P2/3BP1B1/PPPN2PP/R2QK2R b KQ - 0 9",
+          "commentary": "9...c5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c7c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "r2q1rk1/pb1n1ppp/1p1bpn2/2ppN3/3P1P2/3BP1B1/PPPN2PP/R2QK2R w KQ - 0 10",
+          "commentary": "A typical London attacking setup: White plays for f4-f5 and a kingside assault; Black counters with ...c5 on the queenside."
         }
       ]
     },
     {
-      "title": "A Reliable Structure",
-      "content": "White's pawns on c3, d4, and e3 form a sturdy triangle. The plan is simple: complete development, castle, and look for a kingside attack or central break with e4 at the right time.",
+      "title": "London vs King's Indian",
+      "content": "Against a kingside fianchetto, White keeps the solid structure and contests the center carefully.",
       "positions": [
         {
-          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/2N1P3/PPP2PPP/R2QKBNR w KQkq - 0 5",
-          "commentary": "A typical London structure. White has the classic triangle and easy development. The setup is hard to break down.",
-          "expectedMove": "Bd3",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Complete development",
-            "Aim the bishop at h7"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+          "commentary": "2.Bf4 — the London works against almost anything.",
+          "expectedMove": "c1f4",
+          "hints": [
+            "Play Bf4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppppp/5n2/8/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 2 2",
+          "commentary": "2...g6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g7g6",
+          "hints": [
+            "Play g6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 0 3",
+          "commentary": "3.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pppppp1p/5np1/8/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 1 3",
+          "commentary": "3...Bg7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8g7",
+          "hints": [
+            "Play Bg7"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 2 4",
+          "commentary": "4.e3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppppppbp/5np1/8/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+          "commentary": "4...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppppppbp/5np1/8/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQ - 1 5",
+          "commentary": "5.Be2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1e2",
+          "hints": [
+            "Play Be2"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppppppbp/5np1/8/3P1B2/4PN2/PPP1BPPP/RN1QK2R b KQ - 2 5",
+          "commentary": "5...d6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d6",
+          "hints": [
+            "Play d6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/3P1B2/4PN2/PPP1BPPP/RN1QK2R w KQ - 0 6",
+          "commentary": "6.h3 — h3 prevents ...Nh5 hitting the bishop and stops ...Bg4.",
+          "expectedMove": "h2h3",
+          "hints": [
+            "Play h3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1ppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1QK2R b KQ - 0 6",
+          "commentary": "6...Nbd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8d7",
+          "hints": [
+            "Play Nbd7"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1QK2R w KQ - 1 7",
+          "commentary": "7.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "r1bq1rk1/pppnppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1Q1RK1 b - - 2 7",
+          "commentary": "7...Re8. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8e8",
+          "hints": [
+            "Play Re8"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppnppbp/3p1np1/8/3P1B2/4PN1P/PPP1BPP1/RN1Q1RK1 w - - 3 8",
+          "commentary": "8.c3 — supporting the center before Black plays ...e5.",
+          "expectedMove": "c2c3",
+          "hints": [
+            "Play c3"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppnppbp/3p1np1/8/3P1B2/2P1PN1P/PP2BPP1/RN1Q1RK1 b - - 0 8",
+          "commentary": "8...e5 — Black strikes in the center.",
+          "expectedMove": "e7e5",
+          "hints": [
+            "Play e5"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppn1pbp/3p1np1/4p3/3P1B2/2P1PN1P/PP2BPP1/RN1Q1RK1 w - - 0 9",
+          "commentary": "9.Bh2 — the bishop tucks safely onto h2, still on the strong diagonal.",
+          "expectedMove": "f4h2",
+          "hints": [
+            "Play Bh2"
+          ]
+        },
+        {
+          "fen": "r1bqr1k1/pppn1pbp/3p1np1/4p3/3P4/2P1PN1P/PP2BPPB/RN1Q1RK1 b - - 1 9",
+          "commentary": "9...Qe7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d8e7",
+          "hints": [
+            "Play Qe7"
+          ]
+        },
+        {
+          "fen": "r1b1r1k1/pppnqpbp/3p1np1/4p3/3P4/2P1PN1P/PP2BPPB/RN1Q1RK1 w - - 2 10",
+          "commentary": "A solid London vs KID structure where White holds the center and waits for Black to commit."
+        }
+      ]
+    },
+    {
+      "title": "Modern London with c4",
+      "content": "White plays an early c4 to give the London more bite, transposing toward Queen's-Gambit structures.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...d5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.Bf4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c1f4",
+          "hints": [
+            "Play Bf4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2",
+          "commentary": "2...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 2 3",
+          "commentary": "3.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 3 3",
+          "commentary": "3...e6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e6",
+          "hints": [
+            "Play e6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R w KQkq - 0 4",
+          "commentary": "4.e3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq - 0 4",
+          "commentary": "4...Bd6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8d6",
+          "hints": [
+            "Play Bd6"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp2ppp/3bpn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 1 5",
+          "commentary": "5.Bg3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f4g3",
+          "hints": [
+            "Play Bg3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp2ppp/3bpn2/3p4/3P4/4PNB1/PPP2PPP/RN1QKB1R b KQkq - 2 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2ppp/3bpn2/3p4/3P4/4PNB1/PPP2PPP/RN1QKB1R w KQ - 3 6",
+          "commentary": "6.Nbd2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1d2",
+          "hints": [
+            "Play Nbd2"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp2ppp/3bpn2/3p4/3P4/4PNB1/PPPN1PPP/R2QKB1R b KQ - 4 6",
+          "commentary": "6...b6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b7b6",
+          "hints": [
+            "Play b6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p2ppp/1p1bpn2/3p4/3P4/4PNB1/PPPN1PPP/R2QKB1R w KQ - 0 7",
+          "commentary": "7.Bd3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1d3",
+          "hints": [
+            "Play Bd3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p2ppp/1p1bpn2/3p4/3P4/3BPNB1/PPPN1PPP/R2QK2R b KQ - 1 7",
+          "commentary": "7...Bb7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c8b7",
+          "hints": [
+            "Play Bb7"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pbp2ppp/1p1bpn2/3p4/3P4/3BPNB1/PPPN1PPP/R2QK2R w KQ - 2 8",
+          "commentary": "8.c4 — the modern c4 break gives White a more ambitious central setup.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pbp2ppp/1p1bpn2/3p4/2PP4/3BPNB1/PP1N1PPP/R2QK2R b KQ - 0 8",
+          "commentary": "8...c5 — Black contests with ...c5 at once.",
+          "expectedMove": "c7c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pb3ppp/1p1bpn2/2pp4/2PP4/3BPNB1/PP1N1PPP/R2QK2R w KQ - 0 9",
+          "commentary": "9.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pb3ppp/1p1bpn2/2pp4/2PP4/3BPNB1/PP1N1PPP/R2Q1RK1 b - - 1 9",
+          "commentary": "9...Nc6 — a rich position with mutual central tension and active pieces.",
+          "expectedMove": "b8c6",
+          "hints": [
+            "Play Nc6"
+          ]
+        },
+        {
+          "fen": "r2q1rk1/pb3ppp/1pnbpn2/2pp4/2PP4/3BPNB1/PP1N1PPP/R2Q1RK1 w - - 2 10",
+          "commentary": "A modern, sharper London where c4 fights for the center instead of the slow Ne5 plan."
         }
       ]
     }
   ],
   "exercises": [
     {
-      "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 2 3",
-      "title": "Build the Triangle",
-      "description": "White to play. Support the d4 pawn and open the f1 bishop with a modest pawn move.",
+      "fen": "rnbqk2r/ppp2ppp/3bpn2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R w KQkq - 2 5",
+      "title": "Save the Bishop",
+      "description": "White to play. Black offers a trade with ...Bd6 — avoid it and keep your good bishop.",
       "targetColor": "w",
       "expectedMoves": [
-        "e3"
+        "f4g3"
       ],
       "hints": [
-        "Reinforce d4",
-        "Free the light-squared bishop"
+        "Do not trade your strong bishop",
+        "Retreat to g3, still on a fine diagonal"
       ],
       "maxMoves": 1
     }

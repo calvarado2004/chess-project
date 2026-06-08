@@ -1,0 +1,69 @@
+{
+  "id": "rook-vs-minor",
+  "title": "Rook vs Minor Piece Endings",
+  "category": "endings",
+  "difficulty": "advanced",
+  "description": "A rook is usually worth a minor piece plus pawns, but with few pawns these endings are often drawn. Learn the key technique and the drawing fortresses.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Rook vs bishop draws",
+    "Rook vs knight",
+    "Cutting off the king",
+    "Fortresses",
+    "Active rook"
+  ],
+  "sections": [
+    {
+      "title": "Rook vs Bishop (Drawn)",
+      "content": "Rook versus a lone bishop is a draw — the defender keeps the king in the corner of the OPPOSITE color to the bishop, where it cannot be driven out. Knowing this saves many half points.",
+      "positions": [
+        {
+          "fen": "7k/8/8/8/8/8/5B2/6RK b - - 0 1",
+          "commentary": "Bare rook versus bishop is a theoretical draw if the weaker side reaches the safe corner. The defender shuffles the king and holds."
+        },
+        {
+          "fen": "6k1/8/8/8/8/8/5B2/6RK w - - 0 2",
+          "commentary": "The defending king heads to the corner of the wrong color for the bishop, where the rook alone cannot force mate.",
+          "expectedMove": "Rg2",
+          "hints": [
+            "Drive toward the safe corner",
+            "Lone rook cannot mate"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Converting Rook vs Knight",
+      "content": "Rook versus knight is also usually drawn, but the knight can get awkwardly placed. The attacker tries to separate the knight from its king, where a lone knight may get trapped.",
+      "positions": [
+        {
+          "fen": "8/8/8/4k3/8/4n3/8/4K1R1 w - - 0 1",
+          "commentary": "The attacker probes to separate the knight from the king. If the knight strays too far from its monarch, it can be cornered and won.",
+          "expectedMove": "Rg3",
+          "hints": [
+            "Attack the knight",
+            "Separate it from its king"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/8/8/4k3/8/4n3/8/4K1R1 w - - 0 1",
+      "title": "Probe the Knight",
+      "description": "White to play. Use the rook to harass the knight and try to separate it from its king.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Rg3",
+        "Ra1",
+        "Rg5+"
+      ],
+      "hints": [
+        "Attack the awkward knight",
+        "Keep the rook active"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

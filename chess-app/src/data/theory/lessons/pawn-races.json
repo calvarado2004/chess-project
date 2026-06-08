@@ -1,0 +1,63 @@
+{
+  "id": "pawn-races",
+  "title": "Pawn Races and Counting",
+  "category": "endings",
+  "difficulty": "advanced",
+  "description": "When both sides push passed pawns toward promotion, the game becomes a race. Learn to count tempi accurately and use queening with check or threats to win the race.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Counting tempi",
+    "Queening with check",
+    "New queen stops the enemy",
+    "Promotion squares",
+    "Calculating to the end"
+  ],
+  "sections": [
+    {
+      "title": "Count the Tempi",
+      "content": "In a pawn race, count exactly how many moves each pawn needs to promote. Whoever queens first — or queens with check or an immediate threat — wins the race. Calculate to the very last move.",
+      "positions": [
+        {
+          "fen": "8/6p1/8/8/8/1p6/P5K1/7k w - - 0 1",
+          "commentary": "A pawn race. White must count precisely: push the a-pawn and calculate whether it queens in time, possibly with a check that wins the enemy pawn.",
+          "expectedMove": "a4",
+          "hints": [
+            "Count the moves to promotion",
+            "Race your passer immediately"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Queen With Tempo",
+      "content": "A new queen that gives check or attacks the opponent's pawn can stop their promotion. Even a move behind in the race, queening with check can turn the tables.",
+      "positions": [
+        {
+          "fen": "8/8/8/8/8/k1p5/8/4K2Q w - - 0 1",
+          "commentary": "White's queen demonstrates how a new queen halts an enemy passer: it checks the king and then captures or blockades the runaway pawn.",
+          "expectedMove": "Qh3",
+          "hints": [
+            "Use checks to gain time",
+            "Stop the enemy pawn with tempo"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "8/6p1/8/8/8/1p6/P5K1/7k w - - 0 1",
+      "title": "Win the Race",
+      "description": "White to play. Start your passed pawn down the board — count carefully!",
+      "targetColor": "w",
+      "expectedMoves": [
+        "a4"
+      ],
+      "hints": [
+        "Push the passer",
+        "Count tempi to promotion"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

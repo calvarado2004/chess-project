@@ -1,0 +1,65 @@
+{
+  "id": "passed-pawns",
+  "title": "Passed Pawns",
+  "category": "endings",
+  "difficulty": "intermediate",
+  "description": "A passed pawn has no enemy pawns blocking or able to capture it on its way to promotion. Learn to create, support, and push passed pawns — and to blockade the opponent's.",
+  "estimatedMinutes": 20,
+  "keyConcepts": [
+    "Creating passers",
+    "Protected passed pawn",
+    "Outside passed pawn",
+    "Blockade",
+    "Passed pawns must be pushed"
+  ],
+  "sections": [
+    {
+      "title": "The Outside Passed Pawn",
+      "content": "An outside passed pawn — far from the other pawns — is a decisive endgame asset. It lures the enemy king away, letting your king feast on the other wing.",
+      "positions": [
+        {
+          "fen": "6k1/5ppp/8/p7/P7/8/5PPP/6K1 w - - 0 1",
+          "commentary": "The a-pawn is an outside passer. Pushed at the right moment, it drags the black king to the queenside while White's king invades the kingside.",
+          "expectedMove": "Kf1",
+          "hints": [
+            "Use the passer as a decoy",
+            "March your king while the pawn distracts"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "The Protected Passed Pawn",
+      "content": "A passed pawn defended by another pawn is \"protected\" — the enemy king cannot win it and is tied down forever. This is often a winning advantage by itself.",
+      "positions": [
+        {
+          "fen": "8/8/4k3/3p4/3P4/4P3/6K1/8 w - - 0 1",
+          "commentary": "White's e3 pawn protects the passed d4 pawn. The black king can never capture it, and White's king is free to advance.",
+          "expectedMove": "Kf3",
+          "hints": [
+            "Push with king support",
+            "The protected passer ties the enemy down"
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "fen": "6k1/5ppp/8/p7/P7/8/5PPP/6K1 w - - 0 1",
+      "title": "Activate the King",
+      "description": "White to play. Begin marching the king toward the action while the outside passer ties Black down.",
+      "targetColor": "w",
+      "expectedMoves": [
+        "Kf1",
+        "Kf2",
+        "Kg2"
+      ],
+      "hints": [
+        "The king is the key piece in the endgame",
+        "Head for the center/kingside"
+      ],
+      "maxMoves": 1
+    }
+  ]
+}

@@ -3,59 +3,491 @@
   "title": "The Queen's Gambit",
   "category": "openings",
   "difficulty": "intermediate",
-  "description": "White offers the c-pawn to deflect Black's d5 pawn and dominate the center. One of the most classical and instructive openings in chess.",
-  "estimatedMinutes": 22,
+  "description": "The most classical 1.d4 opening. White offers the c-pawn to dominate the center. We study the Declined, the Slav, and the Accepted.",
+  "estimatedMinutes": 30,
   "keyConcepts": [
-    "Central majority",
-    "The c4 lever",
-    "Minority attack",
+    "Central control",
+    "The minority attack",
     "Isolated queen pawn",
-    "Classical development"
+    "Classical development",
+    "The c4-d5 tension"
   ],
   "sections": [
     {
-      "title": "The Gambit Offer",
-      "content": "After 1.d4 d5 2.c4, White offers a pawn. It is not a true sacrifice — if Black takes with 2...dxc4, White regains the pawn easily while gaining central control.",
+      "title": "Queen's Gambit Declined",
+      "content": "Black supports d5 with ...e6, building a solid wall at the cost of temporarily blocking the c8 bishop.",
       "positions": [
         {
-          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2",
-          "commentary": "The Queen's Gambit. White challenges d5 from the side. Black usually declines with e6 or c6, keeping a solid center.",
-          "expectedMove": "e6",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4 — claiming the center.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Decline and stay solid",
-            "Support the d5 pawn"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...d5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.c4 — the Queen's Gambit — offering the c-pawn to deflect d5.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...e6 — declining solidly with ...e6.",
+          "expectedMove": "e7e6",
+          "hints": [
+            "Play e6"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+          "commentary": "3...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
+          "commentary": "4.Bg5 — pinning the f6 knight to pressure d5.",
+          "expectedMove": "c1g5",
+          "hints": [
+            "Play Bg5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 4",
+          "commentary": "4...Be7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8e7",
+          "hints": [
+            "Play Be7"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5",
+          "commentary": "5.e3 — the classical Orthodox setup.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR b KQkq - 0 5",
+          "commentary": "5...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR w KQ - 1 6",
+          "commentary": "6.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQ - 2 6",
+          "commentary": "6...h6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "h7h6",
+          "hints": [
+            "Play h6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1bpp1/4pn1p/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 7",
+          "commentary": "7.Bh4 — maintaining the pin.",
+          "expectedMove": "g5h4",
+          "hints": [
+            "Play Bh4"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/ppp1bpp1/4pn1p/3p4/2PP3B/2N1PN2/PP3PPP/R2QKB1R b KQ - 1 7",
+          "commentary": "7...b6 — preparing to develop the bishop via b7 (the Tartakower).",
+          "expectedMove": "b7b6",
+          "hints": [
+            "Play b6"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p1bpp1/1p2pn1p/3p4/2PP3B/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 8",
+          "commentary": "8.cxd5 — releasing the tension; the knight recaptures.",
+          "expectedMove": "c4d5",
+          "hints": [
+            "Play cxd5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p1bpp1/1p2pn1p/3P4/3P3B/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 8",
+          "commentary": "8...Nxd5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f6d5",
+          "hints": [
+            "Play Nxd5"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p1bpp1/1p2p2p/3n4/3P3B/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 9",
+          "commentary": "9.Bxe7 — trading the dark-squared bishops to ease Black's game.",
+          "expectedMove": "h4e7",
+          "hints": [
+            "Play Bxe7"
+          ]
+        },
+        {
+          "fen": "rnbq1rk1/p1p1Bpp1/1p2p2p/3n4/3P4/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 9",
+          "commentary": "9...Qxe7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d8e7",
+          "hints": [
+            "Play Qxe7"
+          ]
+        },
+        {
+          "fen": "rnb2rk1/p1p1qpp1/1p2p2p/3n4/3P4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 10",
+          "commentary": "A classical QGD tabiya where White eyes the minority attack with b4-b5 and Black seeks the ...c5 break."
         }
       ]
     },
     {
-      "title": "Queen's Gambit Declined",
-      "content": "With 2...e6, Black builds a solid wall. The downside is the c8 bishop is temporarily blocked. White develops naturally and aims for pressure with the minority attack or central play.",
+      "title": "Slav Defense",
+      "content": "Black supports d5 with ...c6 instead of ...e6, keeping the light-squared bishop free.",
       "positions": [
         {
-          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 1 4",
-          "commentary": "A standard Queen's Gambit Declined position. White piles up on d5 and prepares to develop the bishop to g5.",
-          "expectedMove": "Bg5",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
           "hints": [
-            "Pin the f6 knight",
-            "Increase pressure on d5"
+            "Play d4"
           ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...d5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...c6 — the Slav — c6 supports d5 without blocking the bishop.",
+          "expectedMove": "c7c6",
+          "hints": [
+            "Play c6"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R b KQkq - 1 3",
+          "commentary": "3...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq - 2 4",
+          "commentary": "4.Nc3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b1c3",
+          "hints": [
+            "Play Nc3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq - 3 4",
+          "commentary": "4...dxc4 — the main line; Black grabs the pawn and will develop the bishop to f5.",
+          "expectedMove": "d5c4",
+          "hints": [
+            "Play dxc4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/2pP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 5",
+          "commentary": "5.a4 — a4 stops ...b5 and regains the pawn.",
+          "expectedMove": "a2a4",
+          "hints": [
+            "Play a4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/P1pP4/2N2N2/1P2PPPP/R1BQKB1R b KQkq - 0 5",
+          "commentary": "5...Bf5 — the point of the Slav — the bishop is active on f5.",
+          "expectedMove": "c8f5",
+          "hints": [
+            "Play Bf5"
+          ]
+        },
+        {
+          "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pP4/2N2N2/1P2PPPP/R1BQKB1R w KQkq - 1 6",
+          "commentary": "6.e3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pP4/2N1PN2/1P3PPP/R1BQKB1R b KQkq - 0 6",
+          "commentary": "6...e6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e6",
+          "hints": [
+            "Play e6"
+          ]
+        },
+        {
+          "fen": "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1pP4/2N1PN2/1P3PPP/R1BQKB1R w KQkq - 0 7",
+          "commentary": "7.Bxc4 — White recaptures the c4 pawn with a comfortable game.",
+          "expectedMove": "f1c4",
+          "hints": [
+            "Play Bxc4"
+          ]
+        },
+        {
+          "fen": "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1BP4/2N1PN2/1P3PPP/R1BQK2R b KQkq - 0 7",
+          "commentary": "7...Bb4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8b4",
+          "hints": [
+            "Play Bb4"
+          ]
+        },
+        {
+          "fen": "rn1qk2r/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQK2R w KQkq - 1 8",
+          "commentary": "8.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rn1qk2r/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQ1RK1 b kq - 2 8",
+          "commentary": "8...O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e8g8",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQ1RK1 w - - 3 9",
+          "commentary": "9.Qe2. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d1e2",
+          "hints": [
+            "Play Qe2"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P2QPPP/R1B2RK1 b - - 4 9",
+          "commentary": "9...Bg6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f5g6",
+          "hints": [
+            "Play Bg6"
+          ]
+        },
+        {
+          "fen": "rn1q1rk1/pp3ppp/2p1pnb1/8/PbBP4/2N1PN2/1P2QPPP/R1B2RK1 w - - 5 10",
+          "commentary": "A harmonious Slav structure: Black has solved the bishop problem; White has a small space edge."
+        }
+      ]
+    },
+    {
+      "title": "Queen's Gambit Accepted",
+      "content": "Black takes the pawn and aims for quick development and a timely ...c5 to free the position.",
+      "positions": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "commentary": "1.d4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d2d4",
+          "hints": [
+            "Play d4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          "commentary": "1...d5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d7d5",
+          "hints": [
+            "Play d5"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+          "commentary": "2.c4. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "c2c4",
+          "hints": [
+            "Play c4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+          "commentary": "2...dxc4 — accepting the gambit — Black will not try to hold the pawn.",
+          "expectedMove": "d5c4",
+          "hints": [
+            "Play dxc4"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+          "commentary": "3.Nf3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g1f3",
+          "hints": [
+            "Play Nf3"
+          ]
+        },
+        {
+          "fen": "rnbqkbnr/ppp1pppp/8/8/2pP4/5N2/PP2PPPP/RNBQKB1R b KQkq - 1 3",
+          "commentary": "3...Nf6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "g8f6",
+          "hints": [
+            "Play Nf6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/8/2pP4/5N2/PP2PPPP/RNBQKB1R w KQkq - 2 4",
+          "commentary": "4.e3 — preparing to recapture c4 with the bishop.",
+          "expectedMove": "e2e3",
+          "hints": [
+            "Play e3"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp1pppp/5n2/8/2pP4/4PN2/PP3PPP/RNBQKB1R b KQkq - 0 4",
+          "commentary": "4...e6. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e7e6",
+          "hints": [
+            "Play e6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/8/2pP4/4PN2/PP3PPP/RNBQKB1R w KQkq - 0 5",
+          "commentary": "5.Bxc4 — regaining the pawn with a strong centralized bishop.",
+          "expectedMove": "f1c4",
+          "hints": [
+            "Play Bxc4"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/8/2BP4/4PN2/PP3PPP/RNBQK2R b KQkq - 0 5",
+          "commentary": "5...c5 — the freeing break ...c5, the core QGA idea.",
+          "expectedMove": "c7c5",
+          "hints": [
+            "Play c5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp3ppp/4pn2/2p5/2BP4/4PN2/PP3PPP/RNBQK2R w KQkq - 0 6",
+          "commentary": "6.O-O. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "e1g1",
+          "hints": [
+            "Play O-O"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/pp3ppp/4pn2/2p5/2BP4/4PN2/PP3PPP/RNBQ1RK1 b kq - 1 6",
+          "commentary": "6...a6 — gaining queenside space and preparing ...b5.",
+          "expectedMove": "a7a6",
+          "hints": [
+            "Play a6"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/1p3ppp/p3pn2/2p5/2BP4/4PN2/PP3PPP/RNBQ1RK1 w kq - 0 7",
+          "commentary": "7.dxc5 — simplifying into a comfortable endgame.",
+          "expectedMove": "d4c5",
+          "hints": [
+            "Play dxc5"
+          ]
+        },
+        {
+          "fen": "rnbqkb1r/1p3ppp/p3pn2/2P5/2B5/4PN2/PP3PPP/RNBQ1RK1 b kq - 0 7",
+          "commentary": "7...Qxd1. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "d8d1",
+          "hints": [
+            "Play Qxd1"
+          ]
+        },
+        {
+          "fen": "rnb1kb1r/1p3ppp/p3pn2/2P5/2B5/4PN2/PP3PPP/RNBq1RK1 w kq - 0 8",
+          "commentary": "8.Rxd1. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f1d1",
+          "hints": [
+            "Play Rxd1"
+          ]
+        },
+        {
+          "fen": "rnb1kb1r/1p3ppp/p3pn2/2P5/2B5/4PN2/PP3PPP/RNBR2K1 b kq - 0 8",
+          "commentary": "8...Bxc5. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "f8c5",
+          "hints": [
+            "Play Bxc5"
+          ]
+        },
+        {
+          "fen": "rnb1k2r/1p3ppp/p3pn2/2b5/2B5/4PN2/PP3PPP/RNBR2K1 w kq - 0 9",
+          "commentary": "9.b3. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b2b3",
+          "hints": [
+            "Play b3"
+          ]
+        },
+        {
+          "fen": "rnb1k2r/1p3ppp/p3pn2/2b5/2B5/1P2PN2/P4PPP/RNBR2K1 b kq - 0 9",
+          "commentary": "9...Nbd7. A main-line move; follow the theory and find it on the board.",
+          "expectedMove": "b8d7",
+          "hints": [
+            "Play Nbd7"
+          ]
+        },
+        {
+          "fen": "r1b1k2r/1p1n1ppp/p3pn2/2b5/2B5/1P2PN2/P4PPP/RNBR2K1 w kq - 1 10",
+          "commentary": "A balanced position where Black has freed the game with ...c5 and equalized comfortably."
         }
       ]
     }
   ],
   "exercises": [
     {
-      "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
-      "title": "Decline Solidly",
-      "description": "Black to play. Support d5 and prepare to develop the kingside.",
-      "targetColor": "b",
+      "fen": "rnbq1rk1/ppp1bpp1/4pn1p/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 7",
+      "title": "Hold the Pin",
+      "description": "White to play. Black challenged the bishop with ...h6 — keep the pin on the f6 knight.",
+      "targetColor": "w",
       "expectedMoves": [
-        "e6"
+        "g5h4"
       ],
       "hints": [
-        "Reinforce the d5 pawn",
-        "Open a path for the f8 bishop"
+        "Retreat but keep the pin",
+        "Stay on the c1-h6... no, the h4-d8 diagonal"
       ],
       "maxMoves": 1
     }
