@@ -212,7 +212,7 @@ export default function TheoryLesson() {
 
       <div className="lesson-content">
         <div className="lesson-board">
-          <div className="board-container">
+          <div className="lesson-board-frame">
             {gameState && (
               <Board
                 state={boardState}

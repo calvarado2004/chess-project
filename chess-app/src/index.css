@@ -1577,7 +1577,10 @@ select:focus { border-color: #7a5c3a; }
   align-self: start;
 }
 
-.board-container {
+/* Plain wrapper around the lesson <Board>. Must NOT reuse .board-container,
+   which is the global 8x8 grid class — doing so nested a bogus grid that
+   squeezed the real board into one cell (invisible on stricter WebViews). */
+.lesson-board-frame {
   margin-bottom: 16px;
 }
 
