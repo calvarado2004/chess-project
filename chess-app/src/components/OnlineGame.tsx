@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameWebSocket } from '../context/GameWebSocketContext';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, setInActiveGame } from '../context/AuthContext';
 import { exportPgn } from '../lib/pgnExport';
 import Board from './Board';
 import Clock from './Clock';
@@ -72,6 +72,13 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const engineRef = useRef<Worker | null>(null);
   const fenRef = useRef<string>('');
   const prevFenRef = useRef<string>('');
+
+  // Hold any session logout while in the multiplayer game; it is applied when
+  // the player leaves (the component unmounts), never mid-match.
+  useEffect(() => {
+    setInActiveGame(true);
+    return () => setInActiveGame(false);
+  }, []);
 
   // ===================== Stockfish =====================
   useEffect(() => {

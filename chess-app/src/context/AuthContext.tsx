@@ -29,8 +29,30 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 // Global flag to prevent multiple simultaneous redirect attempts
 let redirectingToLogin = false;
+// While a game is in progress we never yank the player to the login screen.
+let inActiveGame = false;
+let deferredLogout = false;
+
+// Game screens (local vs Stockfish, online multiplayer) call this on mount and
+// unmount so an expiring/invalid session can never interrupt play. Any logout
+// that comes due mid-game is held until the player leaves the game — or until
+// they relaunch the app, which re-validates the session on load.
+export function setInActiveGame(active: boolean) {
+  inActiveGame = active;
+  if (!active && deferredLogout) {
+    deferredLogout = false;
+    // Now that the player has left the game, apply the held logout: clear the
+    // React session state (so ProtectedRoute lets go) and send them to login.
+    window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT));
+    forceRedirectToLogin();
+  }
+}
 
 function forceRedirectToLogin() {
+  if (inActiveGame) {
+    deferredLogout = true;
+    return;
+  }
   if (redirectingToLogin) return;
   redirectingToLogin = true;
   clearTokens();
@@ -63,6 +85,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const handleSessionExpired = () => {
+      // Never tear down the session in the middle of a game — that would make
+      // ProtectedRoute bounce an online player to login. Hold it until they
+      // leave the game (setInActiveGame(false) re-dispatches this event).
+      if (inActiveGame) {
+        deferredLogout = true;
+        return;
+      }
       setUser(null);
       setAccessToken(null);
       redirectingToLogin = false;

@@ -4,7 +4,7 @@ import { useChessGame } from '../hooks/useChessGame';
 import { STRENGTH_MAP } from '../engine';
 import { saveLocalStockfishGame, syncLocalStockfishGames } from '../lib/localHistory';
 import { exportPgn } from '../lib/pgnExport';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, setInActiveGame } from '../context/AuthContext';
 import Board from './Board';
 import EvalBar from './EvalBar';
 import Clock from './Clock';
@@ -36,6 +36,13 @@ export default function LocalGame() {
   const appliedRouteMode = useRef(false);
   const settingsRef = useRef<HTMLDivElement | null>(null);
   const boardOrientation = gameMode === 'hbe' ? 'black' : 'white';
+
+  // While on the game screen, hold off any session logout so a token check
+  // never interrupts play. Applies when the player leaves the game screen.
+  useEffect(() => {
+    setInActiveGame(true);
+    return () => setInActiveGame(false);
+  }, []);
 
   useEffect(() => {
     if (appliedRouteMode.current) return;
