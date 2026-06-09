@@ -614,6 +614,9 @@ function startClock() {
       }
     }
     clockRef.current = { whiteTime, blackTime, running: clockRunning };
+    // Re-render every tick so the clock keeps visibly counting down even when
+    // nothing else triggers a render (e.g. while Stockfish is thinking).
+    renderTrigger.current();
   }, 1000);
 }
 
