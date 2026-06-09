@@ -1567,8 +1567,16 @@ select:focus { border-color: #7a5c3a; }
 
 .lesson-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 32px;
+}
+
+/* Two columns only when there is genuinely room for a full board beside the
+   text. Tablets (768-1024px) stay single-column so the board is not squeezed. */
+@media (min-width: 1024px) {
+  .lesson-content {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .lesson-board {
@@ -1580,8 +1588,33 @@ select:focus { border-color: #7a5c3a; }
 /* Plain wrapper around the lesson <Board>. Must NOT reuse .board-container,
    which is the global 8x8 grid class — doing so nested a bogus grid that
    squeezed the real board into one cell (invisible on stricter WebViews). */
+/* Size the lesson board to its own column using only universally-supported
+   CSS — no clamp() or aspect-ratio (older Android System WebViews ignore
+   those, collapsing the board). The padding-bottom:100% trick keeps it a
+   perfect square; note % padding is relative to the PARENT's width, so the
+   max-width cap lives on this frame, and .board-wrapper stays width:100%.
+   The grid then fills the square absolutely. Fixes boards not rendering on
+   older tablets. */
 .lesson-board-frame {
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
+  max-width: 520px;
+}
+
+.lesson-board-frame .board-wrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.lesson-board-frame .board-wrapper .board-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
 }
 
 .flip-board-btn {
