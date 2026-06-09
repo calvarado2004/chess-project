@@ -37,15 +37,23 @@ function forceRedirectToLogin() {
   window.location.replace(isNativeApp() ? '/#/login' : '/login');
 }
 
+// True when the only reason a request failed is lack of connectivity on a
+// native device that already has a stored account — i.e. genuine offline, not
+// an auth rejection. Such sessions can be trusted for offline-only features.
 function canTrustNativeOfflineSession(error: unknown): boolean {
   return isNativeApp() && !!getUser() && axios.isAxiosError(error) && !error.response;
 }
 
 function handleAuthValidationError(error: unknown) {
-  if (canTrustNativeOfflineSession(error)) {
-    return;
+  // Only a definitive 401 means the session is truly invalid: the api response
+  // interceptor has, by this point, already tried and failed to refresh the
+  // access token. Every other failure is transient — a server error (5xx), a
+  // timeout, or no connectivity (e.g. during a backend redeploy, or while
+  // offline on a native device) — and must NOT log the user out. Doing so was
+  // kicking players to the login screen mid-game on a momentary blip.
+  if (axios.isAxiosError(error) && error.response?.status === 401) {
+    forceRedirectToLogin();
   }
-  forceRedirectToLogin();
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
