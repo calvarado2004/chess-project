@@ -17,6 +17,7 @@ import LessonsList from './components/LessonsList';
 import TheoryLesson from './components/TheoryLesson';
 import { isNativeApp } from './lib/auth';
 import { TheoryProvider } from './context/TheoryContext';
+import BackgroundMusic from './components/BackgroundMusic';
 import './index.css';
 
 function AppRoutes() {
@@ -200,6 +201,7 @@ export default function App() {
       <AuthProvider>
         <GameWebSocketProvider>
           <TheoryProvider>
+            <BackgroundMusic />
             <AppRoutes />
           </TheoryProvider>
         </GameWebSocketProvider>

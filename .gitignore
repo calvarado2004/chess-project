@@ -1,3 +1,5 @@
 .qwen
 .idea
 chess-app/.idea
+# Large source audio (only the trimmed chess-app/public/chess-music.m4a is committed)
+/music/
