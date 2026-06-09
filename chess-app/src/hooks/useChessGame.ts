@@ -378,6 +378,11 @@ function getLegalMoves(row: number, col: number): ChessMove[] {
 
   const legal: ChessMove[] = [];
   for (const move of pseudo) {
+    // A king can never be captured. Skip any move onto a king square — this
+    // keeps king-capture out of arbitrary positions (e.g. lesson boards),
+    // not just legally-reached ones.
+    const target = state.board[move.to.row][move.to.col];
+    if (target === W_KING || target === B_KING) continue;
     const savedBoard = state.board.map(r => [...r]);
     const savedEP = cloneCoord(enPassantTarget);
     const savedStateEP = cloneCoord(state.enPassantTarget);
