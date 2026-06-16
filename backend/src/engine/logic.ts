@@ -154,7 +154,9 @@ export function pseudoLegalMoves(
     // Forward one
     if (row + dir >= 0 && row + dir < 8 && board[row + dir][col] === EMPTY) {
       if (row + dir === promoRow) {
-        moves.push({ from: { row, col }, to: { row: row + dir, col }, promotion: 'q' });
+        for (const promo of ['q', 'r', 'b', 'n']) {
+          moves.push({ from: { row, col }, to: { row: row + dir, col }, promotion: promo });
+        }
       } else {
         moves.push({ from: { row, col }, to: { row: row + dir, col } });
         // Forward two from start
@@ -169,7 +171,9 @@ export function pseudoLegalMoves(
       if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
         if (isEnemy(board[tr][tc], color)) {
           if (tr === promoRow) {
-            moves.push({ from: { row, col }, to: { row: tr, col: tc }, promotion: 'q' });
+            for (const promo of ['q', 'r', 'b', 'n']) {
+              moves.push({ from: { row, col }, to: { row: tr, col: tc }, promotion: promo });
+            }
           } else {
             moves.push({ from: { row, col }, to: { row: tr, col: tc } });
           }
@@ -252,7 +256,10 @@ export function applyMoveToBoard(
 
   // Promotion
   if (move.promotion) {
-    board[move.to.row][move.to.col] = isWhite(piece) ? W_QUEEN : B_QUEEN;
+    const promoPieces = isWhite(piece)
+      ? { q: W_QUEEN, r: W_ROOK, b: W_BISHOP, n: W_KNIGHT }
+      : { q: B_QUEEN, r: B_ROOK, b: B_BISHOP, n: B_KNIGHT };
+    board[move.to.row][move.to.col] = promoPieces[move.promotion as keyof typeof promoPieces]!;
   }
 
   return capturedPiece;

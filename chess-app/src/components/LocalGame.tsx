@@ -6,6 +6,7 @@ import { saveLocalStockfishGame, syncLocalStockfishGames } from '../lib/localHis
 import { exportPgn } from '../lib/pgnExport';
 import { useAuth, setInActiveGame } from '../context/AuthContext';
 import Board from './Board';
+import PromotionDialog from './PromotionDialog';
 import EvalBar from './EvalBar';
 import Clock from './Clock';
 import MoveHistory from './MoveHistory';
@@ -25,6 +26,7 @@ export default function LocalGame() {
     moveHistory, capturedByWhite, capturedByBlack,
     enPassantTarget, castlingRights,
     retractsRemaining, retractUsed, canRetract,
+    promotionDialog, onPromotionSelect, dismissPromotionDialog,
     selectSquare, retractMove, resetGame, setGameMode, setStrength,
     formatTime, generatePGN,
   } = useChessGame();
@@ -153,6 +155,9 @@ export default function LocalGame() {
         <Clock color="black" name={blackName} timeFormatted={formatTime(clock.blackTime)} isActive={clock.running && turn === 'b'} icon="♚" />
         <StatusBar gameStatus={gameStatus} turn={turn} />
         <Board state={{ board, turn, selectedSquare, legalMovesForSelected, lastMove, moveHistory, capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={selectSquare} orientation={boardOrientation} />
+        {promotionDialog && (
+          <PromotionDialog from={promotionDialog.from} to={promotionDialog.to} onSelect={onPromotionSelect} onDismiss={dismissPromotionDialog} />
+        )}
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clock.whiteTime)} isActive={clock.running && turn === 'w'} icon="♔" />
         <Controls
           onNewGame={handleNewGame}

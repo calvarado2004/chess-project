@@ -1807,3 +1807,68 @@ select:focus { border-color: #7a5c3a; }
     position: static;
   }
 }
+
+/* ===================== Promotion Dialog ===================== */
+.promotion-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.promotion-dialog {
+  background: #1e1e2e;
+  border: 2px solid #45475a;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+}
+
+.promotion-dialog-title {
+  color: #cdd6f4;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.promotion-dialog-pieces {
+  display: flex;
+  gap: 8px;
+}
+
+.promotion-dialog-piece {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #45475a;
+  border-radius: 8px;
+  background: #313244;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.promotion-dialog-piece:hover,
+.promotion-dialog-piece:active {
+  border-color: #89b4fa;
+  background: #45475a;
+  transform: scale(1.05);
+}
+
+.promotion-dialog-piece-img {
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+}

@@ -4,6 +4,7 @@ import { useGameWebSocket } from '../context/GameWebSocketContext';
 import { useAuth, setInActiveGame } from '../context/AuthContext';
 import { exportPgn } from '../lib/pgnExport';
 import Board from './Board';
+import PromotionDialog from './PromotionDialog';
 import Clock from './Clock';
 import MoveHistory from './MoveHistory';
 import CapturedPieces from './CapturedPieces';
@@ -67,6 +68,7 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
   const [gameOverMessage, setGameOverMessage] = useState('Game Over');
   const [pgnExportMessage, setPgnExportMessage] = useState('');
+  const [promotionDialog, setPromotionDialog] = useState<{ from: Coord; to: Coord } | null>(null);
 
   const myColor = useRef<'white' | 'black' | null>(null);
   const engineRef = useRef<Worker | null>(null);
@@ -281,8 +283,14 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
 
     if (selectedSquare) {
       // Check if this is a legal move target
-      const move = legalMovesForSelected.find(m => m.to.row === row && m.to.col === col);
-      if (move) {
+      const movesToSquare = legalMovesForSelected.filter(m => m.to.row === row && m.to.col === col);
+      if (movesToSquare.length > 0) {
+        const isPromotion = movesToSquare.some(m => m.promotion);
+        if (isPromotion) {
+          setPromotionDialog({ from: selectedSquare, to: { row, col } });
+          return;
+        }
+        const move = movesToSquare[0];
         const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + col)}${8 - row}${move.promotion ?? ''}`;
         if (onlineGame?.gameId) {
           sendMove(uci, onlineGame.gameId);
@@ -313,6 +321,29 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
       setLegalMovesForSelected([]);
     }
   }, [board, selectedSquare, legalMovesForSelected, gameOver, onlineGame?.gameId, onlineGame?.turn, getSelectionMoves, sendMove]);
+
+  const handlePromotionSelect = useCallback((piece: 'q' | 'r' | 'b' | 'n') => {
+    if (!promotionDialog || !selectedSquare || !onlineGame?.gameId) {
+      setPromotionDialog(null);
+      return;
+    }
+    const move = legalMovesForSelected.find(
+      m => m.to.row === promotionDialog.to.row &&
+           m.to.col === promotionDialog.to.col &&
+           m.promotion === piece
+    );
+    setPromotionDialog(null);
+    if (move) {
+      const uci = `${String.fromCharCode(97 + selectedSquare.col)}${8 - selectedSquare.row}${String.fromCharCode(97 + promotionDialog.to.col)}${8 - promotionDialog.to.row}${piece}`;
+      sendMove(uci, onlineGame.gameId);
+      setSelectedSquare(null);
+      setLegalMovesForSelected([]);
+    }
+  }, [promotionDialog, selectedSquare, legalMovesForSelected, onlineGame?.gameId, sendMove]);
+
+  const handleDismissPromotion = useCallback(() => {
+    setPromotionDialog(null);
+  }, []);
 
   const handleResign = useCallback(() => {
     if (onlineGame?.gameId) {
@@ -480,7 +511,9 @@ export default function OnlineGame({ onBackToLobby }: OnlineGameProps) {
         )}
 
         <Board state={{ board, turn: onlineGame?.turn ?? 'w', selectedSquare, legalMovesForSelected, lastMove, moveHistory: [], capturedByWhite, capturedByBlack, gameOver, gameStatus, enPassantTarget, castlingRights }} onSelectSquare={handleSelectSquare} orientation={boardOrientation} />
-
+        {promotionDialog && (
+          <PromotionDialog from={promotionDialog.from} to={promotionDialog.to} onSelect={handlePromotionSelect} onDismiss={handleDismissPromotion} />
+        )}
         <Clock color="white" name={whiteName} timeFormatted={formatTime(clockDisplay.white)} isActive={onlineGame?.turn === 'w' && onlineGame?.status === 'playing'} icon="♔" />
 
         {/* Controls */}

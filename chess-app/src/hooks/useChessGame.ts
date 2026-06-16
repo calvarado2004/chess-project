@@ -278,7 +278,9 @@ function pseudoLegalMoves(row: number, col: number): ChessMove[] {
     const promoRow = color === 'w' ? 0 : 7;
     if (row + dir >= 0 && row + dir < 8 && state.board[row + dir][col] === EMPTY) {
       if (row + dir === promoRow) {
-        moves.push({ from: { row, col }, to: { row: row + dir, col }, promotion: 'q' });
+        for (const promo of ['q', 'r', 'b', 'n']) {
+          moves.push({ from: { row, col }, to: { row: row + dir, col }, promotion: promo });
+        }
       } else {
         moves.push({ from: { row, col }, to: { row: row + dir, col } });
         if (row === startRow && state.board[row + 2 * dir][col] === EMPTY) {
@@ -291,7 +293,9 @@ function pseudoLegalMoves(row: number, col: number): ChessMove[] {
       if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8) {
         if (isEnemy(state.board[tr][tc], color)) {
           if (tr === promoRow) {
-            moves.push({ from: { row, col }, to: { row: tr, col: tc }, promotion: 'q' });
+            for (const promo of ['q', 'r', 'b', 'n']) {
+              moves.push({ from: { row, col }, to: { row: tr, col: tc }, promotion: promo });
+            }
           } else {
             moves.push({ from: { row, col }, to: { row: tr, col: tc } });
           }
@@ -428,7 +432,10 @@ function applyMoveToBoard(move: ChessMove) {
     else if (move.to.col === 2) { state.board[move.to.row][3] = state.board[move.to.row][0]; state.board[move.to.row][0] = EMPTY; }
   }
   if (move.promotion) {
-    state.board[move.to.row][move.to.col] = colorOf(piece) === 'w' ? W_QUEEN : B_QUEEN;
+    const promoPieces = colorOf(piece) === 'w'
+      ? { q: W_QUEEN, r: W_ROOK, b: W_BISHOP, n: W_KNIGHT }
+      : { q: B_QUEEN, r: B_ROOK, b: B_BISHOP, n: B_KNIGHT };
+    state.board[move.to.row][move.to.col] = promoPieces[move.promotion as keyof typeof promoPieces]!;
   }
   let nextEnPassantTarget: Coord | null = null;
   if (PIECE_TYPE[piece] === 'p' && Math.abs(move.to.row - move.from.row) === 2) {
@@ -1001,6 +1008,9 @@ export interface UseChessGameReturn {
   retractsRemaining: number;
   retractUsed: boolean;
   canRetract: boolean;
+  promotionDialog: { from: Coord; to: Coord } | null;
+  onPromotionSelect: (piece: 'q' | 'r' | 'b' | 'n') => void;
+  dismissPromotionDialog: () => void;
   selectSquare: (row: number, col: number) => void;
   retractMove: () => boolean;
   resetGame: (timeControlMinutes?: number) => void;
@@ -1018,6 +1028,7 @@ export function useChessGame(): UseChessGameReturn {
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('unavailable');
   const [engineEval, setEngineEval] = useState<EngineEval | null>(null);
   const [lastEngineBestMove, setLastEngineBestMove] = useState<string | null>(null);
+  const [promotionDialog, setPromotionDialog] = useState<{ from: Coord; to: Coord } | null>(null);
 
   // Wire render trigger
   useEffect(() => { renderTrigger.current = () => setRenderTick(r => r + 1); }, []);
@@ -1056,7 +1067,13 @@ export function useChessGame(): UseChessGameReturn {
     const piece = state.board[row][col];
 
     if (state.selectedSquare && state.legalMovesForSelected.some(m => m.to.row === row && m.to.col === col)) {
-      const move = state.legalMovesForSelected.find(m => m.to.row === row && m.to.col === col);
+      const movesToSquare = state.legalMovesForSelected.filter(m => m.to.row === row && m.to.col === col);
+      const isPromotion = movesToSquare.some(m => m.promotion);
+      if (isPromotion) {
+        setPromotionDialog({ from: state.selectedSquare!, to: { row, col } });
+        return;
+      }
+      const move = movesToSquare[0];
       if (move) {
         if (isHumanTurnInStockfishMode()) {
           state.retractSnapshots.push(createSnapshot());
@@ -1077,6 +1094,26 @@ export function useChessGame(): UseChessGameReturn {
     state.selectedSquare = null;
     state.legalMovesForSelected = [];
     renderTrigger.current();
+  }, []);
+
+  const onPromotionSelect = useCallback((piece: 'q' | 'r' | 'b' | 'n') => {
+    if (!promotionDialog) return;
+    const move = state.legalMovesForSelected.find(
+      m => m.to.row === promotionDialog.to.row &&
+           m.to.col === promotionDialog.to.col &&
+           m.promotion === piece
+    );
+    setPromotionDialog(null);
+    if (move) {
+      if (isHumanTurnInStockfishMode()) {
+        state.retractSnapshots.push(createSnapshot());
+      }
+      executeMove(move);
+    }
+  }, [promotionDialog]);
+
+  const dismissPromotionDialog = useCallback(() => {
+    setPromotionDialog(null);
   }, []);
 
   const resetGame = useCallback((timeControlMinutes: number = 10) => {
@@ -1136,6 +1173,9 @@ export function useChessGame(): UseChessGameReturn {
     retractsRemaining: Math.max(0, MAX_STOCKFISH_RETRACTS - state.retractCount),
     retractUsed: state.retractUsed,
     canRetract: isStockfishMode() && state.retractCount < MAX_STOCKFISH_RETRACTS && state.retractSnapshots.length > 0,
+    promotionDialog,
+    onPromotionSelect,
+    dismissPromotionDialog,
     selectSquare,
     retractMove,
     resetGame,
